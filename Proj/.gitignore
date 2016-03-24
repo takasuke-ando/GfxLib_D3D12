@@ -3,3 +3,7 @@
 #ignore folders
 Debug/
 x64/
+
+#ignore files
+GfxLib_D3D12.vcxproj.user
+

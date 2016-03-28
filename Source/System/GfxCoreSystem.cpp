@@ -43,6 +43,13 @@ void CoreSystem::Finalize()
 
 	if (m_CmdQueue != nullptr) {
 
+		//for (uint32_t i = 0; i < __crt_countof(m_aFence); ++i) {
+		//全フェンスの終了を待機
+		for (  auto & fence : m_aFence  ){
+			fence.Sync();
+		}
+
+
 		Fence fence;
 		fence.Initialize(this, false);
 
@@ -60,6 +67,10 @@ void CoreSystem::Finalize()
 		m_aCmdAllocator[i].Release();
 	}
 	m_GIFactory.Release();
+
+	for (auto & fence : m_aFence) {
+		fence.Finalize();
+	}
 
 	GFX_RELEASE(m_pd3dDev);
 
@@ -131,6 +142,12 @@ bool	CoreSystem::Initialize()
 	}
 
 
+	for (uint32_t i = 0; i < __crt_countof(m_aFence); ++i) {
+		m_aFence[i].Initialize(this, false);
+	}
+
+
+
 	m_nCurrentCmdAllocatorIndex = 0;
 
 	return true;
@@ -184,6 +201,10 @@ bool		CoreSystem::Begin()
 		m_nCurrentCmdAllocatorIndex = 0;
 	}
 
+
+	// コマンドアロケータの再利用の前
+	m_aFence[m_nCurrentCmdAllocatorIndex].Sync();
+
 	m_aCmdAllocator[m_nCurrentCmdAllocatorIndex]->Reset();
 
 
@@ -195,10 +216,9 @@ bool		CoreSystem::Begin()
 void		CoreSystem::End()
 {
 
-
-
-
-
+	// このフレームのコマンドの最後を識別する
+	InsertFence( &m_aFence[m_nCurrentCmdAllocatorIndex] );
+	
 
 }
 
@@ -207,7 +227,7 @@ void		CoreSystem::End()
 void		CoreSystem::InsertFence(Fence *fence )
 {
 
-	// Lockしたほうがよい
+	// 内部で複数のメソッドが呼ばれるため、Lockしたほうがよい
 
 	fence->_Insert(this);
 

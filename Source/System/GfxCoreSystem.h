@@ -2,7 +2,7 @@
 #define	__INCLUDE_GFXCORESYSTEM_H__
 
 
-
+#include "GfxFence.h"
 
 
 namespace GfxLib
@@ -72,6 +72,8 @@ namespace GfxLib
 		UINT				m_nFrameCount;
 		LARGE_INTEGER		m_lastFpsUpdateTime;
 		float				m_fFps;
+
+		Fence				m_aFence[MAX_FRAME_QUEUE];
 
 		uint32_t			m_nCurrentCmdAllocatorIndex;
 		uint64_t			m_uFenceValue;

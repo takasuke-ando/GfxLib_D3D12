@@ -36,6 +36,8 @@ namespace GfxLib
 
 		/*
 			フェンスの初期化を行う
+
+			pollingMode : falseにすると、待機オブジェクトを作成する
 		*/
 		bool	Initialize(CoreSystem*,bool pollingMode);
 		void	Finalize();

@@ -18,7 +18,7 @@ CommandList::CommandList()
 
 CommandList::~CommandList()
 {
-	m_pCmdList.Release();
+	Finalize();
 }
 
 
@@ -50,6 +50,17 @@ bool	CommandList::Initialize(CoreSystem * coreSystem)
 
 	return true;
 }
+
+
+
+void	CommandList::Finalize()
+{
+
+	m_pCmdList.Release();
+
+
+}
+
 
 
 

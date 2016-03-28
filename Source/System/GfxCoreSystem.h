@@ -3,12 +3,12 @@
 
 
 
-#include "GfxLibStdAfx.h"
 
 
 namespace GfxLib
 {
 
+	class Fence;
 
 	class CoreSystem
 	{
@@ -43,6 +43,18 @@ namespace GfxLib
 
 		IDXGIFactory4*			GetDXGIFactory() const { return m_GIFactory; }
 		ID3D12CommandQueue*		GetCommandQueue() const { return m_CmdQueue; }
+
+
+		// フェンスを挿入 Fenceオブジェクトを使用して、GPUとの同期をとることが可能
+		void					InsertFence(Fence *);
+
+
+		//	コマンドキューにフェンスを登録し、新しい値を返す。1以上の値が返ることは保証される
+		uint64_t				Signal( ID3D12Fence *fence );
+
+		//	次にフェンスに書き込まれる予定の値を取得する
+		uint64_t				GetNextFenceValue() const { return m_uFenceValue;  }
+
 	private:
 
 		ID3D12Device*		m_pd3dDev;
@@ -62,7 +74,7 @@ namespace GfxLib
 		float				m_fFps;
 
 		uint32_t			m_nCurrentCmdAllocatorIndex;
-
+		uint64_t			m_uFenceValue;
 
 	};
 

@@ -7,6 +7,7 @@
 #include "stdafx.h"
 
 #include "System/GfxCoreSystem.h"
+#include "System/GfxFence.h"
 
 
 using namespace GfxLib;
@@ -23,6 +24,7 @@ CoreSystem::CoreSystem()
 	, m_nFrameCount(0)
 	, m_fFps(0)
 	, m_nCurrentCmdAllocatorIndex(0)
+	, m_uFenceValue(1)
 {
 	QueryPerformanceCounter(&m_lastFpsUpdateTime);
 }
@@ -38,6 +40,20 @@ CoreSystem::~CoreSystem()
 
 void CoreSystem::Finalize()
 {
+
+	if (m_CmdQueue != nullptr) {
+
+		Fence fence;
+		fence.Initialize(this, false);
+
+		InsertFence(&fence);
+
+		// GPU‚ÌŠ®—¹‚ð‘Ò‹@
+		fence.Sync();
+
+		fence.Finalize();
+	}
+
 
 	m_CmdQueue.Release();
 	for (uint32_t i = 0; i < __crt_countof(m_aCmdAllocator); ++i) {
@@ -186,4 +202,29 @@ void		CoreSystem::End()
 
 }
 
+
+
+void		CoreSystem::InsertFence(Fence *fence )
+{
+
+	// Lock‚µ‚½‚Ù‚¤‚ª‚æ‚¢
+
+	fence->_Insert(this);
+
+
+}
+
+
+
+
+uint64_t	CoreSystem::Signal(ID3D12Fence *fence)
+{
+
+	uint64_t fv = m_uFenceValue;
+	m_CmdQueue->Signal(fence, m_uFenceValue);
+	++m_uFenceValue;
+
+	
+	return fv;
+}
 

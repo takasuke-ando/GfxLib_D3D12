@@ -90,9 +90,18 @@ bool	SwapChain::Initialize(CoreSystem *coreSystem, HWND hwnd)
 
 	}
 
+	if (!m_RTDescHeap.InitializeRTV(coreSystem, BufferCount)) {
+
+		return false;		
+	}
+
+
+
+	//	スワップチェーンから、レンダーターゲットを作成する
 	for (uint32_t i = 0; i < BufferCount; ++i ) {
-		D3DPtr<ID3D12Resource>	  resource;
-		HRESULT hr = m_GISwapChain->GetBuffer(i, IID_PPV_ARGS(resource.InitialAccept()));
+		D3DPtr<ID3D12Resource>	  renderTarget;
+		HRESULT hr = m_GISwapChain->GetBuffer(i, IID_PPV_ARGS(renderTarget.InitialAccept()));
+		D3D12_CPU_DESCRIPTOR_HANDLE	handle = m_RTDescHeap.GetCPUDescriptorHandleByIndex(i);
 
 		if (FAILED(hr)) {
 			GFX_ERROR_LOG(L"SwapChain3::GetBuffer Failed %08x", hr);
@@ -101,23 +110,15 @@ bool	SwapChain::Initialize(CoreSystem *coreSystem, HWND hwnd)
 		else {
 			// OK!
 
-			D3D12_RESOURCE_DESC desc = resource->GetDesc();
+			//D3D12_RESOURCE_DESC desc = resource->GetDesc();
 
-
+			coreSystem->GetD3DDevice()->CreateRenderTargetView(renderTarget, nullptr, handle );
+			
 		}
-
-
+		
 	}
 
-
-	{
-		//	Descriptor Heap
-
-
-	}
-
-
-
+		
 
 	m_nCurrentBackBufferIndex = m_GISwapChain->GetCurrentBackBufferIndex();
 
@@ -130,7 +131,28 @@ void	SwapChain::Finalize()
 {
 
 	m_GISwapChain.Release();
+	m_RTDescHeap.Finalize();
 
 }
 
 
+void	SwapChain::Present(uint32_t SyncInterval, uint32_t Flags)
+{
+
+	m_GISwapChain->Present(SyncInterval, Flags);
+	m_nCurrentBackBufferIndex = m_GISwapChain->GetCurrentBackBufferIndex();
+	
+}
+
+
+
+D3D12_CPU_DESCRIPTOR_HANDLE	SwapChain::GetCurrentRenderTargetHandle() const
+{
+
+
+	D3D12_CPU_DESCRIPTOR_HANDLE	handle = m_RTDescHeap.GetCPUDescriptorHandleByIndex(m_nCurrentBackBufferIndex);
+
+	return handle;
+
+
+}

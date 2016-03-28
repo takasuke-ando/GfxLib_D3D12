@@ -18,11 +18,16 @@
 #include <dxgi1_4.h>
 #include <stdint.h>
 
+
+
+void	GfxLibErrorLog(const char *str,...);
+void	GfxLibErrorLog( const wchar_t *str,... );
+
 #define		GFX_RELEASE( ptr )		if ( ptr )	{	(ptr)->Release(); (ptr)=NULL;	}
 
 #define		GFX_ASSERT( exp , ... )		{	assert(exp);	}
 
-#define		GFX_ERROR_LOG( ... )		{}
+#define		GFX_ERROR_LOG( ... )		{GfxLibErrorLog(__VA_ARGS__);}
 
 
 

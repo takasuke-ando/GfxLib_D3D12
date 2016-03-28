@@ -11,6 +11,7 @@
 
 #include "GfxLibStdAfx.h"
 #include "System/GfxCoreSystem.h"
+#include "System/GfxFence.h"
 #include "Device/GfxCommandList.h"
 #include "Device/GfxSwapChain.h"
 

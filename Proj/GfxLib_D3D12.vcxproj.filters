@@ -57,6 +57,9 @@
     <ClInclude Include="..\Source\Resource\GfxDescriptorHeap.h">
       <Filter>Resource</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\System\GfxFence.h">
+      <Filter>System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -76,6 +79,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Resource\GfxDescriptorHeap.cpp">
       <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\System\GfxFence.cpp">
+      <Filter>System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

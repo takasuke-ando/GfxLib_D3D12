@@ -2,7 +2,6 @@
 #define __INCLUDE_GFXCOMMANDLIST_H__
 
 
-#include "GfxLibStdAfx.h"
 
 
 namespace GfxLib
@@ -24,8 +23,14 @@ namespace GfxLib
 
 
 		bool	Initialize( CoreSystem * coreSystem );
+		void	Finalize();
 
+		//	コマンドの書き込みを可能な状態にする。フレームの最初に呼び出す
 		void	Reset(CoreSystem * coreSystem);
+
+
+
+		ID3D12GraphicsCommandList*	GetD3DCommandList() const {		return m_pCmdList;		}
 
 
 	private:

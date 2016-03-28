@@ -72,10 +72,27 @@ bool	DescriptorHeap::InitializeRTV(CoreSystem *coreSystem, uint32_t bufferCount)
 void	DescriptorHeap::Finalize()
 {
 
-
 	m_descriptorHeap.Release();
-
+	m_maxBufferCount = 0;
 
 }
+
+
+D3D12_CPU_DESCRIPTOR_HANDLE		DescriptorHeap::GetCPUDescriptorHandleByIndex(uint32_t idx) const
+{
+
+	if (m_maxBufferCount <= idx) {
+		D3D12_CPU_DESCRIPTOR_HANDLE handle = {0};
+		return handle;
+	}
+
+	D3D12_CPU_DESCRIPTOR_HANDLE handle = m_descriptorHeap->GetCPUDescriptorHandleForHeapStart();
+
+	handle.ptr += (m_descriptorSize * idx);
+
+	return handle;
+
+}
+
 
 

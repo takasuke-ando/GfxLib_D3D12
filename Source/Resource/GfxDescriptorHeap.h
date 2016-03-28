@@ -22,6 +22,12 @@ namespace GfxLib
 
 		void	Finalize();
 
+
+		/*
+			指定インデックスのデスクリプタハンドルを取得する
+		*/
+		D3D12_CPU_DESCRIPTOR_HANDLE		GetCPUDescriptorHandleByIndex( uint32_t idx ) const;
+
 	private:
 
 		D3DPtr<ID3D12DescriptorHeap>	m_descriptorHeap;

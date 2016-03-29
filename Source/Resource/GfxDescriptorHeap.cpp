@@ -34,11 +34,11 @@ DescriptorHeap::~DescriptorHeap()
 	RTV Ç∆ÇµÇƒèâä˙âªÇ∑ÇÈ
 
 */
-bool	DescriptorHeap::InitializeRTV(CoreSystem *coreSystem, uint32_t bufferCount)
+bool	DescriptorHeap::InitializeRTV( uint32_t bufferCount)
 {
 	Finalize();
 
-
+	CoreSystem *coreSystem = CoreSystem::GetInstance();
 
 	D3D12_DESCRIPTOR_HEAP_DESC desc = {};
 

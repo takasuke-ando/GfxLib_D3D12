@@ -17,7 +17,7 @@ namespace GfxLib
 
 
 		// RTV
-		bool	InitializeRTV(CoreSystem *coreSystem , uint32_t bufferCount);
+		bool	InitializeRTV( uint32_t bufferCount);
 
 
 		void	Finalize();

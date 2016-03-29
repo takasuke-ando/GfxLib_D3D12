@@ -27,9 +27,10 @@ SwapChain::~SwapChain()
 }
 
 
-bool	SwapChain::Initialize(CoreSystem *coreSystem, HWND hwnd)
+bool	SwapChain::Initialize( HWND hwnd)
 {
 
+	CoreSystem *coreSystem = CoreSystem::GetInstance();
 	const uint32_t BufferCount = 3;
 
 
@@ -90,7 +91,7 @@ bool	SwapChain::Initialize(CoreSystem *coreSystem, HWND hwnd)
 
 	}
 
-	if (!m_RTDescHeap.InitializeRTV(coreSystem, BufferCount)) {
+	if (!m_RTDescHeap.InitializeRTV(BufferCount)) {
 
 		return false;		
 	}

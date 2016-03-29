@@ -22,7 +22,7 @@ namespace GfxLib
 		SwapChain();
 		~SwapChain();
 
-		bool	Initialize(CoreSystem *coreSystem, HWND hwnd );
+		bool	Initialize(HWND hwnd );
 		void	Finalize();
 
 		void	Present(uint32_t SyncInterval, uint32_t Flags);

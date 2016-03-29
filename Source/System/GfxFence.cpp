@@ -33,9 +33,11 @@ Fence::~Fence()
 
 
 
-bool Fence::Initialize(CoreSystem *coreSystem, bool pollingMode)
+bool Fence::Initialize(bool pollingMode)
 {
 	Finalize();
+
+	CoreSystem *coreSystem = CoreSystem::GetInstance();
 
 	
 	HRESULT hr = coreSystem->GetD3DDevice()->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(m_fence.InitialAccept()));

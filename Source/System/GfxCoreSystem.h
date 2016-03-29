@@ -34,11 +34,12 @@ namespace GfxLib
 		
 		float		GetFps()	const { return m_fFps; }
 
-
+		// すべての描画処理は、Begin/End内部で呼び出す必要がある
 		bool		Begin();
 		void		End();
 
 
+		// 現在のフレームのコマンドアロケータを取得 Begin/Endブラケット内部で呼び出す必要がある
 		ID3D12CommandAllocator*	GetCurrentCommandAllocator() const { return m_aCmdAllocator[m_nCurrentCmdAllocatorIndex];	 }
 
 		IDXGIFactory4*			GetDXGIFactory() const { return m_GIFactory; }
@@ -47,13 +48,16 @@ namespace GfxLib
 
 		// フェンスを挿入 Fenceオブジェクトを使用して、GPUとの同期をとることが可能
 		void					InsertFence(Fence *);
-
-
+		
 		//	コマンドキューにフェンスを登録し、新しい値を返す。1以上の値が返ることは保証される
 		uint64_t				Signal( ID3D12Fence *fence );
 
 		//	次にフェンスに書き込まれる予定の値を取得する
 		uint64_t				GetNextFenceValue() const { return m_uFenceValue;  }
+
+		// インスタンスを取得する
+		static CoreSystem*	GetInstance() { return s_pInstance; }
+
 
 	private:
 
@@ -77,6 +81,10 @@ namespace GfxLib
 
 		uint32_t			m_nCurrentCmdAllocatorIndex;
 		uint64_t			m_uFenceValue;
+
+
+		//	Singleton
+		static CoreSystem*			s_pInstance;
 
 	};
 

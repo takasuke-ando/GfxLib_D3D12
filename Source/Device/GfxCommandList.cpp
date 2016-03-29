@@ -22,9 +22,10 @@ CommandList::~CommandList()
 }
 
 
-bool	CommandList::Initialize(CoreSystem * coreSystem)
+bool	CommandList::Initialize()
 {
 
+	CoreSystem *coreSystem = CoreSystem::GetInstance();
 
 	HRESULT hr = coreSystem->GetD3DDevice()->CreateCommandList(
 		0,									//	Node Mask  ƒ}ƒ‹ƒ`GPUŽ¯•Ê—p

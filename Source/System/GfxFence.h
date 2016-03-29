@@ -39,7 +39,7 @@ namespace GfxLib
 
 			pollingMode : falseにすると、待機オブジェクトを作成する
 		*/
-		bool	Initialize(CoreSystem*,bool pollingMode);
+		bool	Initialize(bool pollingMode);
 		void	Finalize();
 
 

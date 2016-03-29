@@ -14,6 +14,7 @@ using namespace GfxLib;
 
 
 
+CoreSystem*	CoreSystem::s_pInstance = nullptr;
 
 
 CoreSystem::CoreSystem()
@@ -51,7 +52,7 @@ void CoreSystem::Finalize()
 
 
 		Fence fence;
-		fence.Initialize(this, false);
+		fence.Initialize(false);
 
 		InsertFence(&fence);
 
@@ -73,6 +74,8 @@ void CoreSystem::Finalize()
 	}
 
 	GFX_RELEASE(m_pd3dDev);
+
+	s_pInstance = nullptr;
 
 }
 
@@ -142,13 +145,23 @@ bool	CoreSystem::Initialize()
 	}
 
 
-	for (uint32_t i = 0; i < __crt_countof(m_aFence); ++i) {
-		m_aFence[i].Initialize(this, false);
+
+
+	m_nCurrentCmdAllocatorIndex = 0;
+	s_pInstance = this;	//	ここでシングルトンを保持しておかないと続く処理でCoreSystemへのアクセスができない
+
+	//	最低限の初期化は完了
+
+
+	//	内部オブジェクトの初期化
+
+	//for (uint32_t i = 0; i < __crt_countof(m_aFence); ++i) {
+	for ( auto& fence : m_aFence ) {
+		fence.Initialize(false);
 	}
 
 
 
-	m_nCurrentCmdAllocatorIndex = 0;
 
 	return true;
 

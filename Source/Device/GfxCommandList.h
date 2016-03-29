@@ -22,7 +22,7 @@ namespace GfxLib
 		~CommandList();
 
 
-		bool	Initialize( CoreSystem * coreSystem );
+		bool	Initialize();
 		void	Finalize();
 
 		//	コマンドの書き込みを可能な状態にする。フレームの最初に呼び出す

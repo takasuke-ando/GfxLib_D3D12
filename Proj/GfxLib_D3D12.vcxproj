@@ -136,6 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Device\GfxCommandList.h" />
+    <ClInclude Include="..\Source\Device\GfxCommandQueue.h" />
     <ClInclude Include="..\Source\Device\GfxSwapChain.h" />
     <ClInclude Include="..\Source\GfxLib.h" />
     <ClInclude Include="..\Source\GfxLibStdAfx.h" />
@@ -148,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Device\GfxCommandList.cpp" />
+    <ClCompile Include="..\Source\Device\GfxCommandQueue.cpp" />
     <ClCompile Include="..\Source\Device\GfxSwapChain.cpp" />
     <ClCompile Include="..\Source\GfxLib.cpp" />
     <ClCompile Include="..\Source\Resource\GfxDescriptorHeap.cpp" />

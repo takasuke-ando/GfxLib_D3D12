@@ -66,8 +66,10 @@ void	CommandList::Finalize()
 
 
 
-void	CommandList::Reset(CoreSystem * coreSystem)
+void	CommandList::Reset()
 {
+
+	CoreSystem * coreSystem = CoreSystem::GetInstance();
 
 	m_pCmdList->Reset(coreSystem->GetCurrentCommandAllocator(), nullptr /*PSO*/);
 

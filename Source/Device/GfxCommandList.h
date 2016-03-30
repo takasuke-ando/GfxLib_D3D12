@@ -26,7 +26,7 @@ namespace GfxLib
 		void	Finalize();
 
 		//	コマンドの書き込みを可能な状態にする。フレームの最初に呼び出す
-		void	Reset(CoreSystem * coreSystem);
+		void	Reset();
 
 
 

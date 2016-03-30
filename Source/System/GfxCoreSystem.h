@@ -3,7 +3,7 @@
 
 
 #include "GfxFence.h"
-
+#include "Device/GfxCommandQueue.h"
 
 namespace GfxLib
 {
@@ -43,7 +43,10 @@ namespace GfxLib
 		ID3D12CommandAllocator*	GetCurrentCommandAllocator() const { return m_aCmdAllocator[m_nCurrentCmdAllocatorIndex];	 }
 
 		IDXGIFactory4*			GetDXGIFactory() const { return m_GIFactory; }
-		ID3D12CommandQueue*		GetCommandQueue() const { return m_CmdQueue; }
+		//ID3D12CommandQueue*		GetCommandQueue() const { return m_CmdQueue; }
+
+		//コマンドキューの取得。自動的作成される、唯一のコマンドキュー
+		CommandQueue&			GetCommandQueue() {return m_CommandQueue;}
 
 
 		// フェンスを挿入 Fenceオブジェクトを使用して、GPUとの同期をとることが可能
@@ -63,7 +66,8 @@ namespace GfxLib
 
 		ID3D12Device*		m_pd3dDev;
 
-		D3DPtr<ID3D12CommandQueue>		m_CmdQueue;
+		//D3DPtr<ID3D12CommandQueue>		m_CmdQueue;
+		CommandQueue					m_CommandQueue;
 		D3DPtr<IDXGIFactory4>			m_GIFactory;
 		D3DPtr<ID3D12CommandAllocator>	m_aCmdAllocator[MAX_FRAME_QUEUE];
 

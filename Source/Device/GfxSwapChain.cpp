@@ -68,7 +68,7 @@ bool	SwapChain::Initialize( HWND hwnd)
 
 		HRESULT hr;
 		hr = factory->CreateSwapChain(
-			coreSystem->GetCommandQueue(),	//	複数のSwapChainがある場合、別々のコマンドキューを渡すということも考えられる
+			coreSystem->GetCommandQueue().GetD3DCommandQueue(),	//	複数のSwapChainがある場合、別々のコマンドキューを渡すということも考えられる
 			&desc,
 			&swapChain
 			);
@@ -133,6 +133,21 @@ void	SwapChain::Finalize()
 
 	m_GISwapChain.Release();
 	m_RTDescHeap.Finalize();
+
+}
+
+
+
+void	SwapChain::Begin(CommandList& cmdList)
+{
+
+
+}
+
+
+void	SwapChain::End(CommandList& cmdList)
+{
+
 
 }
 

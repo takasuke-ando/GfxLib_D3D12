@@ -42,7 +42,7 @@ CoreSystem::~CoreSystem()
 void CoreSystem::Finalize()
 {
 
-	if (m_CmdQueue != nullptr) {
+	if (m_CommandQueue.GetD3DCommandQueue() != nullptr) {
 
 		//for (uint32_t i = 0; i < __crt_countof(m_aFence); ++i) {
 		//全フェンスの終了を待機
@@ -63,7 +63,8 @@ void CoreSystem::Finalize()
 	}
 
 
-	m_CmdQueue.Release();
+	//m_CmdQueue.Release();
+	m_CommandQueue.Finalize();
 	for (uint32_t i = 0; i < __crt_countof(m_aCmdAllocator); ++i) {
 		m_aCmdAllocator[i].Release();
 	}
@@ -123,6 +124,7 @@ bool	CoreSystem::Initialize()
 	}
 
 
+	/*
 	D3D12_COMMAND_QUEUE_DESC	desc = {};
 
 	desc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
@@ -134,6 +136,7 @@ bool	CoreSystem::Initialize()
 		GFX_ERROR_LOG(L"CreateCommandQueue Failed error=%08x", hr);
 		return false;
 	}
+	*/
 
 
 	for (uint32_t i = 0; i < __crt_countof(m_aCmdAllocator); ++i) {
@@ -154,6 +157,8 @@ bool	CoreSystem::Initialize()
 
 
 	//	内部オブジェクトの初期化
+
+	m_CommandQueue.Initialize();
 
 	//for (uint32_t i = 0; i < __crt_countof(m_aFence); ++i) {
 	for ( auto& fence : m_aFence ) {
@@ -237,13 +242,13 @@ void		CoreSystem::End()
 
 
 
-void		CoreSystem::InsertFence(Fence *fence )
+void		CoreSystem::InsertFence( Fence *fence )
 {
 
 	// 内部で複数のメソッドが呼ばれるため、Lockしたほうがよい
 
 	fence->_Insert(this);
-
+	
 
 }
 
@@ -254,7 +259,8 @@ uint64_t	CoreSystem::Signal(ID3D12Fence *fence)
 {
 
 	uint64_t fv = m_uFenceValue;
-	m_CmdQueue->Signal(fence, m_uFenceValue);
+	//m_CmdQueue->Signal(fence, m_uFenceValue);
+	m_CommandQueue.GetD3DCommandQueue()->Signal(fence, m_uFenceValue);
 	++m_uFenceValue;
 
 	

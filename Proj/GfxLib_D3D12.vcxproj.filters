@@ -60,6 +60,9 @@
     <ClInclude Include="..\Source\System\GfxFence.h">
       <Filter>System</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Device\GfxCommandQueue.h">
+      <Filter>Device</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -82,6 +85,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\System\GfxFence.cpp">
       <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Device\GfxCommandQueue.cpp">
+      <Filter>Device</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

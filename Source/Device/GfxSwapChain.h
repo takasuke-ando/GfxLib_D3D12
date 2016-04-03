@@ -50,11 +50,14 @@ namespace GfxLib
 
 
 		D3D12_CPU_DESCRIPTOR_HANDLE	GetCurrentRenderTargetHandle() const;
+		ID3D12Resource*				GetCurrentRenderTarget() const;
+
 
 	private:
 
 
 		D3DPtr< IDXGISwapChain3 >	m_GISwapChain;
+		D3DPtr<ID3D12Resource>*		m_paRenderTargets;	//	Render Target Array
 		DescriptorHeap				m_RTDescHeap;		//	Render Target View
 
 		uint32_t	m_nCurrentBackBufferIndex;

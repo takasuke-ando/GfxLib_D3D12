@@ -27,6 +27,7 @@ using namespace GfxLib;
 
 
 CommandQueue::CommandQueue()
+: m_uFenceValue(1)
 {
 
 
@@ -79,6 +80,31 @@ void CommandQueue::Finalize()
 
 
 
+
+void		CommandQueue::InsertFence(Fence *fence)
+{
+
+	// 内部で複数のメソッドが呼ばれるため、Lockしたほうがよい
+
+	fence->_Insert(this);
+
+
+}
+
+
+
+
+uint64_t	CommandQueue::Signal(ID3D12Fence *fence)
+{
+
+	uint64_t fv = m_uFenceValue;
+	//m_CmdQueue->Signal(fence, m_uFenceValue);
+	m_CmdQueue->Signal(fence, m_uFenceValue);
+	++m_uFenceValue;
+
+
+	return fv;
+}
 
 
 

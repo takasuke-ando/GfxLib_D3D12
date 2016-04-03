@@ -74,3 +74,21 @@ void	CommandList::Reset()
 	m_pCmdList->Reset(coreSystem->GetCurrentCommandAllocator(), nullptr /*PSO*/);
 
 }
+
+
+
+//	リソースバリアを設定する
+void	CommandList::ResourceTransitionBarrier(ID3D12Resource* res , ResourceStates stateBefore, ResourceStates stateAfter )
+{
+
+	D3D12_RESOURCE_BARRIER barrier = {};
+
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barrier.Transition.pResource = res;
+	barrier.Transition.StateBefore = (D3D12_RESOURCE_STATES)stateBefore;
+	barrier.Transition.StateAfter  = (D3D12_RESOURCE_STATES)stateAfter;
+
+
+
+}

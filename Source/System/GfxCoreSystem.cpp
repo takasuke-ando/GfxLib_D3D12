@@ -1,4 +1,4 @@
-
+ï»¿
 
 
 
@@ -25,7 +25,6 @@ CoreSystem::CoreSystem()
 	, m_nFrameCount(0)
 	, m_fFps(0)
 	, m_nCurrentCmdAllocatorIndex(0)
-	, m_uFenceValue(1)
 {
 	QueryPerformanceCounter(&m_lastFpsUpdateTime);
 }
@@ -45,7 +44,7 @@ void CoreSystem::Finalize()
 	if (m_CommandQueue.GetD3DCommandQueue() != nullptr) {
 
 		//for (uint32_t i = 0; i < __crt_countof(m_aFence); ++i) {
-		//‘SƒtƒFƒ“ƒX‚ÌI—¹‚ð‘Ò‹@
+		//å…¨ãƒ•ã‚§ãƒ³ã‚¹ã®çµ‚äº†ã‚’å¾…æ©Ÿ
 		for (  auto & fence : m_aFence  ){
 			fence.Sync();
 		}
@@ -54,9 +53,9 @@ void CoreSystem::Finalize()
 		Fence fence;
 		fence.Initialize(false);
 
-		InsertFence(&fence);
+		m_CommandQueue.InsertFence(&fence);
 
-		// GPU‚ÌŠ®—¹‚ð‘Ò‹@
+		// GPUã®å®Œäº†ã‚’å¾…æ©Ÿ
 		fence.Sync();
 
 		fence.Finalize();
@@ -87,7 +86,7 @@ bool	CoreSystem::Initialize()
 
 #ifdef _DEBUG
 	{
-		//	DebugLayer ‚Ì—LŒø‰»
+		//	DebugLayer ã®æœ‰åŠ¹åŒ–
 		ID3D12Debug* debugController;
 		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
 			debugController->EnableDebugLayer();
@@ -101,7 +100,7 @@ bool	CoreSystem::Initialize()
 
 	HRESULT hr;
 
-	// Device‚Ìì¬
+	// Deviceã®ä½œæˆ
 
 	hr = D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_pd3dDev));
 
@@ -112,7 +111,7 @@ bool	CoreSystem::Initialize()
 	}
 
 
-	// DXGIFactory‚ðì¬
+	// DXGIFactoryã‚’ä½œæˆ
 
 
 	hr = CreateDXGIFactory1(IID_PPV_ARGS(m_GIFactory.InitialAccept()));
@@ -151,12 +150,12 @@ bool	CoreSystem::Initialize()
 
 
 	m_nCurrentCmdAllocatorIndex = 0;
-	s_pInstance = this;	//	‚±‚±‚ÅƒVƒ“ƒOƒ‹ƒgƒ“‚ð•ÛŽ‚µ‚Ä‚¨‚©‚È‚¢‚Æ‘±‚­ˆ—‚ÅCoreSystem‚Ö‚ÌƒAƒNƒZƒX‚ª‚Å‚«‚È‚¢
+	s_pInstance = this;	//	ã“ã“ã§ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã‚’ä¿æŒã—ã¦ãŠã‹ãªã„ã¨ç¶šãå‡¦ç†ã§CoreSystemã¸ã®ã‚¢ã‚¯ã‚»ã‚¹ãŒã§ããªã„
 
-	//	Å’áŒÀ‚Ì‰Šú‰»‚ÍŠ®—¹
+	//	æœ€ä½Žé™ã®åˆæœŸåŒ–ã¯å®Œäº†
 
 
-	//	“à•”ƒIƒuƒWƒFƒNƒg‚Ì‰Šú‰»
+	//	å†…éƒ¨ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®åˆæœŸåŒ–
 
 	m_CommandQueue.Initialize();
 
@@ -177,7 +176,7 @@ bool	CoreSystem::Initialize()
 
 /*
 
-	–ˆƒtƒŒ[ƒ€ŒÄ‚Ño‚µ‚Ä‚­‚¾‚³‚¢
+	æ¯Žãƒ•ãƒ¬ãƒ¼ãƒ å‘¼ã³å‡ºã—ã¦ãã ã•ã„
 
 */
 void	CoreSystem::Update()
@@ -220,7 +219,7 @@ bool		CoreSystem::Begin()
 	}
 
 
-	// ƒRƒ}ƒ“ƒhƒAƒƒP[ƒ^‚ÌÄ—˜—p‚Ì‘O
+	// ã‚³ãƒžãƒ³ãƒ‰ã‚¢ãƒ­ã‚±ãƒ¼ã‚¿ã®å†åˆ©ç”¨ã®å‰
 	m_aFence[m_nCurrentCmdAllocatorIndex].Sync();
 
 	m_aCmdAllocator[m_nCurrentCmdAllocatorIndex]->Reset();
@@ -234,36 +233,11 @@ bool		CoreSystem::Begin()
 void		CoreSystem::End()
 {
 
-	// ‚±‚ÌƒtƒŒ[ƒ€‚ÌƒRƒ}ƒ“ƒh‚ÌÅŒã‚ðŽ¯•Ê‚·‚é
-	InsertFence( &m_aFence[m_nCurrentCmdAllocatorIndex] );
+	// ã“ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã®ã‚³ãƒžãƒ³ãƒ‰ã®æœ€å¾Œã‚’è­˜åˆ¥ã™ã‚‹
+	m_CommandQueue.InsertFence( &m_aFence[m_nCurrentCmdAllocatorIndex] );
 	
 
 }
 
 
-
-void		CoreSystem::InsertFence( Fence *fence )
-{
-
-	// “à•”‚Å•¡”‚Ìƒƒ\ƒbƒh‚ªŒÄ‚Î‚ê‚é‚½‚ßALock‚µ‚½‚Ù‚¤‚ª‚æ‚¢
-
-	fence->_Insert(this);
-	
-
-}
-
-
-
-
-uint64_t	CoreSystem::Signal(ID3D12Fence *fence)
-{
-
-	uint64_t fv = m_uFenceValue;
-	//m_CmdQueue->Signal(fence, m_uFenceValue);
-	m_CommandQueue.GetD3DCommandQueue()->Signal(fence, m_uFenceValue);
-	++m_uFenceValue;
-
-	
-	return fv;
-}
 

@@ -1,4 +1,4 @@
-#ifndef __INCLUDE_GFXCORESYSTEM_H__
+ï»¿#ifndef __INCLUDE_GFXCORESYSTEM_H__
 #define	__INCLUDE_GFXCORESYSTEM_H__
 
 
@@ -34,31 +34,23 @@ namespace GfxLib
 		
 		float		GetFps()	const { return m_fFps; }
 
-		// ‚·‚×‚Ä‚Ì•`‰æˆ—‚ÍABegin/End“à•”‚ÅŒÄ‚Ño‚·•K—v‚ª‚ ‚é
+		// ã™ã¹ã¦ã®æç”»å‡¦ç†ã¯ã€Begin/Endå†…éƒ¨ã§å‘¼ã³å‡ºã™å¿…è¦ãŒã‚ã‚‹
 		bool		Begin();
 		void		End();
 
 
-		// Œ»İ‚ÌƒtƒŒ[ƒ€‚ÌƒRƒ}ƒ“ƒhƒAƒƒP[ƒ^‚ğæ“¾ Begin/Endƒuƒ‰ƒPƒbƒg“à•”‚ÅŒÄ‚Ño‚·•K—v‚ª‚ ‚é
+		// ç¾åœ¨ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã®ã‚³ãƒãƒ³ãƒ‰ã‚¢ãƒ­ã‚±ãƒ¼ã‚¿ã‚’å–å¾— Begin/Endãƒ–ãƒ©ã‚±ãƒƒãƒˆå†…éƒ¨ã§å‘¼ã³å‡ºã™å¿…è¦ãŒã‚ã‚‹
 		ID3D12CommandAllocator*	GetCurrentCommandAllocator() const { return m_aCmdAllocator[m_nCurrentCmdAllocatorIndex];	 }
 
 		IDXGIFactory4*			GetDXGIFactory() const { return m_GIFactory; }
 		//ID3D12CommandQueue*		GetCommandQueue() const { return m_CmdQueue; }
 
-		//ƒRƒ}ƒ“ƒhƒLƒ…[‚Ìæ“¾B©“®“Iì¬‚³‚ê‚éA—Bˆê‚ÌƒRƒ}ƒ“ƒhƒLƒ…[
+		//ã‚³ãƒãƒ³ãƒ‰ã‚­ãƒ¥ãƒ¼ã®å–å¾—ã€‚è‡ªå‹•çš„ä½œæˆã•ã‚Œã‚‹ã€å”¯ä¸€ã®ã‚³ãƒãƒ³ãƒ‰ã‚­ãƒ¥ãƒ¼
 		CommandQueue&			GetCommandQueue() {return m_CommandQueue;}
 
 
-		// ƒtƒFƒ“ƒX‚ğ‘}“ü FenceƒIƒuƒWƒFƒNƒg‚ğg—p‚µ‚ÄAGPU‚Æ‚Ì“¯Šú‚ğ‚Æ‚é‚±‚Æ‚ª‰Â”\
-		void					InsertFence(Fence *);
-		
-		//	ƒRƒ}ƒ“ƒhƒLƒ…[‚ÉƒtƒFƒ“ƒX‚ğ“o˜^‚µAV‚µ‚¢’l‚ğ•Ô‚·B1ˆÈã‚Ì’l‚ª•Ô‚é‚±‚Æ‚Í•ÛØ‚³‚ê‚é
-		uint64_t				Signal( ID3D12Fence *fence );
 
-		//	Ÿ‚ÉƒtƒFƒ“ƒX‚É‘‚«‚Ü‚ê‚é—\’è‚Ì’l‚ğæ“¾‚·‚é
-		uint64_t				GetNextFenceValue() const { return m_uFenceValue;  }
-
-		// ƒCƒ“ƒXƒ^ƒ“ƒX‚ğæ“¾‚·‚é
+		// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’å–å¾—ã™ã‚‹
 		static CoreSystem*	GetInstance() { return s_pInstance; }
 
 
@@ -84,7 +76,6 @@ namespace GfxLib
 		Fence				m_aFence[MAX_FRAME_QUEUE];
 
 		uint32_t			m_nCurrentCmdAllocatorIndex;
-		uint64_t			m_uFenceValue;
 
 
 		//	Singleton

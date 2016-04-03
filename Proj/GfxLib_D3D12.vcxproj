@@ -142,6 +142,7 @@
     <ClInclude Include="..\Source\GfxLibStdAfx.h" />
     <ClInclude Include="..\Source\Resource\GfxDescriptorHeap.h" />
     <ClInclude Include="..\Source\System\GfxCoreSystem.h" />
+    <ClInclude Include="..\Source\System\GfxDefines.h" />
     <ClInclude Include="..\Source\System\GfxFence.h" />
     <ClInclude Include="..\Source\Util\GfxD3DPtr.h" />
     <ClInclude Include="stdafx.h" />

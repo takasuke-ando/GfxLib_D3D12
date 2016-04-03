@@ -63,6 +63,9 @@
     <ClInclude Include="..\Source\Device\GfxCommandQueue.h">
       <Filter>Device</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\System\GfxDefines.h">
+      <Filter>System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

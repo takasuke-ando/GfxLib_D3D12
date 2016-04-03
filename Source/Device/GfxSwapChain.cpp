@@ -8,6 +8,7 @@
 #include "GfxSwapChain.h"
 
 #include "System/GfxCoreSystem.h"
+#include "Device/GfxCommandList.h"
 
 
 
@@ -96,12 +97,13 @@ bool	SwapChain::Initialize( HWND hwnd)
 		return false;		
 	}
 
+	m_paRenderTargets = new D3DPtr<ID3D12Resource>[BufferCount];
 
 
 	//	スワップチェーンから、レンダーターゲットを作成する
 	for (uint32_t i = 0; i < BufferCount; ++i ) {
-		D3DPtr<ID3D12Resource>	  renderTarget;
-		HRESULT hr = m_GISwapChain->GetBuffer(i, IID_PPV_ARGS(renderTarget.InitialAccept()));
+		//D3DPtr<ID3D12Resource>	  renderTarget;
+		HRESULT hr = m_GISwapChain->GetBuffer(i, IID_PPV_ARGS(m_paRenderTargets[i].InitialAccept()));
 		D3D12_CPU_DESCRIPTOR_HANDLE	handle = m_RTDescHeap.GetCPUDescriptorHandleByIndex(i);
 
 		if (FAILED(hr)) {
@@ -113,7 +115,7 @@ bool	SwapChain::Initialize( HWND hwnd)
 
 			//D3D12_RESOURCE_DESC desc = resource->GetDesc();
 
-			coreSystem->GetD3DDevice()->CreateRenderTargetView(renderTarget, nullptr, handle );
+			coreSystem->GetD3DDevice()->CreateRenderTargetView(m_paRenderTargets[i], nullptr, handle );
 			
 		}
 		
@@ -130,7 +132,8 @@ bool	SwapChain::Initialize( HWND hwnd)
 
 void	SwapChain::Finalize()
 {
-
+	delete[] m_paRenderTargets;
+	m_paRenderTargets = nullptr;
 	m_GISwapChain.Release();
 	m_RTDescHeap.Finalize();
 
@@ -141,12 +144,16 @@ void	SwapChain::Finalize()
 void	SwapChain::Begin(CommandList& cmdList)
 {
 
+	cmdList.ResourceTransitionBarrier(GetCurrentRenderTarget(), ResourceStates::Present, ResourceStates::RenderTarget);
+
 
 }
 
 
 void	SwapChain::End(CommandList& cmdList)
 {
+
+	cmdList.ResourceTransitionBarrier(GetCurrentRenderTarget(), ResourceStates::RenderTarget, ResourceStates::Present);
 
 
 }
@@ -169,6 +176,17 @@ D3D12_CPU_DESCRIPTOR_HANDLE	SwapChain::GetCurrentRenderTargetHandle() const
 	D3D12_CPU_DESCRIPTOR_HANDLE	handle = m_RTDescHeap.GetCPUDescriptorHandleByIndex(m_nCurrentBackBufferIndex);
 
 	return handle;
+
+
+}
+
+
+
+ID3D12Resource*				SwapChain::GetCurrentRenderTarget() const
+{
+
+
+	return m_paRenderTargets[m_nCurrentBackBufferIndex];
 
 
 }

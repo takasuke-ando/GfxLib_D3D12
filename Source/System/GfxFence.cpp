@@ -1,4 +1,4 @@
-
+ï»¿
 
 
 
@@ -104,7 +104,7 @@ bool	Fence::Sync()
 
 
 
-void	Fence::_Insert(CoreSystem * coreSystem )
+void	Fence::_Insert(CommandQueue * cmdQueue )
 {
 	GFX_ASSERT(m_fence!=nullptr , L"GfxLib::Fence Is not initialized!");
 
@@ -112,15 +112,15 @@ void	Fence::_Insert(CoreSystem * coreSystem )
 
 		GFX_ASSERT(m_bWaiting == false, L"GfxLib::Fence Is not initialized!");
 
-		uint64_t fenceValue = coreSystem->GetNextFenceValue();
+		uint64_t fenceValue = cmdQueue->GetNextFenceValue();
 
-		// Signal‚æ‚è‘O‚É“o˜^
+		// Signalã‚ˆã‚Šå‰ã«ç™»éŒ²
 		m_fence->SetEventOnCompletion(fenceValue, m_event);
 
 	}
 
 
-	m_waitingFenceValue = coreSystem->Signal(m_fence);
+	m_waitingFenceValue = cmdQueue->Signal(m_fence);
 	
 
 	if (!IsPollingMode()) {

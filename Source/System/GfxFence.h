@@ -1,22 +1,22 @@
-#ifndef __INCLUDE_GFXFENCE_H__
+﻿#ifndef __INCLUDE_GFXFENCE_H__
 #define __INCLUDE_GFXFENCE_H__
 
 
 
 /*
 
-	�t�F���X���J�v�Z����
-	GPU�|CPU�Ԃœ�������肽���ꍇ�Ɏg�p����
+	フェンスをカプセル化
+	GPU－CPU間で同期を取りたい場合に使用する
 
-	GPU�Ƃ̓������Ƃ�^��2�ʂ�̎g����������
+	GPUとの同期をとり型で2通りの使い方がある
 
-	�|�[�����O���[�h�̏ꍇ
-	Sync�֐��͑����ɐ����Ԃ�
+	ポーリングモードの場合
+	Sync関数は即座に制御を返す
 
-	�ҋ@���[�h�̏ꍇ
-	Sync�͓������s����܂ŁA�ҋ@����
-	Signal ��Sync�͑΂ɂȂ��ČĂяo����Ȃ��Ƃ����Ȃ�
-	���̃��[�h�̏ꍇWindows�̓����I�u�W�F�N�g���g�p���邽�߁A��ʂɍ쐬���邱�Ƃ͐�������Ȃ�
+	待機モードの場合
+	Syncは同期が行われるまで、待機する
+	Signal とSyncは対になって呼び出されないといけない
+	このモードの場合Windowsの同期オブジェクトを使用するため、大量に作成することは推奨されない
 
 */
 
@@ -24,29 +24,29 @@
 
 namespace GfxLib
 {
-	class CoreSystem;
+	class CommandQueue;
 
 	class Fence
 	{
-		friend class CoreSystem;
+		friend class CommandQueue;
 	public:
 		Fence();
 		~Fence();
 
 
 		/*
-			�t�F���X�̏��������s��
+			フェンスの初期化を行う
 
-			pollingMode : false�ɂ���ƁA�ҋ@�I�u�W�F�N�g���쐬����
+			pollingMode : falseにすると、待機オブジェクトを作成する
 		*/
 		bool	Initialize(bool pollingMode);
 		void	Finalize();
 
 
 		/*
-			�������s��
-			�t�F���X��ʉߍς݂̏ꍇ�ATRUE���Ԃ�
-			�|�[�����O���[�h�̏ꍇ�A�����ɐ��䂪�߂�
+			同期を行う
+			フェンスを通過済みの場合、TRUEが返る
+			ポーリングモードの場合、即時に制御が戻る
 		*/
 		bool	Sync();
 
@@ -54,11 +54,11 @@ namespace GfxLib
 
 	private:
 
-		void	_Insert(CoreSystem *);
+		void	_Insert(CommandQueue *);
 
 		D3DPtr<ID3D12Fence>	m_fence;
 		bool				m_bWaiting;
-		HANDLE				m_event;		//!<	winAPI �ҋ@�C�x���g
+		HANDLE				m_event;		//!<	winAPI 待機イベント
 		uint64_t			m_waitingFenceValue;
 
 	};

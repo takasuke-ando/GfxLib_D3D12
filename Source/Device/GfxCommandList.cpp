@@ -1,4 +1,4 @@
-
+ï»¿
 
 
 
@@ -28,7 +28,7 @@ bool	CommandList::Initialize()
 	CoreSystem *coreSystem = CoreSystem::GetInstance();
 
 	HRESULT hr = coreSystem->GetD3DDevice()->CreateCommandList(
-		0,									//	Node Mask  ƒ}ƒ‹ƒ`GPU¯•Ê—p
+		0,									//	Node Mask  ãƒãƒ«ãƒGPUè­˜åˆ¥ç”¨
 		D3D12_COMMAND_LIST_TYPE_DIRECT,
 		coreSystem->GetCurrentCommandAllocator(),
 		nullptr,
@@ -45,7 +45,7 @@ bool	CommandList::Initialize()
 	}
 
 
-	// ‚¨‚Ü‚¶‚È‚¢
+	// ãŠã¾ã˜ãªã„
 	m_pCmdList->Close();
 
 
@@ -77,7 +77,7 @@ void	CommandList::Reset()
 
 
 
-//	ƒŠƒ\[ƒXƒoƒŠƒA‚ğİ’è‚·‚é
+//	ãƒªã‚½ãƒ¼ã‚¹ãƒãƒªã‚¢ã‚’è¨­å®šã™ã‚‹
 void	CommandList::ResourceTransitionBarrier(ID3D12Resource* res , ResourceStates stateBefore, ResourceStates stateAfter )
 {
 

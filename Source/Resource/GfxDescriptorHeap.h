@@ -1,4 +1,4 @@
-#ifndef __INCLUDE_GFXDESCRIPTORHEAP_H__
+ï»¿#ifndef __INCLUDE_GFXDESCRIPTORHEAP_H__
 #define	__INCLUDE_GFXDESCRIPTORHEAP_H__
 
 
@@ -24,7 +24,7 @@ namespace GfxLib
 
 
 		/*
-			Žw’èƒCƒ“ƒfƒbƒNƒX‚ÌƒfƒXƒNƒŠƒvƒ^ƒnƒ“ƒhƒ‹‚ðŽæ“¾‚·‚é
+			æŒ‡å®šã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã®ãƒ‡ã‚¹ã‚¯ãƒªãƒ—ã‚¿ãƒãƒ³ãƒ‰ãƒ«ã‚’å–å¾—ã™ã‚‹
 		*/
 		D3D12_CPU_DESCRIPTOR_HANDLE		GetCPUDescriptorHandleByIndex( uint32_t idx ) const;
 

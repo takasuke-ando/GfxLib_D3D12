@@ -1,10 +1,10 @@
-#ifndef ___INCLUDE_GFXLIB_D3D12_H__
+ï»¿#ifndef ___INCLUDE_GFXLIB_D3D12_H__
 #define	___INCLUDE_GFXLIB_D3D12_H__
 
 
 /*
 
-	ŠO•”—pƒCƒ“ƒNƒ‹[ƒh
+	å¤–éƒ¨ç”¨ã‚¤ãƒ³ã‚¯ãƒ«ãƒ¼ãƒ‰
 
 */
 

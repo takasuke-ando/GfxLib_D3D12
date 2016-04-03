@@ -1,4 +1,4 @@
-#ifndef __INCLUDE_GFXCOMMANDLIST_H__
+﻿#ifndef __INCLUDE_GFXCOMMANDLIST_H__
 #define __INCLUDE_GFXCOMMANDLIST_H__
 
 
@@ -9,8 +9,8 @@ namespace GfxLib
 {
 	/*
 	
-		�R�}���h���X�g���J�v�Z����
-		����O���t�B�b�N�X�p�C�v�̂�
+		コマンドリストをカプセル化
+		現状グラフィックスパイプのみ
 	
 	*/
 	
@@ -26,13 +26,13 @@ namespace GfxLib
 		bool	Initialize();
 		void	Finalize();
 
-		//	�R�}���h�̏������݂��\�ȏ�Ԃɂ���B�t���[���̍ŏ��ɌĂяo��
+		//	コマンドの書き込みを可能な状態にする。フレームの最初に呼び出す
 		void	Reset();
 
 		/***************************************************************
-			@brief	���\�[�X�o���A��ݒ肷��
-			@par	[����]
-				�g�����W�V�������\�[�X�o���A��ݒ肷��
+			@brief	リソースバリアを設定する
+			@par	[説明]
+				トランジションリソースバリアを設定する
 			@param[in]	
 		*/
 		void	ResourceTransitionBarrier(ID3D12Resource* resource,ResourceStates stateBefore , ResourceStates stateAfter );

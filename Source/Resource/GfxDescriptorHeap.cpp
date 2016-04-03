@@ -1,4 +1,4 @@
-
+ï»¿
 
 
 
@@ -31,7 +31,7 @@ DescriptorHeap::~DescriptorHeap()
 
 /*
 
-	RTV ‚Æ‚µ‚Ä‰Šú‰»‚·‚é
+	RTV ã¨ã—ã¦åˆæœŸåŒ–ã™ã‚‹
 
 */
 bool	DescriptorHeap::InitializeRTV( uint32_t bufferCount)
@@ -59,7 +59,7 @@ bool	DescriptorHeap::InitializeRTV( uint32_t bufferCount)
 
 	m_maxBufferCount = bufferCount;
 
-	// ƒfƒXƒNƒŠƒvƒ^ƒTƒCƒY‚ðŽæ“¾
+	// ãƒ‡ã‚¹ã‚¯ãƒªãƒ—ã‚¿ã‚µã‚¤ã‚ºã‚’å–å¾—
 	m_descriptorSize = coreSystem->GetD3DDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
 

@@ -1,9 +1,9 @@
-#ifndef __INCLUDE_GFXSWAPCHAIN_H__
+﻿#ifndef __INCLUDE_GFXSWAPCHAIN_H__
 #define	__INCLUDE_GFXSWAPCHAIN_H__
 
 
 /*
-	�X���b�v�`�F�C�����J�v�Z����
+	スワップチェインをカプセル化
 	
 */
 
@@ -28,21 +28,21 @@ namespace GfxLib
 
 
 		/***************************************************************
-		@brief		�t���[���̊J�n
-		@par	[����]
-			�����_�[�^�[�Q�b�g�ւ̏������݂��s���O�ɌĂяo���܂�
-			�Ăяo����Y���ƃn�U�[�h���䂪�s��ꂸ�A�\�����̃o�b�N�o�b�t�@��`��Ɏg���Ă��܂����Ƃ�����܂�
-		@param[in]	cmdList:	�R�}���h���X�g
+		@brief		フレームの開始
+		@par	[説明]
+			レンダーターゲットへの書き込みを行う前に呼び出します
+			呼び出しを忘れるとハザード制御が行われず、表示中のバックバッファを描画に使ってしまうことがあります
+		@param[in]	cmdList:	コマンドリスト
 		*/
 		void	Begin(CommandList& cmdList);
 
 		/***************************************************************
-		@brief		�t���[���̏I��
-		@par	[����]
-			�t���[���̍Ō�ɌĂяo���܂�
-			�ʏ�A���̒���ɃR�}���h���X�g��Close,
-			ExecuteCommandList,Present�̏��ŌĂяo���܂�
-		@param[in]	cmdList:	�R�}���h���X�g
+		@brief		フレームの終了
+		@par	[説明]
+			フレームの最後に呼び出します
+			通常、この直後にコマンドリストのClose,
+			ExecuteCommandList,Presentの順で呼び出します
+		@param[in]	cmdList:	コマンドリスト
 		*/
 		void	End(CommandList& cmdList );
 

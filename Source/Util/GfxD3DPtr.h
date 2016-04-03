@@ -1,4 +1,4 @@
-#pragma	once
+ï»¿#pragma	once
 
 
 
@@ -61,7 +61,7 @@ namespace GfxLib
 			return m_ptr;
 		}
 
-		//	D3DŠÖ”‚Ìˆø”‚É“n‚·Œ`‚Åó‚¯æ‚é
+		//	D3Dé–¢æ•°ã®å¼•æ•°ã«æ¸¡ã™å½¢ã§å—ã‘å–ã‚‹
 		D3DType**	InitialAccept()
 		{
 			GFX_ASSERT( m_ptr ==NULL , "Initial Call only!" );

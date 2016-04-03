@@ -1,11 +1,11 @@
-#ifndef __INCLUDE_GFXLIB_STDAFX_H__
+ï»¿#ifndef __INCLUDE_GFXLIB_STDAFX_H__
 #define	__INCLUDE_GFXLIB_STDAFX_H__
 
 
 
 /*
 
-	“à•”—pƒCƒ“ƒNƒ‹[ƒh
+	å†…éƒ¨ç”¨ã‚¤ãƒ³ã‚¯ãƒ«ãƒ¼ãƒ‰
 
 */
 

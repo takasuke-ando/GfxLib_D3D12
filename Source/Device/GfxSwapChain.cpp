@@ -1,4 +1,4 @@
-
+ï»¿
 
 
 
@@ -69,7 +69,7 @@ bool	SwapChain::Initialize( HWND hwnd)
 
 		HRESULT hr;
 		hr = factory->CreateSwapChain(
-			coreSystem->GetCommandQueue().GetD3DCommandQueue(),	//	•¡”‚ÌSwapChain‚ª‚ ‚éê‡A•ÊX‚ÌƒRƒ}ƒ“ƒhƒLƒ…[‚ğ“n‚·‚Æ‚¢‚¤‚±‚Æ‚àl‚¦‚ç‚ê‚é
+			coreSystem->GetCommandQueue().GetD3DCommandQueue(),	//	è¤‡æ•°ã®SwapChainãŒã‚ã‚‹å ´åˆã€åˆ¥ã€…ã®ã‚³ãƒãƒ³ãƒ‰ã‚­ãƒ¥ãƒ¼ã‚’æ¸¡ã™ã¨ã„ã†ã“ã¨ã‚‚è€ƒãˆã‚‰ã‚Œã‚‹
 			&desc,
 			&swapChain
 			);
@@ -79,7 +79,7 @@ bool	SwapChain::Initialize( HWND hwnd)
 			return false;
 		}
 
-		// SwapChain3‚É•ÏŠ·
+		// SwapChain3ã«å¤‰æ›
 		hr  = swapChain->QueryInterface(IID_PPV_ARGS(m_GISwapChain.InitialAccept()));
 		if (FAILED(hr)) {
 			GFX_ERROR_LOG(L"QueryInterface Failed %08x", hr);
@@ -100,7 +100,7 @@ bool	SwapChain::Initialize( HWND hwnd)
 	m_paRenderTargets = new D3DPtr<ID3D12Resource>[BufferCount];
 
 
-	//	ƒXƒƒbƒvƒ`ƒF[ƒ“‚©‚çAƒŒƒ“ƒ_[ƒ^[ƒQƒbƒg‚ğì¬‚·‚é
+	//	ã‚¹ãƒ¯ãƒƒãƒ—ãƒã‚§ãƒ¼ãƒ³ã‹ã‚‰ã€ãƒ¬ãƒ³ãƒ€ãƒ¼ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚’ä½œæˆã™ã‚‹
 	for (uint32_t i = 0; i < BufferCount; ++i ) {
 		//D3DPtr<ID3D12Resource>	  renderTarget;
 		HRESULT hr = m_GISwapChain->GetBuffer(i, IID_PPV_ARGS(m_paRenderTargets[i].InitialAccept()));

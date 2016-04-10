@@ -34,5 +34,8 @@ void	GfxLibErrorLog( const wchar_t *str,... );
 #include "Util/GfxD3DPtr.h"
 
 
+#define		GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FINALIZE		(false)
+
+
 
 #endif // !__INCLUDE_GFXLIB_STDAFX_H__

@@ -19,8 +19,11 @@ namespace GfxLib
 		// RTV
 		bool	InitializeRTV( uint32_t bufferCount);
 
+		//	CBV SRV UAV
+		bool	InitializeCBV_SRV_UAV(uint32_t bufferCount);
 
-		void	Finalize();
+
+		void	Finalize(bool delayedDelete = GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FINALIZE);
 
 
 		/*

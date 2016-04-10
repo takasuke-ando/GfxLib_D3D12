@@ -21,6 +21,7 @@ CoreSystem::CoreSystem()
 	:m_pd3dDev(NULL)
 	, m_featureLevel(D3D_FEATURE_LEVEL_11_0)
 	, m_driverType(D3D_DRIVER_TYPE_HARDWARE)
+	, m_bInsideBeginEnd(false)
 	, m_nUpdateCount(0)
 	, m_nFrameCount(0)
 	, m_fFps(0)
@@ -51,7 +52,7 @@ void CoreSystem::Finalize()
 
 
 		Fence fence;
-		fence.Initialize(false);
+		fence.Initialize(true);
 
 		m_CommandQueue.InsertFence(&fence);
 
@@ -59,6 +60,8 @@ void CoreSystem::Finalize()
 		fence.Sync();
 
 		fence.Finalize();
+
+
 	}
 
 
@@ -71,6 +74,10 @@ void CoreSystem::Finalize()
 
 	for (auto & fence : m_aFence) {
 		fence.Finalize();
+	}
+
+	if (m_pd3dDev) {
+		m_DelayDelete.DeleteAll();
 	}
 
 	GFX_RELEASE(m_pd3dDev);
@@ -161,7 +168,7 @@ bool	CoreSystem::Initialize()
 
 	//for (uint32_t i = 0; i < __crt_countof(m_aFence); ++i) {
 	for ( auto& fence : m_aFence ) {
-		fence.Initialize(false);
+		fence.Initialize(true);
 	}
 
 
@@ -213,6 +220,11 @@ void	CoreSystem::Update()
 
 bool		CoreSystem::Begin()
 {
+	// このフレームのコマンドの最後を識別する
+	// 本当はEndで入れたいところだが、コマンドアロケータなど描画時以外にアクセスが必要なものもあるため
+	// 前のフレームの描画＆今フレームのUpdateで行われたコマンドに対してフェンスを発行する
+	m_CommandQueue.InsertFence(&m_aFence[m_nCurrentCmdAllocatorIndex]);
+
 	++m_nCurrentCmdAllocatorIndex;
 	if (m_nCurrentCmdAllocatorIndex >= MAX_FRAME_QUEUE) {
 		m_nCurrentCmdAllocatorIndex = 0;
@@ -222,8 +234,14 @@ bool		CoreSystem::Begin()
 	// コマンドアロケータの再利用の前
 	m_aFence[m_nCurrentCmdAllocatorIndex].Sync();
 
+	// GPU待機の直後に行う
+	m_DelayDelete.Update();
+
 	m_aCmdAllocator[m_nCurrentCmdAllocatorIndex]->Reset();
 
+
+
+	m_bInsideBeginEnd = true;
 
 	return true;
 }
@@ -233,11 +251,21 @@ bool		CoreSystem::Begin()
 void		CoreSystem::End()
 {
 
-	// このフレームのコマンドの最後を識別する
-	m_CommandQueue.InsertFence( &m_aFence[m_nCurrentCmdAllocatorIndex] );
 	
+
+	m_bInsideBeginEnd = false;
 
 }
 
 
 
+HRESULT CoreSystem::_CreateSwapChain(DXGI_SWAP_CHAIN_DESC& desc, IDXGISwapChain* &swapChain)
+{
+
+	return m_GIFactory->CreateSwapChain(
+		m_CommandQueue.GetD3DCommandQueue(),	//	複数のSwapChainがある場合、別々のコマンドキューを渡すということも考えられる
+		&desc,
+		&swapChain
+		);
+
+}

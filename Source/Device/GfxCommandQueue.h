@@ -3,6 +3,7 @@
 
 
 
+
 namespace GfxLib
 {
 	class Fence;
@@ -33,6 +34,12 @@ namespace GfxLib
 		// フェンスを挿入 Fenceオブジェクトを使用して、GPUとの同期をとることが可能
 		void					InsertFence(Fence *);
 
+		// フェンスを挿入
+		uint64_t				InsertFence();
+
+		// フェンスを待機しているか
+		bool					IsFencePending(uint64_t);
+
 		//	コマンドキューにフェンスを登録し、新しい値を返す。1以上の値が返ることは保証される
 		uint64_t				Signal(ID3D12Fence *fence);
 
@@ -43,6 +50,8 @@ namespace GfxLib
 	private:
 		D3DPtr<ID3D12CommandQueue>		m_CmdQueue;
 		uint64_t			m_uFenceValue;
+		D3DPtr<ID3D12Fence>		m_d3dFence;
+
 
 
 	};

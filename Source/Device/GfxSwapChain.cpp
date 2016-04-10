@@ -68,11 +68,7 @@ bool	SwapChain::Initialize( HWND hwnd)
 		IDXGISwapChain* swapChain = nullptr;
 
 		HRESULT hr;
-		hr = factory->CreateSwapChain(
-			coreSystem->GetCommandQueue().GetD3DCommandQueue(),	//	複数のSwapChainがある場合、別々のコマンドキューを渡すということも考えられる
-			&desc,
-			&swapChain
-			);
+		hr = coreSystem->_CreateSwapChain(desc, swapChain);
 
 		if (FAILED(hr)) {
 			GFX_ERROR_LOG(L"CreateSwapChain Failed %08x",hr);

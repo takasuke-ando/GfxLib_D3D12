@@ -140,9 +140,12 @@
     <ClInclude Include="..\Source\Device\GfxSwapChain.h" />
     <ClInclude Include="..\Source\GfxLib.h" />
     <ClInclude Include="..\Source\GfxLibStdAfx.h" />
+    <ClInclude Include="..\Source\Resource\GfxConstantBuffer.h" />
     <ClInclude Include="..\Source\Resource\GfxDescriptorHeap.h" />
+    <ClInclude Include="..\Source\Resource\GfxResource.h" />
     <ClInclude Include="..\Source\System\GfxCoreSystem.h" />
     <ClInclude Include="..\Source\System\GfxDefines.h" />
+    <ClInclude Include="..\Source\System\GfxDelayDelete.h" />
     <ClInclude Include="..\Source\System\GfxFence.h" />
     <ClInclude Include="..\Source\Util\GfxD3DPtr.h" />
     <ClInclude Include="stdafx.h" />
@@ -153,8 +156,11 @@
     <ClCompile Include="..\Source\Device\GfxCommandQueue.cpp" />
     <ClCompile Include="..\Source\Device\GfxSwapChain.cpp" />
     <ClCompile Include="..\Source\GfxLib.cpp" />
+    <ClCompile Include="..\Source\Resource\GfxConstantBuffer.cpp" />
     <ClCompile Include="..\Source\Resource\GfxDescriptorHeap.cpp" />
+    <ClCompile Include="..\Source\Resource\GfxResource.cpp" />
     <ClCompile Include="..\Source\System\GfxCoreSystem.cpp" />
+    <ClCompile Include="..\Source\System\GfxDelayDelete.cpp" />
     <ClCompile Include="..\Source\System\GfxFence.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

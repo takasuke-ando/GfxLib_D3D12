@@ -85,7 +85,7 @@ bool	ConstantBuffer::Initialize(uint32_t byteSize)
 	{
 		D3D12_CONSTANT_BUFFER_VIEW_DESC viewDesc = {};
 
-		viewDesc.SizeInBytes = resDesc.Width;
+		viewDesc.SizeInBytes = (UINT)resDesc.Width;
 		viewDesc.BufferLocation = m_d3dRes->GetGPUVirtualAddress();
 
 		d3dDev->CreateConstantBufferView(&viewDesc, m_descHeap.GetCPUDescriptorHandleByIndex(0) );

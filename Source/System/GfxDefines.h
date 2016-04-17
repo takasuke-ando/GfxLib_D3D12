@@ -38,6 +38,53 @@ namespace GfxLib
 	};
 
 
+	/*
+		Descriptor Range Type 
+		D3D12_DESCRIPTOR_RANGE_TYPE にキャスト可能
+		DescriptorTableに接続される複数のRange情報のうちの一つ
+	*/
+	enum class DescriptorRangeType : uint32_t {
+
+		Srv = D3D12_DESCRIPTOR_RANGE_TYPE_SRV ,
+		Uav = D3D12_DESCRIPTOR_RANGE_TYPE_UAV ,
+		Cbv = D3D12_DESCRIPTOR_RANGE_TYPE_CBV ,
+		Sampler = D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER,
+
+	};
+
+
+
+	/*
+		
+		D3D12_SHADER_VISIBILITYにキャスト可能
+	
+	*/
+
+	enum class ShaderVisibility : uint32_t {
+		All = D3D12_SHADER_VISIBILITY_ALL ,
+		Vertex = D3D12_SHADER_VISIBILITY_VERTEX ,
+		Hull = D3D12_SHADER_VISIBILITY_HULL ,
+		Domain = D3D12_SHADER_VISIBILITY_DOMAIN ,
+		Geometry = D3D12_SHADER_VISIBILITY_GEOMETRY ,
+		Pixel  =D3D12_SHADER_VISIBILITY_PIXEL ,
+
+	};
+
+	/*
+	
+		D3D12_DESCRIPTOR_RANGE 構造体のクローン
+		
+	
+	*/
+	struct DESCRIPTOR_RANGE {
+		DescriptorRangeType	RangeType;
+		uint32_t NumDescriptors;		//	デスクリプタ数
+		uint32_t BaseShaderRegister;	//	
+		//UINT RegisterSpace;			//	シェーダでは→register(t3,space5)のような書き方でデスクリプタ配列を定義できるみたい
+		//UINT OffsetInDescriptorsFromTableStart;	// ?
+
+	};
+
 
 
 

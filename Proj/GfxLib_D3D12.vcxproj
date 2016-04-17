@@ -143,6 +143,8 @@
     <ClInclude Include="..\Source\Resource\GfxConstantBuffer.h" />
     <ClInclude Include="..\Source\Resource\GfxDescriptorHeap.h" />
     <ClInclude Include="..\Source\Resource\GfxResource.h" />
+    <ClInclude Include="..\Source\Resource\GfxRootSignature.h" />
+    <ClInclude Include="..\Source\Resource\GfxRootSignatureDesc.h" />
     <ClInclude Include="..\Source\System\GfxCoreSystem.h" />
     <ClInclude Include="..\Source\System\GfxDefines.h" />
     <ClInclude Include="..\Source\System\GfxDelayDelete.h" />
@@ -159,6 +161,8 @@
     <ClCompile Include="..\Source\Resource\GfxConstantBuffer.cpp" />
     <ClCompile Include="..\Source\Resource\GfxDescriptorHeap.cpp" />
     <ClCompile Include="..\Source\Resource\GfxResource.cpp" />
+    <ClCompile Include="..\Source\Resource\GfxRootSignature.cpp" />
+    <ClCompile Include="..\Source\Resource\GfxRootSignatureDesc.cpp" />
     <ClCompile Include="..\Source\System\GfxCoreSystem.cpp" />
     <ClCompile Include="..\Source\System\GfxDelayDelete.cpp" />
     <ClCompile Include="..\Source\System\GfxFence.cpp" />

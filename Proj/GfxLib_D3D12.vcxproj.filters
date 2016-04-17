@@ -75,6 +75,12 @@
     <ClInclude Include="..\Source\Resource\GfxConstantBuffer.h">
       <Filter>Resource</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Resource\GfxRootSignature.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Resource\GfxRootSignatureDesc.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -108,6 +114,12 @@
       <Filter>System</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Resource\GfxConstantBuffer.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Resource\GfxRootSignature.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Resource\GfxRootSignatureDesc.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
   </ItemGroup>

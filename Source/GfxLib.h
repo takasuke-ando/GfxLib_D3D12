@@ -15,6 +15,8 @@
 #include "System/GfxDefines.h"
 #include "Device/GfxCommandList.h"
 #include "Device/GfxSwapChain.h"
+#include "Resource/GfxRootSignature.h"
+#include "Resource/GfxRootSignatureDesc.h"
 
 
 

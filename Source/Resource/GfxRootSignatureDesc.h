@@ -3,6 +3,7 @@
 
 
 #include <vector>
+#include <array>
 #include "System/GfxDefines.h"
 
 namespace GfxLib
@@ -28,6 +29,24 @@ namespace GfxLib
 		@param[in]	visb:このデスクリプタテーブルは、どのシェーダから参照が可能か
 		*/
 		void		AddParam_DescriptorTable( const DESCRIPTOR_RANGE *ranges , uint32_t numRanges , ShaderVisibility visb = ShaderVisibility::All );
+
+
+
+		/*
+			rootSigDesc.AddParam_DescriptorTable(std::array<GfxLib::DESCRIPTOR_RANGE,1>{ GfxLib::DescriptorRangeType::Cbv,1,0 } );
+			rootSigDesc.AddParam_DescriptorTable(
+				std::array<GfxLib::DESCRIPTOR_RANGE, 2>{ 
+					GfxLib::DESCRIPTOR_RANGE{ GfxLib::DescriptorRangeType::Cbv, 1, 0 },
+					GfxLib::DESCRIPTOR_RANGE{ GfxLib::DescriptorRangeType::Cbv,1,1 }
+				}
+			);
+			な風に呼び出せる
+			いまいちか…
+		*/
+		template< int SIZE >
+		void		AddParam_DescriptorTable(const std::array<DESCRIPTOR_RANGE,SIZE> &rangeArray, ShaderVisibility visb = ShaderVisibility::All) {
+			AddParam_DescriptorTable(&rangeArray[0], SIZE, visb);
+		}
 
 
 		/***************************************************************

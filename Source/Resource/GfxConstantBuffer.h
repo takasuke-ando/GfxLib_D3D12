@@ -32,7 +32,7 @@ namespace GfxLib
 	private:
 
 		D3DPtr<ID3D12Resource>		m_d3dRes;
-		DescriptorHeap				m_descHeap;
+		DescriptorHeap				m_descHeap;			//	とりあえず作ったCBV用。ここで持ちたくはない…
 
 		uint32_t					m_byteSize;
 		void*						m_pMappedAddr;		//	GPU書き込み先アドレス

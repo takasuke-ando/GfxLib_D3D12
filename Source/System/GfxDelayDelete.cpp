@@ -43,6 +43,7 @@ void	DelayDelete::Update()
 	for (auto &it : frameInfo.vecIUnknown) {
 		it->Release();
 	}
+	frameInfo.vecIUnknown.clear();
 
 
 	//	swap テクニックでメモリ解放したほうが良い？

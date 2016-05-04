@@ -37,6 +37,7 @@ namespace GfxLib
 		*/
 		bool Initialize(const void* pVBData, size_t strideSize , size_t vtxCount);
 
+		const D3D12_VERTEX_BUFFER_VIEW&		GetVertexBufferView() const { return m_vtxBuffView; }
 
 
 	private:

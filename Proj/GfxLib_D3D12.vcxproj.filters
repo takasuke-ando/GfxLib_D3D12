@@ -28,6 +28,9 @@
     <Filter Include="Shader">
       <UniqueIdentifier>{cda45a92-4c1b-4bbd-8328-a80e38405ed2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="State">
+      <UniqueIdentifier>{1c3a581d-9c37-453b-b346-2583c50e4aa1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -93,6 +96,9 @@
     <ClInclude Include="..\Source\Util\GfxMath.h">
       <Filter>Util</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\State\GfxPipelineState.h">
+      <Filter>State</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -142,6 +148,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Util\GfxMath.cpp">
       <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\State\GfxPipelineState.cpp">
+      <Filter>State</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

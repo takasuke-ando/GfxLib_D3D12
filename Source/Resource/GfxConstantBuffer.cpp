@@ -53,6 +53,8 @@ bool	ConstantBuffer::Initialize(uint32_t byteSize)
 	D3D12_RESOURCE_DESC resDesc = {};
 	resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
 	resDesc.Alignment = 0;
+
+	// D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT = 256使うべき？
 	resDesc.Width = (byteSize + 255) / 256 * 256;
 	resDesc.Height = 1;
 	resDesc.DepthOrArraySize = 1;

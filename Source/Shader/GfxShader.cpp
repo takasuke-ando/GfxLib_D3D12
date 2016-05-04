@@ -30,6 +30,8 @@ Shader::~Shader()
 
 void	Shader::Finalize(bool delayDelete)
 {
+	// @TODO	delayDelete対応。一旦ID3DBlobに突っ込むほうが良いかも
+
 	if (m_pShaderByteCode) {
 		::free(const_cast<void*>(m_pShaderByteCode));
 		m_pShaderByteCode = nullptr;

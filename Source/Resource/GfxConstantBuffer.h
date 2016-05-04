@@ -28,6 +28,12 @@ namespace GfxLib
 		*/
 		void	Finalize( bool delayed = GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FINALIZE );
 
+		const DescriptorHeap&	GetDescriptorHeap() const { return m_descHeap; }		//	とりあえず作ったCBV用。ここで持ちたくはない…
+
+
+		D3D12_GPU_DESCRIPTOR_HANDLE	GetGPUDescriptorHandleForHeapStart() const {
+			return m_descHeap.GetD3DDescriptorHeap()->GetGPUDescriptorHandleForHeapStart();
+		}
 
 	private:
 

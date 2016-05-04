@@ -19,6 +19,8 @@ namespace GfxLib
 		void	Finalize(bool delayed = GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FINALIZE);
 
 
+		ID3D12RootSignature *GetD3DRootSignature() const {return m_d3dRootSignature;}
+
 	private:
 		D3DPtr< ID3D12RootSignature >	m_d3dRootSignature;
 

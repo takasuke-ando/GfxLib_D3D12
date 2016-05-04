@@ -18,7 +18,9 @@ using namespace GfxLib;
 
 
 SwapChain::SwapChain()
-	:m_nCurrentBackBufferIndex(0)
+	:m_Width(0)
+	,m_Height(0)
+	,m_nCurrentBackBufferIndex(0)
 {
 }
 
@@ -47,6 +49,9 @@ bool	SwapChain::Initialize( HWND hwnd)
 
 	if (w < 16)	w = 16;
 	if (h < 16) h = 16;
+
+	m_Width = w;
+	m_Height = h;
 
 	IDXGIFactory4 *factory = coreSystem->GetDXGIFactory();
 

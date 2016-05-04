@@ -31,6 +31,10 @@ namespace GfxLib
 		*/
 		D3D12_CPU_DESCRIPTOR_HANDLE		GetCPUDescriptorHandleByIndex( uint32_t idx ) const;
 
+
+		ID3D12DescriptorHeap*	GetD3DDescriptorHeap() const { return	m_descriptorHeap; }
+
+
 	private:
 
 		D3DPtr<ID3D12DescriptorHeap>	m_descriptorHeap;

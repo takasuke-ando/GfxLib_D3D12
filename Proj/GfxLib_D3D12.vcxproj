@@ -147,6 +147,7 @@
     <ClInclude Include="..\Source\Resource\GfxRootSignatureDesc.h" />
     <ClInclude Include="..\Source\Resource\GfxVertexBuffer.h" />
     <ClInclude Include="..\Source\Shader\GfxShader.h" />
+    <ClInclude Include="..\Source\State\GfxPipelineState.h" />
     <ClInclude Include="..\Source\System\GfxCoreSystem.h" />
     <ClInclude Include="..\Source\System\GfxDefines.h" />
     <ClInclude Include="..\Source\System\GfxDelayDelete.h" />
@@ -168,6 +169,7 @@
     <ClCompile Include="..\Source\Resource\GfxRootSignatureDesc.cpp" />
     <ClCompile Include="..\Source\Resource\GfxVertexBuffer.cpp" />
     <ClCompile Include="..\Source\Shader\GfxShader.cpp" />
+    <ClCompile Include="..\Source\State\GfxPipelineState.cpp" />
     <ClCompile Include="..\Source\System\GfxCoreSystem.cpp" />
     <ClCompile Include="..\Source\System\GfxDelayDelete.cpp" />
     <ClCompile Include="..\Source\System\GfxFence.cpp" />

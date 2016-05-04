@@ -18,7 +18,7 @@
 #include <dxgi1_4.h>
 #include <stdint.h>
 #include <vector>
-
+#include <directxmath.h>
 
 
 void	GfxLibErrorLog(const char *str,...);

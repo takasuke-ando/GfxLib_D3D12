@@ -25,6 +25,12 @@
     <Filter Include="Resource">
       <UniqueIdentifier>{4ff62c94-d614-4ec7-a7f8-6741e3642648}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{cda45a92-4c1b-4bbd-8328-a80e38405ed2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="State">
+      <UniqueIdentifier>{1c3a581d-9c37-453b-b346-2583c50e4aa1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -66,6 +72,33 @@
     <ClInclude Include="..\Source\System\GfxDefines.h">
       <Filter>System</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Resource\GfxResource.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\System\GfxDelayDelete.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Resource\GfxConstantBuffer.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Resource\GfxRootSignature.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Resource\GfxRootSignatureDesc.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Shader\GfxShader.h">
+      <Filter>Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Resource\GfxVertexBuffer.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Util\GfxMath.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\State\GfxPipelineState.h">
+      <Filter>State</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -92,9 +125,39 @@
     <ClCompile Include="..\Source\Device\GfxCommandQueue.cpp">
       <Filter>Device</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Resource\GfxResource.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\System\GfxDelayDelete.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Resource\GfxConstantBuffer.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Resource\GfxRootSignature.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Resource\GfxRootSignatureDesc.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Shader\GfxShader.cpp">
+      <Filter>Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Resource\GfxVertexBuffer.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Util\GfxMath.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\State\GfxPipelineState.cpp">
+      <Filter>State</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Source\Util\GfxD3DPtr.inl">
+      <Filter>Util</Filter>
+    </None>
+    <None Include="..\Source\Util\GfxMath.inl">
       <Filter>Util</Filter>
     </None>
   </ItemGroup>

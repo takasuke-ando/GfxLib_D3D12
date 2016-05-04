@@ -18,7 +18,9 @@ using namespace GfxLib;
 
 
 SwapChain::SwapChain()
-	:m_nCurrentBackBufferIndex(0)
+	:m_Width(0)
+	,m_Height(0)
+	,m_nCurrentBackBufferIndex(0)
 {
 }
 
@@ -48,6 +50,9 @@ bool	SwapChain::Initialize( HWND hwnd)
 	if (w < 16)	w = 16;
 	if (h < 16) h = 16;
 
+	m_Width = w;
+	m_Height = h;
+
 	IDXGIFactory4 *factory = coreSystem->GetDXGIFactory();
 
 
@@ -68,11 +73,7 @@ bool	SwapChain::Initialize( HWND hwnd)
 		IDXGISwapChain* swapChain = nullptr;
 
 		HRESULT hr;
-		hr = factory->CreateSwapChain(
-			coreSystem->GetCommandQueue().GetD3DCommandQueue(),	//	複数のSwapChainがある場合、別々のコマンドキューを渡すということも考えられる
-			&desc,
-			&swapChain
-			);
+		hr = coreSystem->_CreateSwapChain(desc, swapChain);
 
 		if (FAILED(hr)) {
 			GFX_ERROR_LOG(L"CreateSwapChain Failed %08x",hr);

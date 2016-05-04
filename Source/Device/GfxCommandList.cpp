@@ -89,6 +89,6 @@ void	CommandList::ResourceTransitionBarrier(ID3D12Resource* res , ResourceStates
 	barrier.Transition.StateBefore = (D3D12_RESOURCE_STATES)stateBefore;
 	barrier.Transition.StateAfter  = (D3D12_RESOURCE_STATES)stateAfter;
 
-
+	m_pCmdList->ResourceBarrier(1, &barrier);
 
 }

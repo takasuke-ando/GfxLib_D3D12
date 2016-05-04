@@ -33,7 +33,7 @@ Fence::~Fence()
 
 
 
-bool Fence::Initialize(bool pollingMode)
+bool Fence::Initialize(bool createEvent)
 {
 	Finalize();
 
@@ -49,7 +49,7 @@ bool Fence::Initialize(bool pollingMode)
 		return false;
 	}
 
-	if ( !pollingMode ){
+	if ( createEvent){
 		m_event = ::CreateEventEx(nullptr, FALSE, FALSE, EVENT_ALL_ACCESS);
 
 		GFX_ASSERT(m_event!=NULL,L"Create Event Failed!!")

@@ -19,14 +19,21 @@ namespace GfxLib
 		// RTV
 		bool	InitializeRTV( uint32_t bufferCount);
 
+		//	CBV SRV UAV
+		bool	InitializeCBV_SRV_UAV(uint32_t bufferCount);
 
-		void	Finalize();
+
+		void	Finalize(bool delayedDelete = GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FINALIZE);
 
 
 		/*
 			指定インデックスのデスクリプタハンドルを取得する
 		*/
 		D3D12_CPU_DESCRIPTOR_HANDLE		GetCPUDescriptorHandleByIndex( uint32_t idx ) const;
+
+
+		ID3D12DescriptorHeap*	GetD3DDescriptorHeap() const { return	m_descriptorHeap; }
+
 
 	private:
 

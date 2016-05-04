@@ -17,7 +17,8 @@
 #include <d3d12.h>
 #include <dxgi1_4.h>
 #include <stdint.h>
-
+#include <vector>
+#include <directxmath.h>
 
 
 void	GfxLibErrorLog(const char *str,...);
@@ -32,6 +33,9 @@ void	GfxLibErrorLog( const wchar_t *str,... );
 
 
 #include "Util/GfxD3DPtr.h"
+
+
+#define		GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FINALIZE		(false)
 
 
 

@@ -53,12 +53,18 @@ namespace GfxLib
 		ID3D12Resource*				GetCurrentRenderTarget() const;
 
 
+		uint32_t		GetWidth() const { return m_Width; }
+		uint32_t		GetHeight() const { return m_Height; }
+
 	private:
 
 
 		D3DPtr< IDXGISwapChain3 >	m_GISwapChain;
 		D3DPtr<ID3D12Resource>*		m_paRenderTargets;	//	Render Target Array
 		DescriptorHeap				m_RTDescHeap;		//	Render Target View
+
+		uint32_t		m_Width;
+		uint32_t		m_Height;
 
 		uint32_t	m_nCurrentBackBufferIndex;
 

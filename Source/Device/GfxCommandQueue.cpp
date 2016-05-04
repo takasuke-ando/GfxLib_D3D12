@@ -36,8 +36,7 @@ CommandQueue::CommandQueue()
 
 CommandQueue::~CommandQueue()
 {
-
-
+	Finalize();
 }
 
 
@@ -64,6 +63,13 @@ bool CommandQueue::Initialize()
 		return false;
 	}
 
+	//	汎用のフェンスを作成
+	
+	hr = pDevice->CreateFence(0,D3D12_FENCE_FLAG_NONE,IID_PPV_ARGS(m_d3dFence.InitialAccept()));
+	if (FAILED(hr)) {
+		GFX_ERROR_LOG(L"CreateFence Failed error=%08x", hr);
+		return false;
+	}
 
 	return true;
 
@@ -74,7 +80,7 @@ void CommandQueue::Finalize()
 {
 
 	m_CmdQueue.Release();
-
+	m_d3dFence.Release();
 
 }
 
@@ -88,6 +94,25 @@ void		CommandQueue::InsertFence(Fence *fence)
 
 	fence->_Insert(this);
 
+
+}
+
+
+
+uint64_t	CommandQueue::InsertFence()
+{
+
+	return Signal(m_d3dFence);
+
+}
+
+
+
+// フェンスを待機しているか
+bool		CommandQueue::IsFencePending(uint64_t fenceValue)
+{
+	GFX_ASSERT( fenceValue < m_uFenceValue , L"Invalid Fence Value" )
+	return m_d3dFence->GetCompletedValue() < fenceValue;
 
 }
 

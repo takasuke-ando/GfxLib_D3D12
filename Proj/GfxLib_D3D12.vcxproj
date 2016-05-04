@@ -140,11 +140,20 @@
     <ClInclude Include="..\Source\Device\GfxSwapChain.h" />
     <ClInclude Include="..\Source\GfxLib.h" />
     <ClInclude Include="..\Source\GfxLibStdAfx.h" />
+    <ClInclude Include="..\Source\Resource\GfxConstantBuffer.h" />
     <ClInclude Include="..\Source\Resource\GfxDescriptorHeap.h" />
+    <ClInclude Include="..\Source\Resource\GfxResource.h" />
+    <ClInclude Include="..\Source\Resource\GfxRootSignature.h" />
+    <ClInclude Include="..\Source\Resource\GfxRootSignatureDesc.h" />
+    <ClInclude Include="..\Source\Resource\GfxVertexBuffer.h" />
+    <ClInclude Include="..\Source\Shader\GfxShader.h" />
+    <ClInclude Include="..\Source\State\GfxPipelineState.h" />
     <ClInclude Include="..\Source\System\GfxCoreSystem.h" />
     <ClInclude Include="..\Source\System\GfxDefines.h" />
+    <ClInclude Include="..\Source\System\GfxDelayDelete.h" />
     <ClInclude Include="..\Source\System\GfxFence.h" />
     <ClInclude Include="..\Source\Util\GfxD3DPtr.h" />
+    <ClInclude Include="..\Source\Util\GfxMath.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -153,9 +162,18 @@
     <ClCompile Include="..\Source\Device\GfxCommandQueue.cpp" />
     <ClCompile Include="..\Source\Device\GfxSwapChain.cpp" />
     <ClCompile Include="..\Source\GfxLib.cpp" />
+    <ClCompile Include="..\Source\Resource\GfxConstantBuffer.cpp" />
     <ClCompile Include="..\Source\Resource\GfxDescriptorHeap.cpp" />
+    <ClCompile Include="..\Source\Resource\GfxResource.cpp" />
+    <ClCompile Include="..\Source\Resource\GfxRootSignature.cpp" />
+    <ClCompile Include="..\Source\Resource\GfxRootSignatureDesc.cpp" />
+    <ClCompile Include="..\Source\Resource\GfxVertexBuffer.cpp" />
+    <ClCompile Include="..\Source\Shader\GfxShader.cpp" />
+    <ClCompile Include="..\Source\State\GfxPipelineState.cpp" />
     <ClCompile Include="..\Source\System\GfxCoreSystem.cpp" />
+    <ClCompile Include="..\Source\System\GfxDelayDelete.cpp" />
     <ClCompile Include="..\Source\System\GfxFence.cpp" />
+    <ClCompile Include="..\Source\Util\GfxMath.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -165,6 +183,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Source\Util\GfxD3DPtr.inl" />
+    <None Include="..\Source\Util\GfxMath.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

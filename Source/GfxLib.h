@@ -15,6 +15,12 @@
 #include "System/GfxDefines.h"
 #include "Device/GfxCommandList.h"
 #include "Device/GfxSwapChain.h"
+#include "Resource/GfxRootSignature.h"
+#include "Resource/GfxRootSignatureDesc.h"
+#include "Resource/GfxVertexBuffer.h"
+#include "Resource/GfxConstantBuffer.h"
+#include "State/GfxPipelineState.h"
+#include "Shader/GfxShader.h"
 
 
 

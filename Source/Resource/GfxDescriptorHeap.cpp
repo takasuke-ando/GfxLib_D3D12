@@ -67,6 +67,50 @@ bool	DescriptorHeap::InitializeRTV( uint32_t bufferCount)
 	return true;
 }
 
+
+
+/*
+
+	DSV として初期化する
+
+*/
+bool	DescriptorHeap::InitializeDSV(uint32_t bufferCount)
+{
+	Finalize();
+
+	CoreSystem *coreSystem = CoreSystem::GetInstance();
+
+	D3D12_DESCRIPTOR_HEAP_DESC desc = {};
+
+	desc.NumDescriptors = bufferCount;
+	desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+	desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+
+
+	HRESULT hr;
+
+
+	hr = coreSystem->GetD3DDevice()->CreateDescriptorHeap(&desc, IID_PPV_ARGS(m_descriptorHeap.InitialAccept()));
+
+	if (FAILED(hr)) {
+		GFX_ERROR_LOG(L"CreateDescriptorHeap Failed %08x", hr);
+		return false;
+	}
+
+	m_maxBufferCount = bufferCount;
+
+	// デスクリプタサイズを取得
+	m_descriptorSize = coreSystem->GetD3DDevice()->GetDescriptorHandleIncrementSize(desc.Type);
+
+
+
+	return true;
+}
+
+
+
+
+
 bool DescriptorHeap::InitializeCBV_SRV_UAV(uint32_t bufferCount)
 {
 

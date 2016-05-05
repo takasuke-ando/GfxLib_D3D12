@@ -7,7 +7,7 @@
 
 #include "Resource/GfxDepthStencil.h"
 #include "System/GfxCoreSystem.h"
-
+#include "Util/GfxFormatUtil.h"
 
 
 
@@ -39,7 +39,8 @@ void	DepthStencil::Finalize(bool delayed /*= GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FI
 
 	SuperClass::Finalize(delayed);
 
-
+	m_DSVDescHeap.Finalize(delayed);
+	m_SRVDescHeap.Finalize(delayed);
 
 
 }
@@ -56,18 +57,18 @@ void	DepthStencil::Finalize(bool delayed /*= GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FI
 @param[in]	mipLevels : ミップレベル。0: 完全ミップ
 @param[in]	rtvEnable:	ShaderResource有効
 */
-bool	DepthStencil::Initialize(Format format, uint32_t width, uint32_t height, uint32_t mipLevels /*= 1*/, bool EnableShaderResource /*= true */ )
+bool	DepthStencil::Initialize(Format format, uint32_t width, uint32_t height, uint32_t _mipLevels /*= 1*/, bool EnableShaderResource /*= true */ )
 {
 
 
 	Finalize();
-#if 0
+
 	CoreSystem *coreSystem = CoreSystem::GetInstance();
 	ID3D12Device* d3dDev = coreSystem->GetD3DDevice();
 
 	// レンダーターゲットとして初期化
 	// 初期ステートはDEPTH_WRITE
-	bool b = _Initialize_DepthStencil(format, width, height, mipLevels, EnableShaderResource);
+	bool b = _Initialize_DepthStencil(format, width, height, _mipLevels, EnableShaderResource);
 
 	if (!b) {
 
@@ -82,19 +83,20 @@ bool	DepthStencil::Initialize(Format format, uint32_t width, uint32_t height, ui
 	GFX_ASSERT(mipLevels > 0);
 
 
-	m_DSVDescHeap.InitializeDSV(mipLevls);
+	m_DSVDescHeap.InitializeDSV(mipLevels);
 
 
 	for (uint32_t lv = 0; lv < mipLevels; ++lv) {
 
-		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc = {};
+		D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
 
-		rtvDesc.Format = (DXGI_FORMAT)format;
-		rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
-		rtvDesc.Texture2D.MipSlice = lv;
-		rtvDesc.Texture2D.PlaneSlice = 0;
+		dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
+		dsvDesc.Format = (DXGI_FORMAT)format;
+		dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+		dsvDesc.Texture2D.MipSlice = lv;
 
-		d3dDev->CreateRenderTargetView(m_d3dRes, &rtvDesc, m_RTVDescHeap.GetCPUDescriptorHandleByIndex(lv));
+
+		d3dDev->CreateDepthStencilView(m_d3dRes, &dsvDesc, m_DSVDescHeap.GetCPUDescriptorHandleByIndex(lv));
 
 	
 	}
@@ -109,7 +111,7 @@ bool	DepthStencil::Initialize(Format format, uint32_t width, uint32_t height, ui
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 
 
-		srvDesc.Format = (DXGI_FORMAT)format;
+		srvDesc.Format = (DXGI_FORMAT)FormatUtil::GetSRVFormat( format );
 		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MipLevels = mipLevels;
 		srvDesc.Texture2D.MostDetailedMip = 0;
@@ -119,17 +121,14 @@ bool	DepthStencil::Initialize(Format format, uint32_t width, uint32_t height, ui
 
 
 		d3dDev->CreateShaderResourceView(m_d3dRes, &srvDesc, m_SRVDescHeap.GetCPUDescriptorHandleByIndex(0));
-
-
+		
 		
 	}
 
 
 	return true;
-#endif
 
 
-	return false;
 
 }
 

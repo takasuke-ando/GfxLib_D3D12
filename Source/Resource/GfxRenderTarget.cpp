@@ -49,7 +49,7 @@ void	RenderTarget::Finalize(bool delayed )
 
 
 
-bool	RenderTarget::Initialize( Format format, uint32_t width, uint32_t height, uint32_t mipLevls  , bool EnableShaderResource )
+bool	RenderTarget::Initialize( Format format, uint32_t width, uint32_t height, uint32_t _mipLevls  , bool EnableShaderResource )
 {
 
 	Finalize();
@@ -59,7 +59,7 @@ bool	RenderTarget::Initialize( Format format, uint32_t width, uint32_t height, u
 
 	// レンダーターゲットとして初期化
 	// 初期ステートはRENDER_TARGET
-	bool b = _Initialize_RenderTarget(format, width, height, mipLevls ,  EnableShaderResource);
+	bool b = _Initialize_RenderTarget(format, width, height, _mipLevls,  EnableShaderResource);
 
 	if (!b) {
 
@@ -74,7 +74,7 @@ bool	RenderTarget::Initialize( Format format, uint32_t width, uint32_t height, u
 	GFX_ASSERT(mipLevels > 0);
 
 
-	m_RTVDescHeap.InitializeRTV(mipLevls);
+	m_RTVDescHeap.InitializeRTV(mipLevels);
 
 	
 	for (uint32_t lv = 0; lv < mipLevels; ++lv) {

@@ -17,7 +17,10 @@ namespace GfxLib
 
 
 		// RTV
-		bool	InitializeRTV( uint32_t bufferCount);
+		bool	InitializeRTV(uint32_t bufferCount);
+
+		// DSV
+		bool	InitializeDSV( uint32_t bufferCount);
 
 		//	CBV SRV UAV
 		bool	InitializeCBV_SRV_UAV(uint32_t bufferCount);

@@ -22,9 +22,14 @@ namespace GfxLib
 		//	CBV SRV UAV
 		bool	InitializeCBV_SRV_UAV(uint32_t bufferCount);
 
+		//	Sampler
+		bool	InitializeSampler(uint32_t bufferCount);
 
 		void	Finalize(bool delayedDelete = GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FINALIZE);
 
+
+
+		bool	IsValid() const { return m_descriptorHeap != nullptr; }
 
 		/*
 			指定インデックスのデスクリプタハンドルを取得する

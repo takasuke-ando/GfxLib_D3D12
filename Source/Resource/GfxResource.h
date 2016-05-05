@@ -12,6 +12,8 @@
 ***************************************************************/
 
 
+#include "System/GfxDefines.h"
+
 
 namespace GfxLib
 {
@@ -36,6 +38,14 @@ namespace GfxLib
 	protected:
 
 		bool		_Initialize_Buffer( size_t sizeInBytes );
+
+		bool		_Initialize_RenderTarget(Format format, uint32_t width, uint32_t height, uint32_t mipLevls, bool EnableShaderResource);
+
+		/*
+			DepthStencilとして初期化
+			初期ステートはD3D12_RESOURCE_STATE_DEPTH_WRITE
+		*/
+		bool		_Initialize_DepthStencil( Format format , uint32_t width ,uint32_t height , uint32_t mipLevls, bool EnableShaderResource);
 
 
 		D3DPtr<ID3D12Resource>	m_d3dRes;

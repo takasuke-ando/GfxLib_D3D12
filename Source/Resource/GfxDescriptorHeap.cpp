@@ -78,11 +78,10 @@ bool DescriptorHeap::InitializeCBV_SRV_UAV(uint32_t bufferCount)
 
 	desc.NumDescriptors = bufferCount;
 	desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;	//	コピー専用なら、これをつける必要はない
 
 
 	HRESULT hr;
-
 
 	hr = coreSystem->GetD3DDevice()->CreateDescriptorHeap(&desc, IID_PPV_ARGS(m_descriptorHeap.InitialAccept()));
 
@@ -100,6 +99,45 @@ bool DescriptorHeap::InitializeCBV_SRV_UAV(uint32_t bufferCount)
 
 	return true;
 }
+
+
+
+//	Sampler
+bool	DescriptorHeap::InitializeSampler(uint32_t bufferCount)
+{
+
+
+	Finalize();
+
+	CoreSystem *coreSystem = CoreSystem::GetInstance();
+
+	D3D12_DESCRIPTOR_HEAP_DESC desc = {};
+
+	desc.NumDescriptors = bufferCount;
+	desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER;
+	desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+
+
+	HRESULT hr;
+
+	hr = coreSystem->GetD3DDevice()->CreateDescriptorHeap(&desc, IID_PPV_ARGS(m_descriptorHeap.InitialAccept()));
+
+	if (FAILED(hr)) {
+		GFX_ERROR_LOG(L"CreateDescriptorHeap Failed %08x", hr);
+		return false;
+	}
+
+	m_maxBufferCount = bufferCount;
+
+	// デスクリプタサイズを取得
+	m_descriptorSize = coreSystem->GetD3DDevice()->GetDescriptorHandleIncrementSize(desc.Type);
+
+
+
+	return true;
+
+}
+
 
 
 

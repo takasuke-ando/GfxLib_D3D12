@@ -50,6 +50,13 @@ namespace GfxLib
 		bool	Initialize(Format format, uint32_t width, uint32_t height, uint32_t mipLevels = 1, bool EnableShaderResource = true);
 
 
+		/***************************************************************
+		@brief	Descriptorのコピーを行う
+		@par	[説明]
+		@param
+		*/
+		void	CopySRVDescriptor(D3D12_CPU_DESCRIPTOR_HANDLE dstHandle);
+
 
 	private:
 

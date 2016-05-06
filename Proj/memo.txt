@@ -1,0 +1,62 @@
+
+
+
+D3D12
+
+
+◆リソース初期化
+
+	一時的なリソースを作って
+
+	D3D12_HEAP_TYPE_UPLOAD => D3D12_HEAP_TYPE_DEFAULT
+	へのコピーを行うのが良い
+
+
+	
+	DirectX-Graphics-Samples\Samples\Desktop\D3D1211On12\src\D3D1211On12.cpp
+	など参考になる
+
+	描画キューとは切り分けて
+	D3D12_COMMAND_LIST_TYPE_COPY を使って
+	リソースコピーするのが良いやり方と思われ
+
+
+◆TODO
+
+
+・coreSystem->GetCurrentCommandAllocator(),
+	フレーム同期と、フレーム非同期版を作る
+	→コピーキューのため
+
+
+・GFX_ERROR、GFX_WARNなど
+
+	ログ、アサートなど動作を変更できるように
+
+
+・パイプラインステートのキャッシング
+
+
+
+◆ノウハウ
+
+
+・PipelineStateに設定するデスクリプタヒープは
+	 SRV,UAV,CBV,Sampler,
+	 に分かれている必要がある？
+
+ 	一つのテーブル内に、Samplerと、CBV,SRV,UAV を混ぜることはできない
+	CBV+UAV は可能だが、 Sampler + CBV などは不可
+
+
+ このサイトの
+ https://sites.google.com/site/monshonosuana/directxno-hanashi-1/directx-145
+ この図は間違っている
+ https://f030609e-a-62cb3a1a-s-sites.googlegroups.com/site/monshonosuana/directxno-hanashi-1/directx-145/fig144_03.jpg?attachauth=ANoY7cogjHeu8dfE47yR9_x_QXMFEP5Avpx78a0Dru7v0Mg1aoxhSFEMhxMLwyjkpsW-ItdRx4PPIR-4uU-Kj97a6QVVQuZKNmJI4d9k8-1dXRMlEurUgD1VoQgNYR2lV_ngc1ehg9u80crgZO_7zwAvieizZtRSCvTZN_UDpwKDuNz6A-l5flXbUr3TlRE6cMfuHVLlorM07Pm-JgZfBkBnClzT5t4u8rUu8rlE-z36KHChYZBBgLY2uTBO6ceLAmBpSd47JLfu&attredirects=0
+
+ デスクリプタテーブルが2つのヒープにまたがって指定されている
+
+
+
+
+

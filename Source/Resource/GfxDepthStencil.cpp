@@ -66,9 +66,22 @@ bool	DepthStencil::Initialize(Format format, uint32_t width, uint32_t height, ui
 	CoreSystem *coreSystem = CoreSystem::GetInstance();
 	ID3D12Device* d3dDev = coreSystem->GetD3DDevice();
 
+
+
+	if (!FormatUtil::IsDepthStencil(format)) {
+
+		GFX_ERROR_LOG(L"This format is not DepthStencil ! (%d)", format);
+
+		return false;
+	}
+
+	Format buffFormat, srvFormat, stencilSrvFormat;
+	FormatUtil::GetBufferAndSrvFormatFromDepth(format, buffFormat, srvFormat, stencilSrvFormat);
+
+
 	// レンダーターゲットとして初期化
 	// 初期ステートはDEPTH_WRITE
-	bool b = _Initialize_DepthStencil(format, width, height, _mipLevels, EnableShaderResource);
+	bool b = _Initialize_DepthStencil(buffFormat, width, height, _mipLevels, EnableShaderResource);
 
 	if (!b) {
 
@@ -111,7 +124,7 @@ bool	DepthStencil::Initialize(Format format, uint32_t width, uint32_t height, ui
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 
 
-		srvDesc.Format = (DXGI_FORMAT)FormatUtil::GetSRVFormat( format );
+		srvDesc.Format = (DXGI_FORMAT)srvFormat;
 		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MipLevels = mipLevels;
 		srvDesc.Texture2D.MostDetailedMip = 0;
@@ -131,5 +144,30 @@ bool	DepthStencil::Initialize(Format format, uint32_t width, uint32_t height, ui
 
 
 }
+
+
+
+/***************************************************************
+@brief	Descriptorのコピーを行う
+@par	[説明]
+@param
+*/
+void	DepthStencil::CopySRVDescriptor(D3D12_CPU_DESCRIPTOR_HANDLE dstHandle)
+{
+
+	if (!m_SRVDescHeap.IsValid()) {
+		GFX_ASSERT(0);
+		return;
+	}
+
+
+	CoreSystem *coreSystem = CoreSystem::GetInstance();
+	ID3D12Device* d3dDev = coreSystem->GetD3DDevice();
+
+
+	d3dDev->CopyDescriptorsSimple(1, dstHandle, m_SRVDescHeap.GetCPUDescriptorHandleByIndex(0), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	
+}
+
 
 

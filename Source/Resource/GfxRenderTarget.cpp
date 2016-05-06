@@ -139,7 +139,7 @@ void	RenderTarget::CopySRVDescriptor(D3D12_CPU_DESCRIPTOR_HANDLE dstHandle)
 	ID3D12Device* d3dDev = coreSystem->GetD3DDevice();
 
 
-	d3dDev->CopyDescriptorsSimple(1, dstHandle, m_SRVDescHeap.GetCPUDescriptorHandleByIndex(0), D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	d3dDev->CopyDescriptorsSimple(1, dstHandle, m_SRVDescHeap.GetCPUDescriptorHandleByIndex(0), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 
 }

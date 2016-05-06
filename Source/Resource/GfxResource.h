@@ -35,6 +35,9 @@ namespace GfxLib
 		void	Finalize(bool delayed = GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FINALIZE);
 
 
+		// D3Dリソース取得
+		ID3D12Resource*	GetD3DResource() const { return m_d3dRes; }
+
 	protected:
 
 		bool		_Initialize_Buffer( size_t sizeInBytes );

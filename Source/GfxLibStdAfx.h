@@ -21,14 +21,29 @@
 #include <directxmath.h>
 
 
-void	GfxLibErrorLog(const char *str,...);
-void	GfxLibErrorLog( const wchar_t *str,... );
 
 #define		GFX_RELEASE( ptr )		if ( ptr )	{	(ptr)->Release(); (ptr)=NULL;	}
 
 #define		GFX_ASSERT( exp , ... )		{	assert(exp);	}
 
-#define		GFX_ERROR_LOG( ... )		{GfxLibErrorLog(__VA_ARGS__);}
+
+namespace GfxLib {
+
+	enum class DebugLevel : uint32_t {
+		None = 0,
+		Info,
+		Warn,
+		Error,
+	};
+
+}
+
+void	GfxLibDebugEvent(GfxLib::DebugLevel ,  const char *str, ...);
+void	GfxLibDebugEvent(GfxLib::DebugLevel ,  const wchar_t *str, ...);
+
+
+
+#define		GFX_ERROR_LOG( ... )		{GfxLibDebugEvent(GfxLib::DebugLevel::Error,__VA_ARGS__);}
 
 
 

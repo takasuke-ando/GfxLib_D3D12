@@ -16,7 +16,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-void	GfxLibErrorLog(const char *str, ...)
+void GfxLibDebugEvent(GfxLib::DebugLevel, const char *str, ...)
 {
 
 	char buff[256];
@@ -31,7 +31,8 @@ void	GfxLibErrorLog(const char *str, ...)
 	OutputDebugStringA(buff);
 
 }
-void	GfxLibErrorLog(const wchar_t *str, ...)
+
+void GfxLibDebugEvent(GfxLib::DebugLevel, const wchar_t *str, ...)
 {
 	wchar_t buff[256];
 

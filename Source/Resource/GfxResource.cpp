@@ -133,8 +133,9 @@ bool		Resource::_Initialize_RenderTarget( Format format, uint32_t width, uint32_
 	resDesc.SampleDesc.Count = 1;
 	resDesc.SampleDesc.Quality = 0;
 	resDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
-	resDesc.Flags = D3D12_RESOURCE_FLAGS( D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET | ( EnableShaderResource ? 0: D3D12_RESOURCE_FLAG_DENY_SHADER_RESOURCE) );
-
+	//resDesc.Flags = D3D12_RESOURCE_FLAGS(D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET | (EnableShaderResource ? 0 : D3D12_RESOURCE_FLAG_DENY_SHADER_RESOURCE));
+	resDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
+	// DENY_SHADER_RESOURCEは、DEPTH_STENCILの時しか使えない
 
 	HRESULT hr = pDev->CreateCommittedResource(
 		&heapProp,
@@ -163,12 +164,6 @@ bool		Resource::_Initialize_RenderTarget( Format format, uint32_t width, uint32_
 bool		Resource::_Initialize_DepthStencil(Format format, uint32_t width, uint32_t height, uint32_t mipLevls, bool EnableShaderResource)
 {
 
-	if ( !FormatUtil::IsDepthStencil(format)) {
-
-		GFX_ERROR_LOG(L"This format is not DepthStencil ! (%d)", format);
-
-		return false;
-	}
 
 
 	ID3D12Device *pDev = CoreSystem::GetInstance()->GetD3DDevice();

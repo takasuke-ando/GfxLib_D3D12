@@ -47,6 +47,8 @@ void		RootSignatureDesc::AddParam_DescriptorTable(const DESCRIPTOR_RANGE *ranges
 		return;
 	}
 
+	const bool bIsSampler = ranges->RangeType == DescriptorRangeType::Sampler;
+
 
 	// D3D構造体に変換する
 	// このアドレスはデストラクタまで保持する
@@ -54,6 +56,14 @@ void		RootSignatureDesc::AddParam_DescriptorTable(const DESCRIPTOR_RANGE *ranges
 
 	// 一つ一つ変換する
 	for (uint32_t i = 0; i < numRanges; ++i) {
+
+		bool _bIsSampler = ranges[i].RangeType == DescriptorRangeType::Sampler;
+		if (bIsSampler != _bIsSampler) {
+			// Sampler と、CBV,SRV,UAVのいずれかを混ぜることはできません
+			GFX_ERROR_LOG( L"Range type sampler can not used with CBV,SRV,UAV  in one Descriptor Table" );
+			return;
+		}
+
 		D3D12_DESCRIPTOR_RANGE range = {};
 
 		range.RangeType = (D3D12_DESCRIPTOR_RANGE_TYPE)ranges[i].RangeType;

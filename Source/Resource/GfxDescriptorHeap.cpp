@@ -16,7 +16,8 @@ using namespace GfxLib;
 
 
 DescriptorHeap::DescriptorHeap()
-	:m_descriptorSize(0)
+	:m_heapType( D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES )
+	,m_descriptorSize(0)
 	, m_maxBufferCount(0)
 {
 }
@@ -58,6 +59,7 @@ bool	DescriptorHeap::InitializeRTV( uint32_t bufferCount)
 	}
 
 	m_maxBufferCount = bufferCount;
+	m_heapType = desc.Type;
 
 	// デスクリプタサイズを取得
 	m_descriptorSize = coreSystem->GetD3DDevice()->GetDescriptorHandleIncrementSize(desc.Type);
@@ -98,6 +100,7 @@ bool	DescriptorHeap::InitializeDSV(uint32_t bufferCount)
 	}
 
 	m_maxBufferCount = bufferCount;
+	m_heapType = desc.Type;
 
 	// デスクリプタサイズを取得
 	m_descriptorSize = coreSystem->GetD3DDevice()->GetDescriptorHandleIncrementSize(desc.Type);
@@ -135,6 +138,7 @@ bool DescriptorHeap::InitializeCBV_SRV_UAV(uint32_t bufferCount)
 	}
 
 	m_maxBufferCount = bufferCount;
+	m_heapType = desc.Type;
 
 	// デスクリプタサイズを取得
 	m_descriptorSize = coreSystem->GetD3DDevice()->GetDescriptorHandleIncrementSize(desc.Type);
@@ -172,6 +176,7 @@ bool	DescriptorHeap::InitializeSampler(uint32_t bufferCount)
 	}
 
 	m_maxBufferCount = bufferCount;
+	m_heapType = desc.Type;
 
 	// デスクリプタサイズを取得
 	m_descriptorSize = coreSystem->GetD3DDevice()->GetDescriptorHandleIncrementSize(desc.Type);
@@ -192,6 +197,8 @@ void	DescriptorHeap::Finalize(bool delayedDelete)
 	}
 	m_descriptorHeap.Release();
 	m_maxBufferCount = 0;
+
+	m_heapType = D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES;
 
 }
 

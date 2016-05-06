@@ -46,6 +46,7 @@ namespace GfxLib
 	private:
 
 		D3DPtr<ID3D12DescriptorHeap>	m_descriptorHeap;
+		D3D12_DESCRIPTOR_HEAP_TYPE		m_heapType;
 
 		uint32_t		m_descriptorSize;
 		uint32_t		m_maxBufferCount;

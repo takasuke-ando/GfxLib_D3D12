@@ -58,5 +58,12 @@ D3D12
 
 
 
+ ・深度ステンシル
 
+ リソース初期化時にD3D12_CLEAR_VALUEの設定をしたほうがよい
+ 警告が発生する
 
+ D3D12 WARNING: ID3D12CommandList::ClearDepthStencilView: The application did not pass any clear value to resource creation. 
+ The clear operation is typically slower as a result; but will still clear to the desired value. [ EXECUTION WARNING #821: CLEARDEPTHSTENCILVIEW_MISMATCHINGCLEARVALUE]
+
+ HI-Z的な処理のためだと思われる

@@ -79,9 +79,14 @@ bool	DepthStencil::Initialize(Format format, uint32_t width, uint32_t height, ui
 	FormatUtil::GetBufferAndSrvFormatFromDepth(format, buffFormat, srvFormat, stencilSrvFormat);
 
 
+
+	D3D12_CLEAR_VALUE depthClear = {};
+	depthClear.Format = (DXGI_FORMAT)format;
+	depthClear.DepthStencil.Depth = GFX_DEFAULT_DEPTH_CLEAR_VALUE;
+
 	// レンダーターゲットとして初期化
 	// 初期ステートはDEPTH_WRITE
-	bool b = _Initialize_DepthStencil(buffFormat, width, height, _mipLevels, EnableShaderResource);
+	bool b = _Initialize_DepthStencil(buffFormat, width, height, _mipLevels, EnableShaderResource , &depthClear);
 
 	if (!b) {
 

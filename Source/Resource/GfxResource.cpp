@@ -137,6 +137,8 @@ bool		Resource::_Initialize_RenderTarget( Format format, uint32_t width, uint32_
 	resDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
 	// DENY_SHADER_RESOURCEは、DEPTH_STENCILの時しか使えない
 
+
+
 	HRESULT hr = pDev->CreateCommittedResource(
 		&heapProp,
 		D3D12_HEAP_FLAG_NONE,
@@ -161,7 +163,7 @@ bool		Resource::_Initialize_RenderTarget( Format format, uint32_t width, uint32_
 
 
 
-bool		Resource::_Initialize_DepthStencil(Format format, uint32_t width, uint32_t height, uint32_t mipLevls, bool EnableShaderResource)
+bool		Resource::_Initialize_DepthStencil(Format format, uint32_t width, uint32_t height, uint32_t mipLevls, bool EnableShaderResource, const D3D12_CLEAR_VALUE *clearValue)
 {
 
 
@@ -193,12 +195,13 @@ bool		Resource::_Initialize_DepthStencil(Format format, uint32_t width, uint32_t
 	resDesc.Flags = D3D12_RESOURCE_FLAGS(D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL | (EnableShaderResource ? 0 : D3D12_RESOURCE_FLAG_DENY_SHADER_RESOURCE));
 
 
+
 	HRESULT hr = pDev->CreateCommittedResource(
 		&heapProp,
 		D3D12_HEAP_FLAG_NONE,
 		&resDesc,
 		D3D12_RESOURCE_STATE_DEPTH_WRITE,
-		nullptr,
+		clearValue,
 		IID_PPV_ARGS(m_d3dRes.InitialAccept())
 	);
 

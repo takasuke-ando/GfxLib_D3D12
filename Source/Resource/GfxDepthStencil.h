@@ -57,6 +57,7 @@ namespace GfxLib
 		*/
 		void	CopySRVDescriptor(D3D12_CPU_DESCRIPTOR_HANDLE dstHandle);
 
+		D3D12_CPU_DESCRIPTOR_HANDLE	GetDSVDescriptorHandle() const { return m_DSVDescHeap.GetCPUDescriptorHandleByIndex(0); }
 
 	private:
 

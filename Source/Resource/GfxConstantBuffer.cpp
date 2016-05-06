@@ -72,7 +72,7 @@ bool	ConstantBuffer::Initialize(uint32_t byteSize)
 		IID_PPV_ARGS(m_d3dRes.InitialAccept()));
 
 	if (FAILED(hr)) {
-		GFX_ERROR_LOG( L"Create Comitted Resource Failed = %08x", hr )
+		GFX_ERROR(L"Create Comitted Resource Failed = %08x", hr);
 		return false;
 	}
 

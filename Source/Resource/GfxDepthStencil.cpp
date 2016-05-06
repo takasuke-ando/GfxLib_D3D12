@@ -70,7 +70,7 @@ bool	DepthStencil::Initialize(Format format, uint32_t width, uint32_t height, ui
 
 	if (!FormatUtil::IsDepthStencil(format)) {
 
-		GFX_ERROR_LOG(L"This format is not DepthStencil ! (%d)", format);
+		GFX_ERROR(L"This format is not DepthStencil ! (%d)", format);
 
 		return false;
 	}

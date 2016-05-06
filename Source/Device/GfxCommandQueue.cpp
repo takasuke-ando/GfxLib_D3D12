@@ -59,7 +59,7 @@ bool CommandQueue::Initialize()
 	hr = pDevice->CreateCommandQueue(&desc, IID_PPV_ARGS(m_CmdQueue.InitialAccept()));
 
 	if (FAILED(hr)) {
-		GFX_ERROR_LOG(L"CreateCommandQueue Failed error=%08x", hr);
+		GFX_ERROR(L"CreateCommandQueue Failed error=%08x", hr);
 		return false;
 	}
 
@@ -67,7 +67,7 @@ bool CommandQueue::Initialize()
 	
 	hr = pDevice->CreateFence(0,D3D12_FENCE_FLAG_NONE,IID_PPV_ARGS(m_d3dFence.InitialAccept()));
 	if (FAILED(hr)) {
-		GFX_ERROR_LOG(L"CreateFence Failed error=%08x", hr);
+		GFX_ERROR(L"CreateFence Failed error=%08x", hr);
 		return false;
 	}
 

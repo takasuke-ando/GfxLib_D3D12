@@ -59,7 +59,7 @@ bool	RootSignature::Initialize(const RootSignatureDesc &desc)
 
 	if (FAILED(hr)) {
 
-		GFX_ERROR_LOG("D3D12SerializeRootSignature error %08x" , hr);
+		GFX_ERROR("D3D12SerializeRootSignature error %08x" , hr);
 
 		return false;
 	}
@@ -73,7 +73,7 @@ bool	RootSignature::Initialize(const RootSignatureDesc &desc)
 
 	if (FAILED(hr)) {
 
-		GFX_ERROR_LOG("CreateRootSignature error %08x", hr);
+		GFX_ERROR("CreateRootSignature error %08x", hr);
 		return false;
 	}
 

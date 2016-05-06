@@ -49,21 +49,21 @@ bool	Shader::CreateFromFile(const wchar_t * path)
 	HANDLE hFile = ::CreateFile(path, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 
 	if (hFile == INVALID_HANDLE_VALUE) {
-		GFX_ERROR_LOG(L"CreateFile Failed... (%s)",path);
+		GFX_ERROR(L"CreateFile Failed... (%s)",path);
 		return false;
 	}
 
 	size_t FileSize = ::GetFileSize(hFile,nullptr);
 
 	if (FileSize == 0) {
-		GFX_ERROR_LOG(L"Zero file size... (%s)", path);
+		GFX_ERROR(L"Zero file size... (%s)", path);
 		::CloseHandle(hFile);
 		return false;
 	}
 
 	void *ptr = ::malloc(FileSize);
 	if (!ptr) {
-		GFX_ERROR_LOG(L"malloc failed... (%s)", path);
+		GFX_ERROR(L"malloc failed... (%s)", path);
 		::CloseHandle(hFile);
 
 		return false;

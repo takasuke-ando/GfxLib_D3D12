@@ -44,7 +44,7 @@ bool Fence::Initialize(bool createEvent)
 
 	if (FAILED(hr)) {
 
-		GFX_ERROR_LOG( L"CreateFence failed %08x",hr);
+		GFX_ERROR( L"CreateFence failed %08x",hr);
 
 		return false;
 	}

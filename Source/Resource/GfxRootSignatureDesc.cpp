@@ -60,7 +60,7 @@ void		RootSignatureDesc::AddParam_DescriptorTable(const DESCRIPTOR_RANGE *ranges
 		bool _bIsSampler = ranges[i].RangeType == DescriptorRangeType::Sampler;
 		if (bIsSampler != _bIsSampler) {
 			// Sampler と、CBV,SRV,UAVのいずれかを混ぜることはできません
-			GFX_ERROR_LOG( L"Range type sampler can not used with CBV,SRV,UAV  in one Descriptor Table" );
+			GFX_ERROR( L"Range type sampler can not used with CBV,SRV,UAV  in one Descriptor Table" );
 			return;
 		}
 

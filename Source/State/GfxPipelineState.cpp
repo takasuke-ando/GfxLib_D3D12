@@ -87,7 +87,7 @@ bool	PipelineState::Initialize(const D3D12_GRAPHICS_PIPELINE_STATE_DESC &desc)
 
 
 	if (FAILED(hr)) {
-		GFX_ERROR_LOG("CreatePipeline State failed %08x",hr );
+		GFX_ERROR("CreatePipeline State failed %08x",hr );
 
 		return false;
 	}

@@ -94,7 +94,7 @@ bool		Resource::_Initialize_Buffer(size_t sizeInBytes)
 
 
 	if (FAILED(hr)) {
-		GFX_ERROR_LOG(L"CreateCommittedResource Error ! (%08x)", hr);
+		GFX_ERROR(L"CreateCommittedResource Error ! (%08x)", hr);
 		return false;
 	}
 
@@ -148,7 +148,7 @@ bool		Resource::_Initialize_RenderTarget( Format format, uint32_t width, uint32_
 
 
 	if (FAILED(hr)) {
-		GFX_ERROR_LOG(L"CreateCommittedResource Error ! (%08x)", hr);
+		GFX_ERROR(L"CreateCommittedResource Error ! (%08x)", hr);
 		return false;
 	}
 
@@ -204,7 +204,7 @@ bool		Resource::_Initialize_DepthStencil(Format format, uint32_t width, uint32_t
 
 
 	if (FAILED(hr)) {
-		GFX_ERROR_LOG(L"CreateCommittedResource Error ! (%08x)", hr);
+		GFX_ERROR(L"CreateCommittedResource Error ! (%08x)", hr);
 		return false;
 	}
 

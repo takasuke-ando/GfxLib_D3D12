@@ -113,7 +113,7 @@ bool	CoreSystem::Initialize()
 
 
 	if (FAILED(hr)) {
-		GFX_ERROR_LOG(L"D3D12CreateDevice Failed error=%08x", hr);
+		GFX_ERROR(L"D3D12CreateDevice Failed error=%08x", hr);
 		return false;
 	}
 
@@ -124,7 +124,7 @@ bool	CoreSystem::Initialize()
 	hr = CreateDXGIFactory1(IID_PPV_ARGS(m_GIFactory.InitialAccept()));
 
 	if (FAILED(hr)) {
-		GFX_ERROR_LOG(L"CreateDXGIFactory1 Failed error=%08x", hr);
+		GFX_ERROR(L"CreateDXGIFactory1 Failed error=%08x", hr);
 
 		return false;
 	}
@@ -139,7 +139,7 @@ bool	CoreSystem::Initialize()
 	hr = m_pd3dDev->CreateCommandQueue(&desc, IID_PPV_ARGS(m_CmdQueue.InitialAccept()));
 
 	if (FAILED(hr)) {
-		GFX_ERROR_LOG(L"CreateCommandQueue Failed error=%08x", hr);
+		GFX_ERROR(L"CreateCommandQueue Failed error=%08x", hr);
 		return false;
 	}
 	*/
@@ -148,7 +148,7 @@ bool	CoreSystem::Initialize()
 	for (uint32_t i = 0; i < __crt_countof(m_aCmdAllocator); ++i) {
 		hr = m_pd3dDev->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(m_aCmdAllocator[i].InitialAccept()));
 		if (FAILED(hr)) {
-			GFX_ERROR_LOG(L"CreateCommandAllocator Failed error=%08x", hr);
+			GFX_ERROR(L"CreateCommandAllocator Failed error=%08x", hr);
 			return false;
 		}
 	}

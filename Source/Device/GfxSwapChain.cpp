@@ -76,14 +76,14 @@ bool	SwapChain::Initialize( HWND hwnd)
 		hr = coreSystem->_CreateSwapChain(desc, swapChain);
 
 		if (FAILED(hr)) {
-			GFX_ERROR_LOG(L"CreateSwapChain Failed %08x",hr);
+			GFX_ERROR(L"CreateSwapChain Failed %08x",hr);
 			return false;
 		}
 
 		// SwapChain3に変換
 		hr  = swapChain->QueryInterface(IID_PPV_ARGS(m_GISwapChain.InitialAccept()));
 		if (FAILED(hr)) {
-			GFX_ERROR_LOG(L"QueryInterface Failed %08x", hr);
+			GFX_ERROR(L"QueryInterface Failed %08x", hr);
 			swapChain->Release();
 			return false;
 		}
@@ -108,7 +108,7 @@ bool	SwapChain::Initialize( HWND hwnd)
 		D3D12_CPU_DESCRIPTOR_HANDLE	handle = m_RTDescHeap.GetCPUDescriptorHandleByIndex(i);
 
 		if (FAILED(hr)) {
-			GFX_ERROR_LOG(L"SwapChain3::GetBuffer Failed %08x", hr);
+			GFX_ERROR(L"SwapChain3::GetBuffer Failed %08x", hr);
 
 		}
 		else {

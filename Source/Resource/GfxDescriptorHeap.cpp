@@ -54,7 +54,7 @@ bool	DescriptorHeap::InitializeRTV( uint32_t bufferCount)
 	hr = coreSystem->GetD3DDevice()->CreateDescriptorHeap(&desc , IID_PPV_ARGS(m_descriptorHeap.InitialAccept()));
 
 	if (FAILED(hr)) {
-		GFX_ERROR_LOG(L"CreateDescriptorHeap Failed %08x", hr);
+		GFX_ERROR(L"CreateDescriptorHeap Failed %08x", hr);
 		return false;
 	}
 
@@ -95,7 +95,7 @@ bool	DescriptorHeap::InitializeDSV(uint32_t bufferCount)
 	hr = coreSystem->GetD3DDevice()->CreateDescriptorHeap(&desc, IID_PPV_ARGS(m_descriptorHeap.InitialAccept()));
 
 	if (FAILED(hr)) {
-		GFX_ERROR_LOG(L"CreateDescriptorHeap Failed %08x", hr);
+		GFX_ERROR(L"CreateDescriptorHeap Failed %08x", hr);
 		return false;
 	}
 
@@ -133,7 +133,7 @@ bool DescriptorHeap::InitializeCBV_SRV_UAV(uint32_t bufferCount)
 	hr = coreSystem->GetD3DDevice()->CreateDescriptorHeap(&desc, IID_PPV_ARGS(m_descriptorHeap.InitialAccept()));
 
 	if (FAILED(hr)) {
-		GFX_ERROR_LOG(L"CreateDescriptorHeap Failed %08x", hr);
+		GFX_ERROR(L"CreateDescriptorHeap Failed %08x", hr);
 		return false;
 	}
 
@@ -171,7 +171,7 @@ bool	DescriptorHeap::InitializeSampler(uint32_t bufferCount)
 	hr = coreSystem->GetD3DDevice()->CreateDescriptorHeap(&desc, IID_PPV_ARGS(m_descriptorHeap.InitialAccept()));
 
 	if (FAILED(hr)) {
-		GFX_ERROR_LOG(L"CreateDescriptorHeap Failed %08x", hr);
+		GFX_ERROR(L"CreateDescriptorHeap Failed %08x", hr);
 		return false;
 	}
 

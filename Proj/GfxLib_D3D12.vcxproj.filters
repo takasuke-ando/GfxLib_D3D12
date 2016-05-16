@@ -109,6 +109,9 @@
     <ClInclude Include="..\Source\Util\GfxFormatUtil.h">
       <Filter>Util</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\System\GfxDescriptorAllocator.h">
+      <Filter>System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -167,6 +170,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Resource\GfxDepthStencil.cpp">
       <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\System\GfxDescriptorAllocator.cpp">
+      <Filter>System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

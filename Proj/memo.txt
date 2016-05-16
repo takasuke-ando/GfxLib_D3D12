@@ -11,8 +11,7 @@ D3D12
 	D3D12_HEAP_TYPE_UPLOAD => D3D12_HEAP_TYPE_DEFAULT
 	へのコピーを行うのが良い
 
-
-	
+		
 	DirectX-Graphics-Samples\Samples\Desktop\D3D1211On12\src\D3D1211On12.cpp
 	など参考になる
 
@@ -37,28 +36,29 @@ D3D12
 ・パイプラインステートのキャッシング
 
 
+・アドホック定数バッファ
+
+
+  CPU_HANDLE CreateAdhocConstantBuffer( size , ptr );	的な？
+
 
 ◆ノウハウ
 
 
-・PipelineStateに設定するデスクリプタヒープは
-	 SRV,UAV,CBV,Sampler,
-	 に分かれている必要がある？
+・RootSignatureについて
 
- 	一つのテーブル内に、Samplerと、CBV,SRV,UAV を混ぜることはできない
+ 	一つのデスクリプタテーブル内に、Samplerと、CBV,SRV,UAV を混ぜることはできない
 	CBV+UAV は可能だが、 Sampler + CBV などは不可
 
 
  このサイトの
  https://sites.google.com/site/monshonosuana/directxno-hanashi-1/directx-145
- この図は間違っている
+ この図は間違っている（デスクリプタテーブルが2つのヒープにまたがって指定されている）
  https://f030609e-a-62cb3a1a-s-sites.googlegroups.com/site/monshonosuana/directxno-hanashi-1/directx-145/fig144_03.jpg?attachauth=ANoY7cogjHeu8dfE47yR9_x_QXMFEP5Avpx78a0Dru7v0Mg1aoxhSFEMhxMLwyjkpsW-ItdRx4PPIR-4uU-Kj97a6QVVQuZKNmJI4d9k8-1dXRMlEurUgD1VoQgNYR2lV_ngc1ehg9u80crgZO_7zwAvieizZtRSCvTZN_UDpwKDuNz6A-l5flXbUr3TlRE6cMfuHVLlorM07Pm-JgZfBkBnClzT5t4u8rUu8rlE-z36KHChYZBBgLY2uTBO6ceLAmBpSd47JLfu&attredirects=0
+ 
+ 
 
- デスクリプタテーブルが2つのヒープにまたがって指定されている
-
-
-
- ・深度ステンシル
+・深度ステンシル
 
  リソース初期化時にD3D12_CLEAR_VALUEの設定をしたほうがよい
  警告が発生する
@@ -67,3 +67,27 @@ D3D12
  The clear operation is typically slower as a result; but will still clear to the desired value. [ EXECUTION WARNING #821: CLEARDEPTHSTENCILVIEW_MISMATCHINGCLEARVALUE]
 
  HI-Z的な処理のためだと思われる
+
+
+
+・RootSignatureの運用
+
+　モデル、VFX、ポストプロセス、シンプル描画など
+　サブシステム毎に用意するのがよさそうだが、
+　PSOに結合されないので柔軟性は割と高い
+
+
+・DESCRIPTOR_HANDLEの運用
+
+CBV_SRV_UAV  一旦CPU上に作って起き、アドホックなハンドルヒープにコピー
+SAMPLER		 同上
+RTV			CPU上に作っておく
+DSV			CPU上に作っておく
+
+CPU上のハンドルは
+ハンドルヒープアロケータから取得する
+see
+DirectX-Graphics-Samples\MiniEngine\Core\DescriptorHeap.h
+
+
+

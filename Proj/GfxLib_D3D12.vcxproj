@@ -154,6 +154,7 @@
     <ClInclude Include="..\Source\System\GfxCoreSystem.h" />
     <ClInclude Include="..\Source\System\GfxDefines.h" />
     <ClInclude Include="..\Source\System\GfxDelayDelete.h" />
+    <ClInclude Include="..\Source\System\GfxDescriptorAllocator.h" />
     <ClInclude Include="..\Source\System\GfxFence.h" />
     <ClInclude Include="..\Source\Util\GfxD3DPtr.h" />
     <ClInclude Include="..\Source\Util\GfxFormatUtil.h" />
@@ -178,6 +179,7 @@
     <ClCompile Include="..\Source\State\GfxPipelineState.cpp" />
     <ClCompile Include="..\Source\System\GfxCoreSystem.cpp" />
     <ClCompile Include="..\Source\System\GfxDelayDelete.cpp" />
+    <ClCompile Include="..\Source\System\GfxDescriptorAllocator.cpp" />
     <ClCompile Include="..\Source\System\GfxFence.cpp" />
     <ClCompile Include="..\Source\Util\GfxMath.cpp" />
     <ClCompile Include="stdafx.cpp">

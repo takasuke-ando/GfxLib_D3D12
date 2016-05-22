@@ -10,6 +10,7 @@ namespace GfxLib
 {
 
 	class Fence;
+	class DescriptorAllocator;
 
 	class CoreSystem
 	{
@@ -50,6 +51,8 @@ namespace GfxLib
 		//コマンドキューの取得。自動的作成される、唯一のコマンドキュー
 		CommandQueue&			GetCommandQueue() { GFX_ASSERT(m_bInsideBeginEnd==true,L"This fucntion should call inside Begin/End");	 return m_CommandQueue; }
 
+		//デスクリプタアロケータの取得
+		DescriptorAllocator*	GetDescriptorAllocator() const { return m_pDescriptorAllocator; }
 
 
 		// インスタンスを取得する
@@ -76,6 +79,7 @@ namespace GfxLib
 
 		DelayDelete			m_DelayDelete;
 
+		DescriptorAllocator*	m_pDescriptorAllocator;
 
 		bool				m_bInsideBeginEnd;
 		UINT				m_nUpdateCount;

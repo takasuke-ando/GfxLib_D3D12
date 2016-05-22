@@ -5,6 +5,7 @@
 /*
 
 	外部用インクルード
+	プリコンパイルヘッダに入れるのを推奨
 
 */
 
@@ -13,6 +14,7 @@
 #include "System/GfxCoreSystem.h"
 #include "System/GfxFence.h"
 #include "System/GfxDefines.h"
+#include "System/GfxDescriptorAllocator.h"
 
 #include "Device/GfxCommandList.h"
 #include "Device/GfxSwapChain.h"

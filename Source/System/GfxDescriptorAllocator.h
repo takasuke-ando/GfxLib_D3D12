@@ -32,13 +32,14 @@ namespace GfxLib
 
 
 
+
 		/***************************************************************
 			@brief	確保	
 			@par	[説明]
 				確保を行う
-				後ほど、Freeを呼び出す必要がある
+				通常のメモリ確保同様、Freeを呼び出して開放する必要がある
 		*/
-		D3D12_CPU_DESCRIPTOR_HANDLE		Allocate();
+		D3D12_CPU_DESCRIPTOR_HANDLE		Allocate(DescriptorHeapType);
 
 		/***************************************************************
 			@brief	開放
@@ -47,7 +48,7 @@ namespace GfxLib
 				countパラメータは、Allocate呼び出し時と同じ値を指定する事
 			@param	handle:	ハンドルパラメータ
 		*/
-		void							Free( D3D12_CPU_DESCRIPTOR_HANDLE handle );
+		void							Free(DescriptorHeapType,D3D12_CPU_DESCRIPTOR_HANDLE handle );
 
 
 	private:
@@ -66,6 +67,14 @@ namespace GfxLib
 				@param
 			*/
 			bool	Initialize(ID3D12Device* , DescriptorHeapType , uint32_t size );
+
+			/***************************************************************
+				@brief	ダミー初期化
+				@par	[説明]
+					ダミー初期化。メモリを確保する能力はない
+				@param
+			*/
+			void	InitializeDummy();
 
 
 			D3D12_CPU_DESCRIPTOR_HANDLE		Allocate();
@@ -90,11 +99,13 @@ namespace GfxLib
 			IndexType				*m_paFreeIndexChain;	//!<	フリーインデックスを格納するチェイン
 			IndexType				m_nFirstFreeIndex;		//!<	空いている最初のインデックス
 
+
+			Chunk*				m_pNextChunk;
 		};
 
 
-		ID3D12Device*	m_pDevice;
-		Chunk*			m_pFirstChunk;
+		ID3D12Device*		m_pDevice;
+		Chunk*				m_paFirstChunk;
 		DescriptorHeapType	m_Type;
 
 	};

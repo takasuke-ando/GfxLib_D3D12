@@ -8,6 +8,7 @@
 
 #include "System/GfxCoreSystem.h"
 #include "System/GfxFence.h"
+#include "System/GfxDescriptorAllocator.h"
 
 
 using namespace GfxLib;
@@ -21,6 +22,7 @@ CoreSystem::CoreSystem()
 	:m_pd3dDev(NULL)
 	, m_featureLevel(D3D_FEATURE_LEVEL_11_0)
 	, m_driverType(D3D_DRIVER_TYPE_HARDWARE)
+	, m_pDescriptorAllocator( nullptr )
 	, m_bInsideBeginEnd(false)
 	, m_nUpdateCount(0)
 	, m_nFrameCount(0)
@@ -79,6 +81,11 @@ void CoreSystem::Finalize()
 	if (m_pd3dDev) {
 		m_DelayDelete.DeleteAll();
 	}
+
+
+	// デスクリプタアロケータ開放。CPUハンドルなので、遅延開放は絶対にない
+	delete m_pDescriptorAllocator;
+	m_pDescriptorAllocator = nullptr;
 
 	GFX_RELEASE(m_pd3dDev);
 
@@ -171,6 +178,8 @@ bool	CoreSystem::Initialize()
 		fence.Initialize(true);
 	}
 
+
+	m_pDescriptorAllocator = new DescriptorAllocator;
 
 
 

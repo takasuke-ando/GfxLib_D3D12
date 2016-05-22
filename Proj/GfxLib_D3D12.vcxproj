@@ -156,6 +156,7 @@
     <ClInclude Include="..\Source\System\GfxDelayDelete.h" />
     <ClInclude Include="..\Source\System\GfxDescriptorAllocator.h" />
     <ClInclude Include="..\Source\System\GfxFence.h" />
+    <ClInclude Include="..\Source\Util\GfxAutoDescriptorHandle.h" />
     <ClInclude Include="..\Source\Util\GfxD3DPtr.h" />
     <ClInclude Include="..\Source\Util\GfxFormatUtil.h" />
     <ClInclude Include="..\Source\Util\GfxMath.h" />
@@ -181,6 +182,7 @@
     <ClCompile Include="..\Source\System\GfxDelayDelete.cpp" />
     <ClCompile Include="..\Source\System\GfxDescriptorAllocator.cpp" />
     <ClCompile Include="..\Source\System\GfxFence.cpp" />
+    <ClCompile Include="..\Source\Util\GfxAutoDescriptorHandle.cpp" />
     <ClCompile Include="..\Source\Util\GfxMath.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

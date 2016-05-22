@@ -278,3 +278,21 @@ HRESULT CoreSystem::_CreateSwapChain(DXGI_SWAP_CHAIN_DESC& desc, IDXGISwapChain*
 		);
 
 }
+
+
+D3D12_CPU_DESCRIPTOR_HANDLE		GfxLib::AllocateDescriptorHandle(DescriptorHeapType type )
+{
+
+	return GfxLib::CoreSystem::GetInstance()->GetDescriptorAllocator()->Allocate(type);
+
+}
+
+
+void							GfxLib::FreeDescriptorHandle(DescriptorHeapType type, D3D12_CPU_DESCRIPTOR_HANDLE handle )
+{
+
+	GfxLib::CoreSystem::GetInstance()->GetDescriptorAllocator()->Free(type,handle);
+
+}
+
+

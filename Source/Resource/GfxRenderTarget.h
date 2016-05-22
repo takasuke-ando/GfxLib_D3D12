@@ -6,10 +6,12 @@
 
 #include "GfxResource.h"
 #include "GfxDescriptorHeap.h"
+#include "System/GfxDefines.h"
 
 namespace GfxLib {
 
-
+	template< DescriptorHeapType heapType >
+	class AutoDescriptorHandle;
 
 	/***************************************************************
 		@brief	レンダーターゲット
@@ -61,11 +63,13 @@ namespace GfxLib {
 		void	CopySRVDescriptor( D3D12_CPU_DESCRIPTOR_HANDLE dstHandle );
 
 
-		D3D12_CPU_DESCRIPTOR_HANDLE	GetRTVDescriptorHandle() const { return m_RTVDescHeap.GetCPUDescriptorHandleByIndex(0); }
+		D3D12_CPU_DESCRIPTOR_HANDLE	GetRTVDescriptorHandle() const;
 
 	private:
 
-		DescriptorHeap	m_RTVDescHeap;
+		//DescriptorHeap	m_RTVDescHeap;
+		//D3D12_CPU_DESCRIPTOR_HANDLE *m_paRTVDescHandle;
+		AutoDescriptorHandle< DescriptorHeapType::RTV >	*m_paRTVDescHandle;
 		DescriptorHeap  m_SRVDescHeap;
 
 	};

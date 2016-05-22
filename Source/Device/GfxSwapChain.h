@@ -9,6 +9,7 @@
 
 
 #include "Resource/GfxDescriptorHeap.h"
+#include "System/GfxDefines.h"
 
 
 namespace GfxLib
@@ -16,6 +17,10 @@ namespace GfxLib
 
 	class CoreSystem;
 	class CommandList;
+
+	template< DescriptorHeapType heapType >
+	class AutoDescriptorHandle;
+
 
 	class SwapChain
 	{
@@ -61,7 +66,8 @@ namespace GfxLib
 
 		D3DPtr< IDXGISwapChain3 >	m_GISwapChain;
 		D3DPtr<ID3D12Resource>*		m_paRenderTargets;	//	Render Target Array
-		DescriptorHeap				m_RTDescHeap;		//	Render Target View
+//		DescriptorHeap				m_RTDescHeap;		//	Render Target View
+		AutoDescriptorHandle< DescriptorHeapType::RTV >	*m_paRTDescHandle;
 
 		uint32_t		m_Width;
 		uint32_t		m_Height;

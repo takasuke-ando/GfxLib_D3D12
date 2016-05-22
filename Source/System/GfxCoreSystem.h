@@ -5,6 +5,7 @@
 #include "GfxFence.h"
 #include "GfxDelayDelete.h"
 #include "Device/GfxCommandQueue.h"
+#include "System/GfxDefines.h"
 
 namespace GfxLib
 {
@@ -99,6 +100,9 @@ namespace GfxLib
 	};
 
 
+
+	D3D12_CPU_DESCRIPTOR_HANDLE		AllocateDescriptorHandle(DescriptorHeapType);
+	void							FreeDescriptorHandle(DescriptorHeapType , D3D12_CPU_DESCRIPTOR_HANDLE );
 
 
 

@@ -10,7 +10,7 @@
 
 #include "System/GfxCoreSystem.h"
 
-
+#include "Util/GfxAutoDescriptorHandle.h"
 
 using namespace GfxLib;
 
@@ -18,6 +18,7 @@ using namespace GfxLib;
 
 
 RenderTarget::RenderTarget()
+	:m_paRTVDescHandle( nullptr )
 {
 }
 
@@ -39,10 +40,29 @@ GPUアクセス中のリソースに対して書き込みを行うことがな�
 void	RenderTarget::Finalize(bool delayed )
 {
 
+	if (m_paRTVDescHandle) {
+
+
+		D3D12_RESOURCE_DESC resDesc = m_d3dRes->GetDesc();
+		uint32_t mipLevels = resDesc.MipLevels;
+
+		//for (uint32_t i = 0; i < mipLevels; ++i) {
+
+		//	GfxLib::FreeDescriptorHandle( DescriptorHeapType::RTV , m_paRTVDescHandle[i] );
+
+		//}
+
+		delete[] m_paRTVDescHandle;
+		m_paRTVDescHandle = nullptr;
+
+	}
+
+
 	SuperClass::Finalize(delayed);
 
-	m_RTVDescHeap.Finalize(delayed);
+	//m_RTVDescHeap.Finalize(delayed);
 	m_SRVDescHeap.Finalize(delayed);
+
 
 }
 
@@ -74,7 +94,9 @@ bool	RenderTarget::Initialize( Format format, uint32_t width, uint32_t height, u
 	GFX_ASSERT(mipLevels > 0);
 
 
-	m_RTVDescHeap.InitializeRTV(mipLevels);
+	//m_RTVDescHeap.InitializeRTV(mipLevels);
+
+	m_paRTVDescHandle = new AutoDescriptorHandle< DescriptorHeapType::RTV >[mipLevels];
 
 	
 	for (uint32_t lv = 0; lv < mipLevels; ++lv) {
@@ -86,7 +108,10 @@ bool	RenderTarget::Initialize( Format format, uint32_t width, uint32_t height, u
 		rtvDesc.Texture2D.MipSlice = lv;
 		rtvDesc.Texture2D.PlaneSlice = 0;
 
-		d3dDev->CreateRenderTargetView(m_d3dRes, &rtvDesc, m_RTVDescHeap.GetCPUDescriptorHandleByIndex(lv));
+
+		//m_paRTVDescHandle[lv] = AllocateDescriptorHandle(DescriptorHeapType::RTV);
+
+		d3dDev->CreateRenderTargetView(m_d3dRes, &rtvDesc, m_paRTVDescHandle[lv]);
 
 	}
 
@@ -142,4 +167,11 @@ void	RenderTarget::CopySRVDescriptor(D3D12_CPU_DESCRIPTOR_HANDLE dstHandle)
 	d3dDev->CopyDescriptorsSimple(1, dstHandle, m_SRVDescHeap.GetCPUDescriptorHandleByIndex(0), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 
+}
+
+
+
+D3D12_CPU_DESCRIPTOR_HANDLE	RenderTarget::GetRTVDescriptorHandle() const 
+{ 
+	return m_paRTVDescHandle[0]; 
 }

@@ -112,6 +112,9 @@
     <ClInclude Include="..\Source\System\GfxDescriptorAllocator.h">
       <Filter>System</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Util\GfxAutoDescriptorHandle.h">
+      <Filter>Util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -173,6 +176,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\System\GfxDescriptorAllocator.cpp">
       <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Util\GfxAutoDescriptorHandle.cpp">
+      <Filter>Util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

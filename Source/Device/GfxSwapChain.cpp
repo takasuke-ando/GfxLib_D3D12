@@ -9,6 +9,7 @@
 
 #include "System/GfxCoreSystem.h"
 #include "Device/GfxCommandList.h"
+#include "Util/GfxAutoDescriptorHandle.h"
 
 
 
@@ -18,7 +19,8 @@ using namespace GfxLib;
 
 
 SwapChain::SwapChain()
-	:m_Width(0)
+	:m_paRTDescHandle(nullptr)
+	,m_Width(0)
 	,m_Height(0)
 	,m_nCurrentBackBufferIndex(0)
 {
@@ -93,10 +95,12 @@ bool	SwapChain::Initialize( HWND hwnd)
 
 	}
 
-	if (!m_RTDescHeap.InitializeRTV(BufferCount)) {
+	//if (!m_RTDescHeap.InitializeRTV(BufferCount)) {
 
-		return false;		
-	}
+	//	return false;		
+	//}
+
+	m_paRTDescHandle = new AutoDescriptorHandle< DescriptorHeapType::RTV >[BufferCount];
 
 	m_paRenderTargets = new D3DPtr<ID3D12Resource>[BufferCount];
 
@@ -105,7 +109,8 @@ bool	SwapChain::Initialize( HWND hwnd)
 	for (uint32_t i = 0; i < BufferCount; ++i ) {
 		//D3DPtr<ID3D12Resource>	  renderTarget;
 		HRESULT hr = m_GISwapChain->GetBuffer(i, IID_PPV_ARGS(m_paRenderTargets[i].InitialAccept()));
-		D3D12_CPU_DESCRIPTOR_HANDLE	handle = m_RTDescHeap.GetCPUDescriptorHandleByIndex(i);
+		//D3D12_CPU_DESCRIPTOR_HANDLE	handle = m_RTDescHeap.GetCPUDescriptorHandleByIndex(i);
+		D3D12_CPU_DESCRIPTOR_HANDLE	handle = m_paRTDescHandle[i];
 
 		if (FAILED(hr)) {
 			GFX_ERROR(L"SwapChain3::GetBuffer Failed %08x", hr);
@@ -136,8 +141,9 @@ void	SwapChain::Finalize()
 	delete[] m_paRenderTargets;
 	m_paRenderTargets = nullptr;
 	m_GISwapChain.Release();
-	m_RTDescHeap.Finalize();
-
+	//m_RTDescHeap.Finalize();
+	delete[] m_paRTDescHandle;
+	m_paRTDescHandle = nullptr;
 }
 
 
@@ -174,7 +180,8 @@ D3D12_CPU_DESCRIPTOR_HANDLE	SwapChain::GetCurrentRenderTargetHandle() const
 {
 
 
-	D3D12_CPU_DESCRIPTOR_HANDLE	handle = m_RTDescHeap.GetCPUDescriptorHandleByIndex(m_nCurrentBackBufferIndex);
+	//D3D12_CPU_DESCRIPTOR_HANDLE	handle = m_RTDescHeap.GetCPUDescriptorHandleByIndex(m_nCurrentBackBufferIndex);
+	D3D12_CPU_DESCRIPTOR_HANDLE handle = m_paRTDescHandle[m_nCurrentBackBufferIndex];
 
 	return handle;
 

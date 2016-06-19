@@ -23,7 +23,7 @@ namespace GfxLib
 
 	public:
 		Resource();
-		~Resource();
+		virtual ~Resource();
 
 
 		/***************************************************************
@@ -49,6 +49,12 @@ namespace GfxLib
 			初期ステートはD3D12_RESOURCE_STATE_DEPTH_WRITE
 		*/
 		bool		_Initialize_DepthStencil( Format format , uint32_t width ,uint32_t height , uint32_t mipLevls, bool EnableShaderResource , const D3D12_CLEAR_VALUE *clearValue );
+
+
+		/*
+			Texture2Dとして初期化
+		*/
+		bool		_Initialize_Texture2D(Format format, uint32_t width, uint32_t height, uint32_t mipLevls );
 
 
 		D3DPtr<ID3D12Resource>	m_d3dRes;

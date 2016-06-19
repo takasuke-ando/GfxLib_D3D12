@@ -115,6 +115,9 @@
     <ClInclude Include="..\Source\Util\GfxAutoDescriptorHandle.h">
       <Filter>Util</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Resource\GfxTexture2D.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -179,6 +182,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Util\GfxAutoDescriptorHandle.cpp">
       <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Resource\GfxTexture2D.cpp">
+      <Filter>Resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

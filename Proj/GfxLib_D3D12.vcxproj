@@ -148,6 +148,7 @@
     <ClInclude Include="..\Source\Resource\GfxResource.h" />
     <ClInclude Include="..\Source\Resource\GfxRootSignature.h" />
     <ClInclude Include="..\Source\Resource\GfxRootSignatureDesc.h" />
+    <ClInclude Include="..\Source\Resource\GfxTexture2D.h" />
     <ClInclude Include="..\Source\Resource\GfxVertexBuffer.h" />
     <ClInclude Include="..\Source\Shader\GfxShader.h" />
     <ClInclude Include="..\Source\State\GfxPipelineState.h" />
@@ -175,6 +176,7 @@
     <ClCompile Include="..\Source\Resource\GfxResource.cpp" />
     <ClCompile Include="..\Source\Resource\GfxRootSignature.cpp" />
     <ClCompile Include="..\Source\Resource\GfxRootSignatureDesc.cpp" />
+    <ClCompile Include="..\Source\Resource\GfxTexture2D.cpp" />
     <ClCompile Include="..\Source\Resource\GfxVertexBuffer.cpp" />
     <ClCompile Include="..\Source\Shader\GfxShader.cpp" />
     <ClCompile Include="..\Source\State\GfxPipelineState.cpp" />

@@ -8,6 +8,7 @@ namespace GfxLib
 {
 
 
+
 	class AutoDescriptorHandleBase
 	{
 	protected:
@@ -25,6 +26,7 @@ namespace GfxLib
 		@par	[説明]
 			デスクリプタハンドルを自動的に確保、開放する
 			AllocateDescriptorHandle , FeeDescriptorHandle が使用される
+			CPU用として確保される(D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLEはつかない)
 		@param
 	*/
 	template< DescriptorHeapType heapType >
@@ -38,6 +40,7 @@ namespace GfxLib
 
 		operator D3D12_CPU_DESCRIPTOR_HANDLE()	{return m_Handle; }
 
+		// GPU HANDLEは付きません
 
 	private:
 
@@ -64,6 +67,16 @@ namespace GfxLib
 		Free(heapType, m_Handle);
 	}
 
+
+
+	/*
+	
+	
+	*/
+	typedef AutoDescriptorHandle<DescriptorHeapType::CBV_SRV_UAV>	AutoCBV_SRV_UAVHandle;
+	typedef AutoDescriptorHandle<DescriptorHeapType::SAMPLER>		AutoSamplerHandle;
+	typedef AutoDescriptorHandle<DescriptorHeapType::RTV>			AutoRTVHandle;
+	typedef AutoDescriptorHandle<DescriptorHeapType::DSV>			AutoDSVHandle;
 
 
 

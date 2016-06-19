@@ -28,11 +28,6 @@ D3D12
 	→コピーキューのため
 
 
-・GFX_ERROR、GFX_WARNなど
-
-	ログ、アサートなど動作を変更できるように
-
-
 ・パイプラインステートのキャッシング
 
 
@@ -40,6 +35,8 @@ D3D12
 
 
   CPU_HANDLE CreateAdhocConstantBuffer( size , ptr );	的な？
+
+  SRV用デスクリプタヒープも同様
 
 
 ◆ノウハウ

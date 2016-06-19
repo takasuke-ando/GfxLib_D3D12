@@ -25,6 +25,7 @@
 #include "Resource/GfxConstantBuffer.h"
 #include "Resource/GfxRenderTarget.h"
 #include "Resource/GfxDepthStencil.h"
+#include "Resource/GfxTexture2D.h"
 
 #include "State/GfxPipelineState.h"
 #include "Shader/GfxShader.h"

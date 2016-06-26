@@ -8,7 +8,7 @@
 #include "stdafx.h"
 
 #include "Resource/GfxTexture2D.h"
-
+#include "System/GfxCoreSystem.h"
 
 
 
@@ -22,6 +22,7 @@ using namespace GfxLib;
 Texture2D::Texture2D()
 {
 
+	m_SrvHandle.ptr = 0;
 
 
 }
@@ -59,6 +60,35 @@ bool	Texture2D::Initialize(Format format, uint32_t width, uint32_t height, uint3
 	}
 
 
+	// 基本デフォルトで作っておく
+	// Unknownフォーマットなら無理...
+
+	{
+		ID3D12Device *d3dDev = GfxLib::CoreSystem::GetInstance()->GetD3DDevice();
+
+
+		const D3D12_RESOURCE_DESC resDesc = GetD3DResource()->GetDesc();
+
+		m_SrvHandle = GfxLib::AllocateDescriptorHandle(GfxLib::DescriptorHeapType::CBV_SRV_UAV);
+
+		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {
+			(DXGI_FORMAT)format,
+			D3D12_SRV_DIMENSION_TEXTURE2D,
+			D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING,
+		};
+
+		auto &tex2D = srvDesc.Texture2D;
+		tex2D.MipLevels = resDesc.MipLevels;
+		tex2D.MostDetailedMip = resDesc.MipLevels - 1;
+		tex2D.PlaneSlice = 0;
+		tex2D.ResourceMinLODClamp = 0;
+
+
+		d3dDev->CreateShaderResourceView(GetD3DResource(), &srvDesc, m_SrvHandle);
+
+
+	}
+
 
 
 	return true;
@@ -75,6 +105,13 @@ GPUアクセス中のリソースに対して書き込みを行うことがな�
 */
 void	Texture2D::Finalize(bool delayed /* = GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FINALIZE*/ )
 {
+
+	if (m_SrvHandle.ptr != 0) {
+
+		GfxLib::FreeDescriptorHandle(DescriptorHeapType::CBV_SRV_UAV, m_SrvHandle);
+		m_SrvHandle.ptr = 0;
+
+	}
 
 
 	SuperClass::Finalize();

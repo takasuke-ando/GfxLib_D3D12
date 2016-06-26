@@ -61,13 +61,14 @@ namespace GfxLib
 		bool	WriteToSubresource(uint32_t DstSubResource, const D3D12_BOX *pDstBox, const void* pSrcData, uint32_t SrcRowPitch, uint32_t SrcDepthPitch);
 
 
+		D3D12_CPU_DESCRIPTOR_HANDLE	GetSrvDescHandle() const { return m_SrvHandle; }	//!<	CPUハンドル
 
 	private:
 
 
 		//AutoCBV_SRV_UAVHandle	m_SrvHandle;	//!<	SRVハンドル
 
-
+		D3D12_CPU_DESCRIPTOR_HANDLE	m_SrvHandle;	//!<	CPUハンドル
 
 	};
 

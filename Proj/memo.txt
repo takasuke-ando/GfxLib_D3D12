@@ -88,3 +88,10 @@ DirectX-Graphics-Samples\MiniEngine\Core\DescriptorHeap.h
 
 
 
+・D3D12_ROOT_PARAMETER_TYPE_SRV , CBV , UAV
+
+　いまいち使い方がわからない
+
+　SetGraphicsRootShaderResourceViewの第2引数がGPU_VIRTUAL_ADDRESS だし...
+　あんまり使わないほうが良いか
+

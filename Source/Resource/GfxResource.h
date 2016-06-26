@@ -12,6 +12,8 @@
 ***************************************************************/
 
 
+#include "System/GfxDefines.h"
+
 
 namespace GfxLib
 {
@@ -21,7 +23,7 @@ namespace GfxLib
 
 	public:
 		Resource();
-		~Resource();
+		virtual ~Resource();
 
 
 		/***************************************************************
@@ -33,9 +35,26 @@ namespace GfxLib
 		void	Finalize(bool delayed = GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FINALIZE);
 
 
+		// D3Dリソース取得
+		ID3D12Resource*	GetD3DResource() const { return m_d3dRes; }
+
 	protected:
 
 		bool		_Initialize_Buffer( size_t sizeInBytes );
+
+		bool		_Initialize_RenderTarget(Format format, uint32_t width, uint32_t height, uint32_t mipLevls, bool EnableShaderResource);
+
+		/*
+			DepthStencilとして初期化
+			初期ステートはD3D12_RESOURCE_STATE_DEPTH_WRITE
+		*/
+		bool		_Initialize_DepthStencil( Format format , uint32_t width ,uint32_t height , uint32_t mipLevls, bool EnableShaderResource , const D3D12_CLEAR_VALUE *clearValue );
+
+
+		/*
+			Texture2Dとして初期化
+		*/
+		bool		_Initialize_Texture2D(Format format, uint32_t width, uint32_t height, uint32_t mipLevls );
 
 
 		D3DPtr<ID3D12Resource>	m_d3dRes;

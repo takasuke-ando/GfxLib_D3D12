@@ -22,6 +22,7 @@ ConstantBuffer::ConstantBuffer()
 	:m_byteSize(0)
 	,m_pMappedAddr(nullptr)
 {
+	m_CbvHandle.ptr = 0;
 }
 
 ConstantBuffer::~ConstantBuffer()
@@ -72,7 +73,7 @@ bool	ConstantBuffer::Initialize(uint32_t byteSize)
 		IID_PPV_ARGS(m_d3dRes.InitialAccept()));
 
 	if (FAILED(hr)) {
-		GFX_ERROR_LOG( L"Create Comitted Resource Failed = %08x", hr )
+		GFX_ERROR(L"Create Comitted Resource Failed = %08x", hr);
 		return false;
 	}
 
@@ -84,6 +85,11 @@ bool	ConstantBuffer::Initialize(uint32_t byteSize)
 	}
 
 
+	{	// CBV
+		m_CbvHandle = GfxLib::AllocateDescriptorHandle(GfxLib::DescriptorHeapType::CBV_SRV_UAV);
+	}
+
+
 	{
 		D3D12_CONSTANT_BUFFER_VIEW_DESC viewDesc = {};
 
@@ -91,6 +97,8 @@ bool	ConstantBuffer::Initialize(uint32_t byteSize)
 		viewDesc.BufferLocation = m_d3dRes->GetGPUVirtualAddress();
 
 		d3dDev->CreateConstantBufferView(&viewDesc, m_descHeap.GetCPUDescriptorHandleByIndex(0) );
+		d3dDev->CreateConstantBufferView(&viewDesc, m_CbvHandle);
+
 	}
 
 
@@ -111,6 +119,14 @@ void ConstantBuffer::Finalize(bool delayed)
 	if (delayed) {
 		CoreSystem::GetInstance()->GetDelayDelete().Regist(m_d3dRes);
 	}
+
+	if (m_CbvHandle.ptr != 0) {
+
+		GfxLib::FreeDescriptorHandle(DescriptorHeapType::CBV_SRV_UAV, m_CbvHandle);
+		m_CbvHandle.ptr = 0;
+
+	}
+
 	m_d3dRes.Release();
 	m_descHeap.Finalize(delayed);
 	m_pMappedAddr = nullptr;

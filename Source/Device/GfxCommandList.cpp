@@ -38,7 +38,7 @@ bool	CommandList::Initialize()
 
 	if ( FAILED(hr)) {
 		
-		GFX_ERROR_LOG(L"CreateCommandList error %08x",hr);
+		GFX_ERROR(L"CreateCommandList error %08x",hr);
 		
 		return false;
 

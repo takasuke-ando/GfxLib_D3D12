@@ -5,6 +5,7 @@
 /*
 
 	外部用インクルード
+	プリコンパイルヘッダに入れるのを推奨
 
 */
 
@@ -13,12 +14,19 @@
 #include "System/GfxCoreSystem.h"
 #include "System/GfxFence.h"
 #include "System/GfxDefines.h"
+#include "System/GfxDescriptorAllocator.h"
+
 #include "Device/GfxCommandList.h"
 #include "Device/GfxSwapChain.h"
+
 #include "Resource/GfxRootSignature.h"
 #include "Resource/GfxRootSignatureDesc.h"
 #include "Resource/GfxVertexBuffer.h"
 #include "Resource/GfxConstantBuffer.h"
+#include "Resource/GfxRenderTarget.h"
+#include "Resource/GfxDepthStencil.h"
+#include "Resource/GfxTexture2D.h"
+
 #include "State/GfxPipelineState.h"
 #include "Shader/GfxShader.h"
 

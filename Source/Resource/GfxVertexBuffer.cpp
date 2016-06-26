@@ -42,7 +42,7 @@ bool VertexBuffer::Initialize(const void* pVtxData, size_t strideSize, size_t vt
 	HRESULT hr = m_d3dRes->Map(0, nullptr, &pAddr);
 
 	if (FAILED(hr)) {
-		GFX_ERROR_LOG(L"Map Error ! (%08x)", hr);
+		GFX_ERROR(L"Map Error ! (%08x)", hr);
 		m_d3dRes.Release();
 		return false;
 	}

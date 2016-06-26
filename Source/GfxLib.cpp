@@ -16,8 +16,32 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-void	GfxLibErrorLog(const char *str, ...)
+
+
+namespace GfxLib {
+
+	DebugAction		g_DebugLevelAction[(uint32_t)DebugLevel::Num] =
+	{
+		DebugAction::Ignore,	//	None
+		DebugAction::Log,		//	Info
+		DebugAction::Log,		//	Warn
+		DebugAction::Asset,		//	Error
+	};
+
+}
+
+using namespace GfxLib;
+
+
+
+
+void GfxLibDebugEvent(GfxLib::DebugLevel level, const wchar_t *file, uint32_t line, const char *str, ...)
 {
+	if (g_DebugLevelAction[(uint32_t)level] < DebugAction::Log)
+	{
+		return;
+	}
+
 
 	char buff[256];
 
@@ -30,9 +54,22 @@ void	GfxLibErrorLog(const char *str, ...)
 
 	OutputDebugStringA(buff);
 
+	if (g_DebugLevelAction[(uint32_t)level] < DebugAction::Asset)
+	{
+		return;
+	}
+
+	assert(0);
+
 }
-void	GfxLibErrorLog(const wchar_t *str, ...)
+
+void GfxLibDebugEvent(GfxLib::DebugLevel level, const wchar_t *file, uint32_t line, const wchar_t *str, ...)
 {
+	if (g_DebugLevelAction[(uint32_t)level] < DebugAction::Log)
+	{
+		return;
+	}
+
 	wchar_t buff[256];
 
 	va_list list;
@@ -43,5 +80,13 @@ void	GfxLibErrorLog(const wchar_t *str, ...)
 	va_end(list);
 
 	OutputDebugStringW(buff);
+
+	if (g_DebugLevelAction[(uint32_t)level] < DebugAction::Asset)
+	{
+		return;
+	}
+
+	_wassert(buff, file, line);
+
 }
 

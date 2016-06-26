@@ -8,6 +8,7 @@
 
 #include "System/GfxCoreSystem.h"
 #include "System/GfxFence.h"
+#include "System/GfxDescriptorAllocator.h"
 
 
 using namespace GfxLib;
@@ -21,6 +22,7 @@ CoreSystem::CoreSystem()
 	:m_pd3dDev(NULL)
 	, m_featureLevel(D3D_FEATURE_LEVEL_11_0)
 	, m_driverType(D3D_DRIVER_TYPE_HARDWARE)
+	, m_pDescriptorAllocator( nullptr )
 	, m_bInsideBeginEnd(false)
 	, m_nUpdateCount(0)
 	, m_nFrameCount(0)
@@ -80,6 +82,11 @@ void CoreSystem::Finalize()
 		m_DelayDelete.DeleteAll();
 	}
 
+
+	// デスクリプタアロケータ開放。CPUハンドルなので、遅延開放は絶対にない
+	delete m_pDescriptorAllocator;
+	m_pDescriptorAllocator = nullptr;
+
 	GFX_RELEASE(m_pd3dDev);
 
 	s_pInstance = nullptr;
@@ -113,7 +120,7 @@ bool	CoreSystem::Initialize()
 
 
 	if (FAILED(hr)) {
-		GFX_ERROR_LOG(L"D3D12CreateDevice Failed error=%08x", hr);
+		GFX_ERROR(L"D3D12CreateDevice Failed error=%08x", hr);
 		return false;
 	}
 
@@ -124,7 +131,7 @@ bool	CoreSystem::Initialize()
 	hr = CreateDXGIFactory1(IID_PPV_ARGS(m_GIFactory.InitialAccept()));
 
 	if (FAILED(hr)) {
-		GFX_ERROR_LOG(L"CreateDXGIFactory1 Failed error=%08x", hr);
+		GFX_ERROR(L"CreateDXGIFactory1 Failed error=%08x", hr);
 
 		return false;
 	}
@@ -139,7 +146,7 @@ bool	CoreSystem::Initialize()
 	hr = m_pd3dDev->CreateCommandQueue(&desc, IID_PPV_ARGS(m_CmdQueue.InitialAccept()));
 
 	if (FAILED(hr)) {
-		GFX_ERROR_LOG(L"CreateCommandQueue Failed error=%08x", hr);
+		GFX_ERROR(L"CreateCommandQueue Failed error=%08x", hr);
 		return false;
 	}
 	*/
@@ -148,7 +155,7 @@ bool	CoreSystem::Initialize()
 	for (uint32_t i = 0; i < __crt_countof(m_aCmdAllocator); ++i) {
 		hr = m_pd3dDev->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(m_aCmdAllocator[i].InitialAccept()));
 		if (FAILED(hr)) {
-			GFX_ERROR_LOG(L"CreateCommandAllocator Failed error=%08x", hr);
+			GFX_ERROR(L"CreateCommandAllocator Failed error=%08x", hr);
 			return false;
 		}
 	}
@@ -171,6 +178,8 @@ bool	CoreSystem::Initialize()
 		fence.Initialize(true);
 	}
 
+
+	m_pDescriptorAllocator = new DescriptorAllocator;
 
 
 
@@ -269,3 +278,21 @@ HRESULT CoreSystem::_CreateSwapChain(DXGI_SWAP_CHAIN_DESC& desc, IDXGISwapChain*
 		);
 
 }
+
+
+D3D12_CPU_DESCRIPTOR_HANDLE		GfxLib::AllocateDescriptorHandle(DescriptorHeapType type )
+{
+
+	return GfxLib::CoreSystem::GetInstance()->GetDescriptorAllocator()->Allocate(type);
+
+}
+
+
+void							GfxLib::FreeDescriptorHandle(DescriptorHeapType type, D3D12_CPU_DESCRIPTOR_HANDLE handle )
+{
+
+	GfxLib::CoreSystem::GetInstance()->GetDescriptorAllocator()->Free(type,handle);
+
+}
+
+

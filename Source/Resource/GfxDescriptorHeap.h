@@ -17,14 +17,22 @@ namespace GfxLib
 
 
 		// RTV
-		bool	InitializeRTV( uint32_t bufferCount);
+		bool	InitializeRTV(uint32_t bufferCount);
+
+		// DSV
+		bool	InitializeDSV( uint32_t bufferCount);
 
 		//	CBV SRV UAV
 		bool	InitializeCBV_SRV_UAV(uint32_t bufferCount);
 
+		//	Sampler
+		bool	InitializeSampler(uint32_t bufferCount);
 
 		void	Finalize(bool delayedDelete = GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FINALIZE);
 
+
+
+		bool	IsValid() const { return m_descriptorHeap != nullptr; }
 
 		/*
 			指定インデックスのデスクリプタハンドルを取得する
@@ -38,6 +46,7 @@ namespace GfxLib
 	private:
 
 		D3DPtr<ID3D12DescriptorHeap>	m_descriptorHeap;
+		D3D12_DESCRIPTOR_HEAP_TYPE		m_heapType;
 
 		uint32_t		m_descriptorSize;
 		uint32_t		m_maxBufferCount;

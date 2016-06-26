@@ -11,6 +11,12 @@
 		オンザフライでキャッシュしつつ生成するよてい
 
 
+		シリアライズされたパイプラインステートは
+		ID3D12PipelineState::GetCachedBlob() で取得できる
+		これをD3D12_GRAPHICS_PIPELINE_STATE_DESC::CachedPSO フィールドに設定することで
+		シリアライズから復元できる
+
+
 /****************************************************************/
 
 
@@ -81,12 +87,31 @@ bool	PipelineState::Initialize(const D3D12_GRAPHICS_PIPELINE_STATE_DESC &desc)
 
 
 	if (FAILED(hr)) {
-		GFX_ERROR_LOG("CreatePipeline State failed %08x",hr );
+		GFX_ERROR("CreatePipeline State failed %08x",hr );
 
 		return false;
 	}
 
-	
+	// test
+	/*
+	{
+		ID3DBlob *blob = nullptr;
+		m_d3dPSO->GetCachedBlob(&blob);
+
+
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC _desc = desc;
+
+
+		_desc.CachedPSO.pCachedBlob = blob->GetBufferPointer();
+		_desc.CachedPSO.CachedBlobSizeInBytes = blob->GetBufferSize();
+
+		D3DPtr< ID3D12PipelineState >  pso;
+
+		HRESULT hr = dev->CreateGraphicsPipelineState(&_desc, IID_PPV_ARGS(pso.InitialAccept()));
+
+		blob->Release();
+	}
+	*/
 
 
 	return true;

@@ -34,6 +34,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
+    <Text Include="memo.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -99,6 +100,24 @@
     <ClInclude Include="..\Source\State\GfxPipelineState.h">
       <Filter>State</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Resource\GfxRenderTarget.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Resource\GfxDepthStencil.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Util\GfxFormatUtil.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\System\GfxDescriptorAllocator.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Util\GfxAutoDescriptorHandle.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Resource\GfxTexture2D.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -152,12 +171,30 @@
     <ClCompile Include="..\Source\State\GfxPipelineState.cpp">
       <Filter>State</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Resource\GfxRenderTarget.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Resource\GfxDepthStencil.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\System\GfxDescriptorAllocator.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Util\GfxAutoDescriptorHandle.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Resource\GfxTexture2D.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Source\Util\GfxD3DPtr.inl">
       <Filter>Util</Filter>
     </None>
     <None Include="..\Source\Util\GfxMath.inl">
+      <Filter>Util</Filter>
+    </None>
+    <None Include="..\Source\Util\GfxFormatUtil.inl">
       <Filter>Util</Filter>
     </None>
   </ItemGroup>

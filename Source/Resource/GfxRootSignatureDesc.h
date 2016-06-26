@@ -24,6 +24,9 @@ namespace GfxLib
 			ルートパラメータとして、デスクリプタテーブルを追加する
 			テーブルには一つのヒープしかBindできない
 			複数のRange情報が指定できて、ヒープ内のどこのDescriptorを使用するかを参照する
+			一つのテーブル内に、Samplerと、CBV,SRV,UAV を混ぜることはできない
+			CBV+UAV は可能だが、 Sampler + CBV などは不可
+			これはデスクリプタヒープが異なるため、当然である
 		@param[in]	ranges:	レンジ情報の配列。内部でコピーされるのでこのメソッドの呼び出し直後に破棄しても構わない
 		@param[in]	numRanges:	レンジ数
 		@param[in]	visb:このデスクリプタテーブルは、どのシェーダから参照が可能か

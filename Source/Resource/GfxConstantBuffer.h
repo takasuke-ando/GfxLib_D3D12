@@ -35,6 +35,12 @@ namespace GfxLib
 			return m_descHeap.GetD3DDescriptorHeap()->GetGPUDescriptorHandleForHeapStart();
 		}
 
+		// CPU読み取り用のデスクリプタハンドル
+		D3D12_CPU_DESCRIPTOR_HANDLE	GetCbvDescHandle() const {
+			return m_CbvHandle;
+		}
+
+
 	private:
 
 		D3DPtr<ID3D12Resource>		m_d3dRes;
@@ -42,6 +48,7 @@ namespace GfxLib
 
 		uint32_t					m_byteSize;
 		void*						m_pMappedAddr;		//	GPU書き込み先アドレス
+		D3D12_CPU_DESCRIPTOR_HANDLE	m_CbvHandle;
 
 	};
 

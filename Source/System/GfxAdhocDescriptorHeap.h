@@ -30,7 +30,7 @@ namespace GfxLib
 	{
 	public:
 
-		AdhocDescriptorHeap();
+		AdhocDescriptorHeap( DescriptorHeapType type );
 		~AdhocDescriptorHeap();
 
 
@@ -55,7 +55,8 @@ namespace GfxLib
 	private:
 
 
-	
+		DescriptorHeapType m_heapType;
+
 		typedef std::vector< DescriptorHeap* >	DescHeapVec;
 		DescHeapVec		m_aUsingDescHeap[MAX_FRAME_QUEUE];		//!<	使用中のデスクリプタヒープのベクタ
 		DescHeapVec		m_FreeDescHeap;							//!<	未使用のデスクリプタヒープのプール

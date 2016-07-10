@@ -53,6 +53,10 @@ bool	ConstantBuffer::Initialize(uint32_t byteSize)
 
 	D3D12_RESOURCE_DESC resDesc = {};
 	resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+
+	//Alignment=D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT とすると、↓のエラーが発生
+	//D3D12 ERROR: ID3D12Device::CreateCommittedResource: D3D12_RESOURCE_DESC::Alignment is invalid. The value is 256. 
+	//Buffers must have this field set to 65536 (aka. D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT) or 0. [ STATE_CREATION ERROR #721: CREATERESOURCE_INVALIDALIGNMENT]
 	resDesc.Alignment = 0;
 
 	// D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT = 256使うべき？
@@ -78,11 +82,12 @@ bool	ConstantBuffer::Initialize(uint32_t byteSize)
 	}
 
 
-
+	/*
 	bool bOk = m_descHeap.InitializeCBV_SRV_UAV(1);
 	if (!bOk) {
 		return false;
 	}
+	*/
 
 
 	{	// CBV
@@ -96,7 +101,7 @@ bool	ConstantBuffer::Initialize(uint32_t byteSize)
 		viewDesc.SizeInBytes = (UINT)resDesc.Width;
 		viewDesc.BufferLocation = m_d3dRes->GetGPUVirtualAddress();
 
-		d3dDev->CreateConstantBufferView(&viewDesc, m_descHeap.GetCPUDescriptorHandleByIndex(0) );
+		//d3dDev->CreateConstantBufferView(&viewDesc, m_descHeap.GetCPUDescriptorHandleByIndex(0) );
 		d3dDev->CreateConstantBufferView(&viewDesc, m_CbvHandle);
 
 	}
@@ -128,7 +133,7 @@ void ConstantBuffer::Finalize(bool delayed)
 	}
 
 	m_d3dRes.Release();
-	m_descHeap.Finalize(delayed);
+	//m_descHeap.Finalize(delayed);
 	m_pMappedAddr = nullptr;
 }
 

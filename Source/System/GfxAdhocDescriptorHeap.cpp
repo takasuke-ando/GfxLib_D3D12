@@ -30,8 +30,9 @@ namespace {
 	@par	[説明]
 	@param
 */
-AdhocDescriptorHeap::AdhocDescriptorHeap()
-	:m_nCurrentIndex(0)
+AdhocDescriptorHeap::AdhocDescriptorHeap(DescriptorHeapType heapType )
+	: m_heapType(heapType)
+	, m_nCurrentIndex(0)
 	, m_pCurrentHeap(nullptr)
 	, m_nCurrentHeapUsedSize(0)
 	, m_allocatedCount(0)
@@ -87,7 +88,7 @@ DescriptorHeap*	AdhocDescriptorHeap::Require(uint32_t requestSize, uint32_t &sta
 		// 現在のヒープをそのまま使える
 		const uint32_t capacity = m_pCurrentHeap->GetBufferCount();
 
-		if (requestSize + m_nCurrentHeapUsedSize  >= capacity ) {
+		if (requestSize + m_nCurrentHeapUsedSize  <= capacity ) {
 			
 			startIndex = m_nCurrentHeapUsedSize;
 			m_nCurrentHeapUsedSize += requestSize;
@@ -117,7 +118,13 @@ DescriptorHeap*	AdhocDescriptorHeap::Require(uint32_t requestSize, uint32_t &sta
 		m_pCurrentHeap = new DescriptorHeap;
 
 		// とりあえずCBV/SRV/UAV用として
-		bool b = m_pCurrentHeap->InitializeCBV_SRV_UAV(MaxBufferSize); // サイズ適当
+		bool b = FALSE;
+		if (m_heapType == DescriptorHeapType::CBV_SRV_UAV) {
+			b = m_pCurrentHeap->InitializeCBV_SRV_UAV(MaxBufferSize); // サイズ適当
+		}
+		else if (m_heapType == DescriptorHeapType::SAMPLER) {
+			b = m_pCurrentHeap->InitializeSampler(MaxBufferSize);
+		}
 
 		if (!b) {
 			delete m_pCurrentHeap;

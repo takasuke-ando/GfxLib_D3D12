@@ -186,7 +186,7 @@ bool	CoreSystem::Initialize()
 
 
 	m_pDescriptorAllocator = new DescriptorAllocator;
-	m_pAdhocDescriptorHeap = new AdhocDescriptorHeap;
+	m_pAdhocDescriptorHeap = new AdhocDescriptorHeap(DescriptorHeapType::CBV_SRV_UAV);
 
 
 	return true;

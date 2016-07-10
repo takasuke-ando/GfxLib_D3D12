@@ -11,7 +11,7 @@
 
 ***************************************************************/
 
-
+#include "GfxDefines.h"
 
 #include <vector>
 
@@ -46,7 +46,7 @@ namespace GfxLib
 
 		enum {
 
-			MAX_FRAME_COUNT = 3,
+			MAX_FRAME_COUNT = MAX_FRAME_QUEUE,
 
 		};
 

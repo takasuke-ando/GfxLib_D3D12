@@ -118,6 +118,9 @@
     <ClInclude Include="..\Source\Resource\GfxTexture2D.h">
       <Filter>Resource</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\System\GfxAdhocDescriptorHeap.h">
+      <Filter>System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -185,6 +188,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Resource\GfxTexture2D.cpp">
       <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\System\GfxAdhocDescriptorHeap.cpp">
+      <Filter>System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

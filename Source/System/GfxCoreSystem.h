@@ -12,14 +12,14 @@ namespace GfxLib
 
 	class Fence;
 	class DescriptorAllocator;
+	class AdhocDescriptorHeap;
+	class DescriptorHeap;
 
 	class CoreSystem
 	{
 
 	public:
-		enum {
-			MAX_FRAME_QUEUE = 3,
-		};
+
 
 	public:
 		CoreSystem();
@@ -63,6 +63,31 @@ namespace GfxLib
 		DelayDelete&		GetDelayDelete() { return	m_DelayDelete; }
 
 
+
+		/***************************************************************
+		@brief	利用可能なデスクリプタヒープを取得する
+		@par	[説明]
+		このフレームの間だけ、利用可能なデスクリプタヒープを取得する
+		@param[in]	size:		要求サイズ
+		@param[out]	startIndex:	ヒープのこのインデックスから書き込める
+
+		*/
+		DescriptorHeap*	RequireAdhocDescriptorHeap(uint32_t size, uint32_t &startIndex);
+
+
+
+		/***************************************************************
+		@brief	利用可能なデスクリプタヒープを取得する
+		@par	[説明]
+		このフレームの間だけ、利用可能なデスクリプタヒープを取得する
+		同時に、ハンドルコピーも行う
+		@param[in]	size:		要求サイズ
+		@param[out]	startIndex:	ヒープのこのインデックスから書き込める
+		@param[in]	srcHandle:	コピー元となるハンドルの配列
+		*/
+		DescriptorHeap*	RequireAdhocDescriptorHeap(uint32_t size, uint32_t &startIndex , const D3D12_CPU_DESCRIPTOR_HANDLE *srcHandle );
+
+
 		HRESULT _CreateSwapChain(DXGI_SWAP_CHAIN_DESC& desc ,IDXGISwapChain* &swapChain);
 
 
@@ -81,6 +106,7 @@ namespace GfxLib
 		DelayDelete			m_DelayDelete;
 
 		DescriptorAllocator*	m_pDescriptorAllocator;
+		AdhocDescriptorHeap*	m_pAdhocDescriptorHeap;
 
 		bool				m_bInsideBeginEnd;
 		UINT				m_nUpdateCount;

@@ -121,6 +121,12 @@
     <ClInclude Include="..\Source\System\GfxAdhocDescriptorHeap.h">
       <Filter>System</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\System\GfxAdhocGpuBuffer.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Resource\GfxBuffer.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -191,6 +197,12 @@
     </ClCompile>
     <ClCompile Include="..\Source\System\GfxAdhocDescriptorHeap.cpp">
       <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\System\GfxAdhocGpuBuffer.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Resource\GfxBuffer.cpp">
+      <Filter>Resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

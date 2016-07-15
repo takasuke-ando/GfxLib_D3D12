@@ -13,6 +13,7 @@ namespace GfxLib
 	class Fence;
 	class DescriptorAllocator;
 	class AdhocDescriptorHeap;
+	class AdhocGpuBuffer;
 	class DescriptorHeap;
 
 	class CoreSystem
@@ -107,6 +108,7 @@ namespace GfxLib
 
 		DescriptorAllocator*	m_pDescriptorAllocator;
 		AdhocDescriptorHeap*	m_pAdhocDescriptorHeap;
+		AdhocGpuBuffer*			m_pAdhocGpuBuffer;
 
 		bool				m_bInsideBeginEnd;
 		UINT				m_nUpdateCount;

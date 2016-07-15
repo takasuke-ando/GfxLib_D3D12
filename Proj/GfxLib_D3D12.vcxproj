@@ -141,6 +141,7 @@
     <ClInclude Include="..\Source\Device\GfxSwapChain.h" />
     <ClInclude Include="..\Source\GfxLib.h" />
     <ClInclude Include="..\Source\GfxLibStdAfx.h" />
+    <ClInclude Include="..\Source\Resource\GfxBuffer.h" />
     <ClInclude Include="..\Source\Resource\GfxConstantBuffer.h" />
     <ClInclude Include="..\Source\Resource\GfxDepthStencil.h" />
     <ClInclude Include="..\Source\Resource\GfxDescriptorHeap.h" />
@@ -153,6 +154,7 @@
     <ClInclude Include="..\Source\Shader\GfxShader.h" />
     <ClInclude Include="..\Source\State\GfxPipelineState.h" />
     <ClInclude Include="..\Source\System\GfxAdhocDescriptorHeap.h" />
+    <ClInclude Include="..\Source\System\GfxAdhocGpuBuffer.h" />
     <ClInclude Include="..\Source\System\GfxCoreSystem.h" />
     <ClInclude Include="..\Source\System\GfxDefines.h" />
     <ClInclude Include="..\Source\System\GfxDelayDelete.h" />
@@ -170,6 +172,7 @@
     <ClCompile Include="..\Source\Device\GfxCommandQueue.cpp" />
     <ClCompile Include="..\Source\Device\GfxSwapChain.cpp" />
     <ClCompile Include="..\Source\GfxLib.cpp" />
+    <ClCompile Include="..\Source\Resource\GfxBuffer.cpp" />
     <ClCompile Include="..\Source\Resource\GfxConstantBuffer.cpp" />
     <ClCompile Include="..\Source\Resource\GfxDepthStencil.cpp" />
     <ClCompile Include="..\Source\Resource\GfxDescriptorHeap.cpp" />
@@ -182,6 +185,7 @@
     <ClCompile Include="..\Source\Shader\GfxShader.cpp" />
     <ClCompile Include="..\Source\State\GfxPipelineState.cpp" />
     <ClCompile Include="..\Source\System\GfxAdhocDescriptorHeap.cpp" />
+    <ClCompile Include="..\Source\System\GfxAdhocGpuBuffer.cpp" />
     <ClCompile Include="..\Source\System\GfxCoreSystem.cpp" />
     <ClCompile Include="..\Source\System\GfxDelayDelete.cpp" />
     <ClCompile Include="..\Source\System\GfxDescriptorAllocator.cpp" />

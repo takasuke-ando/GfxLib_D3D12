@@ -90,6 +90,7 @@ bool	ConstantBuffer::Initialize(uint32_t byteSize)
 	*/
 
 
+
 	{	// CBV
 		m_CbvHandle = GfxLib::AllocateDescriptorHandle(GfxLib::DescriptorHeapType::CBV_SRV_UAV);
 	}
@@ -109,6 +110,54 @@ bool	ConstantBuffer::Initialize(uint32_t byteSize)
 
 	m_byteSize = (uint32_t)resDesc.Width;
 	m_d3dRes->Map(0, nullptr, &m_pMappedAddr);
+
+
+
+	return true;
+
+}
+
+
+
+
+
+/***************************************************************
+@brief	既存のリソースのサブセットを指定して、初期化
+@par	[説明]
+	既存のリソースを部分的にマッピングし、ConstantBufferとして利用可能にする
+@param
+*/
+bool	ConstantBuffer::Initialize(ID3D12Resource* res, uint32_t buffWidth, D3D12_GPU_VIRTUAL_ADDRESS gpuAddr, void* cpuAddr)
+{
+
+	Finalize();
+
+
+	CoreSystem *coreSystem = CoreSystem::GetInstance();
+
+	ID3D12Device *d3dDev = coreSystem->GetD3DDevice();
+
+
+	m_byteSize = buffWidth;
+	m_pMappedAddr = cpuAddr;
+
+
+	{	// CBV
+		m_CbvHandle = GfxLib::AllocateDescriptorHandle(GfxLib::DescriptorHeapType::CBV_SRV_UAV);
+	}
+
+
+	{
+		D3D12_CONSTANT_BUFFER_VIEW_DESC viewDesc = {};
+
+		viewDesc.SizeInBytes = (UINT)m_byteSize;
+		viewDesc.BufferLocation = gpuAddr;
+
+		//d3dDev->CreateConstantBufferView(&viewDesc, m_descHeap.GetCPUDescriptorHandleByIndex(0) );
+		d3dDev->CreateConstantBufferView(&viewDesc, m_CbvHandle);
+
+	}
+
 
 
 

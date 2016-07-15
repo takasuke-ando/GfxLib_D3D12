@@ -17,6 +17,16 @@ namespace GfxLib
 
 		bool	Initialize(uint32_t byteSize);
 
+
+		/***************************************************************
+			@brief	既存のリソースのサブセットを指定して、初期化
+			@par	[説明]
+				既存のリソースを部分的にマッピングし、ConstantBufferとして利用可能にする
+			@param
+		*/
+		bool	Initialize(ID3D12Resource* res, uint32_t buffWidth , D3D12_GPU_VIRTUAL_ADDRESS gpuAddr, void* cpuAddr);
+
+
 		void	SetData(const void*pData, uint32_t byteSize);
 
 

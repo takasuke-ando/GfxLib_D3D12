@@ -11,6 +11,7 @@
 #include "System/GfxDescriptorAllocator.h"
 #include "System/GfxAdhocDescriptorHeap.h"
 #include "Resource/GfxDescriptorHeap.h"
+#include "System/GfxAdhocGpuBuffer.h"
 
 
 using namespace GfxLib;
@@ -24,8 +25,9 @@ CoreSystem::CoreSystem()
 	:m_pd3dDev(NULL)
 	, m_featureLevel(D3D_FEATURE_LEVEL_11_0)
 	, m_driverType(D3D_DRIVER_TYPE_HARDWARE)
-	, m_pDescriptorAllocator( nullptr )
-	, m_pAdhocDescriptorHeap( nullptr )
+	, m_pDescriptorAllocator(nullptr)
+	, m_pAdhocDescriptorHeap(nullptr)
+	, m_pAdhocGpuBuffer(nullptr)
 	, m_bInsideBeginEnd(false)
 	, m_nUpdateCount(0)
 	, m_nFrameCount(0)
@@ -72,6 +74,9 @@ void CoreSystem::Finalize()
 
 	delete m_pAdhocDescriptorHeap;
 	m_pAdhocDescriptorHeap = nullptr;
+
+	delete m_pAdhocGpuBuffer;
+	m_pAdhocGpuBuffer = nullptr;
 
 	//m_CmdQueue.Release();
 	m_CommandQueue.Finalize();
@@ -187,6 +192,7 @@ bool	CoreSystem::Initialize()
 
 	m_pDescriptorAllocator = new DescriptorAllocator;
 	m_pAdhocDescriptorHeap = new AdhocDescriptorHeap(DescriptorHeapType::CBV_SRV_UAV);
+	m_pAdhocGpuBuffer = new AdhocGpuBuffer;
 
 
 	return true;
@@ -253,6 +259,7 @@ bool		CoreSystem::Begin()
 	m_DelayDelete.Update();
 
 	m_pAdhocDescriptorHeap->NextFrame();
+	m_pAdhocGpuBuffer->NextFrame();
 
 	m_aCmdAllocator[m_nCurrentCmdAllocatorIndex]->Reset();
 

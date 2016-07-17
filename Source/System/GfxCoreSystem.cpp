@@ -329,6 +329,25 @@ DescriptorHeap*	CoreSystem::RequireAdhocDescriptorHeap(uint32_t size, uint32_t &
 }
 
 
+
+#if 0
+/***************************************************************
+@brief	GPUバッファを確保
+@par	[説明]
+定数バッファ、頂点バッファなどに利用可能なGPUアドレスの確保
+このフレームでしか利用できない
+@param
+*/
+D3D12_GPU_VIRTUAL_ADDRESS	CoreSystem::AllocateGpuBuffer(void* &cpuBuffer, uint32_t size, uint32_t alignment)
+{
+
+	return m_pAdhocGpuBuffer->Require(cpuBuffer, size, alignment);
+
+}
+#endif
+
+
+
 HRESULT CoreSystem::_CreateSwapChain(DXGI_SWAP_CHAIN_DESC& desc, IDXGISwapChain* &swapChain)
 {
 

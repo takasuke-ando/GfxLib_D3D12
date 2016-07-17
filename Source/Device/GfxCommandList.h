@@ -3,7 +3,7 @@
 
 
 #include "System/GfxDefines.h"
-
+#include "System/GfxAdhocGpuBuffer.h"
 
 namespace GfxLib
 {
@@ -40,9 +40,25 @@ namespace GfxLib
 		ID3D12GraphicsCommandList*	GetD3DCommandList() const {		return m_pCmdList;		}
 
 
+
+		/***************************************************************
+		@brief	バッファの確保を行います
+		@par	[説明]
+		このフレームの間だけ、利用可能なGPUアサインされたバッファを確保します
+		数フレーム後にはこの領域は再利用されるため、継続して保持することはできません
+		@param[out]  cpuAddress:	成功時に、CPUマップ済みアドレスが返される
+		@param[in]	size:		要求サイズ
+		@param[in]	alignment:	アライメント
+
+		*/
+		D3D12_GPU_VIRTUAL_ADDRESS	AllocateGpuBuffer(void * &cpuAddress, uint32_t size, uint32_t alignment);
+
+
 	private:
 
 		D3DPtr<ID3D12GraphicsCommandList>	m_pCmdList;
+
+		AdhocGpuBufferClient				m_GpuBufferAllocator;
 
 	};
 

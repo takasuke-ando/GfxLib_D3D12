@@ -44,6 +44,7 @@ bool	CommandList::Initialize()
 
 	}
 
+	m_GpuBufferAllocator.Initialize(coreSystem->GetAdhocGpuBufferHost());
 
 	// おまじない
 	m_pCmdList->Close();
@@ -72,6 +73,7 @@ void	CommandList::Reset()
 	CoreSystem * coreSystem = CoreSystem::GetInstance();
 
 	m_pCmdList->Reset(coreSystem->GetCurrentCommandAllocator(), nullptr /*PSO*/);
+	m_GpuBufferAllocator.Reset();
 
 }
 
@@ -92,3 +94,24 @@ void	CommandList::ResourceTransitionBarrier(ID3D12Resource* res , ResourceStates
 	m_pCmdList->ResourceBarrier(1, &barrier);
 
 }
+
+
+
+/***************************************************************
+@brief	バッファの確保を行います
+@par	[説明]
+このフレームの間だけ、利用可能なGPUアサインされたバッファを確保します
+数フレーム後にはこの領域は再利用されるため、継続して保持することはできません
+@param[out]  cpuAddress:	成功時に、CPUマップ済みアドレスが返される
+@param[in]	size:		要求サイズ
+@param[in]	alignment:	アライメント
+
+*/
+D3D12_GPU_VIRTUAL_ADDRESS	CommandList::AllocateGpuBuffer(void * &cpuAddress, uint32_t size, uint32_t alignment)
+{
+
+	return m_GpuBufferAllocator.Require(cpuAddress, size, alignment);
+
+}
+
+

@@ -89,9 +89,22 @@ namespace GfxLib
 		DescriptorHeap*	RequireAdhocDescriptorHeap(uint32_t size, uint32_t &startIndex , const D3D12_CPU_DESCRIPTOR_HANDLE *srcHandle );
 
 
+		/***************************************************************
+			@brief	GPUバッファを確保
+			@par	[説明]
+				定数バッファ、頂点バッファなどに利用可能なGPUアドレスの確保
+				このフレームでしか利用できない
+			@param
+		*/
+		//D3D12_GPU_VIRTUAL_ADDRESS	AllocateGpuBuffer( void* &cpuBuffer , uint32_t size , uint32_t alignment );
+
+
 		HRESULT _CreateSwapChain(DXGI_SWAP_CHAIN_DESC& desc ,IDXGISwapChain* &swapChain);
 
 
+		AdhocGpuBuffer*		GetAdhocGpuBufferHost() const {
+			return m_pAdhocGpuBuffer;
+		}
 	private:
 
 		ID3D12Device*		m_pd3dDev;

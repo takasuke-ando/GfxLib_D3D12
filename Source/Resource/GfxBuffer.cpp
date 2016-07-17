@@ -3,7 +3,7 @@
 		@par	[説明]
 			GPUアクセス可能なバッファを作成する
 			定数バッファ、頂点バッファ、インデックスバッファとして使用できる
-		@param
+
 /****************************************************************/
 
 
@@ -57,7 +57,7 @@ bool Buffer::Initialize( size_t byteSize)
 
 	m_pCpuAddress = pAddr;
 	m_pGpuAddress = m_d3dRes->GetGPUVirtualAddress();
-
+	m_BuffSize = (uint32_t)byteSize;
 
 	return true;
 

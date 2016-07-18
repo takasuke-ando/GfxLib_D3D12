@@ -5,6 +5,7 @@
 
 #include "System/GfxCoreSystem.h"
 #include "Resource/GfxDescriptorHeap.h"
+#include "Util/GfxMath.h"
 
 
 namespace GfxLib
@@ -87,6 +88,31 @@ namespace GfxLib
 				srcHandle[i],
 				heapType);
 		}
+
+
+	}
+
+
+
+	/***************************************************************
+	@brief	定数バッファのセット
+	@par	[説明]
+	GPUアドレスからCBVをセットする
+	@param
+	*/
+	inline void	DescriptorBuffer::SetConstantBuffer(uint32_t index, D3D12_GPU_VIRTUAL_ADDRESS gpuAddress, uint32_t size)
+	{
+		if (index  > m_size) {
+			GFX_ERROR(L"Index over");
+		}
+
+		D3D12_CONSTANT_BUFFER_VIEW_DESC	cbvDesc = { 0 };
+
+		cbvDesc.BufferLocation = gpuAddress;
+		cbvDesc.SizeInBytes = UpperBounds( size , D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT );
+
+		m_d3dDev->CreateConstantBufferView(&cbvDesc, m_heap->GetCPUDescriptorHandleByIndex(m_startIndex + index));
+
 
 
 	}

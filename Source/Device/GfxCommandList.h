@@ -65,7 +65,7 @@ namespace GfxLib
 		@param[out]	startIndex:	ヒープのこのインデックスから書き込める
 
 		*/
-		DescriptorHeap*	RequireAdhocDescriptorHeap(uint32_t size, uint32_t &startIndex);
+		//DescriptorHeap*	RequireAdhocDescriptorHeap(uint32_t size, uint32_t &startIndex);
 
 
 
@@ -78,7 +78,7 @@ namespace GfxLib
 		@param[out]	startIndex:	ヒープのこのインデックスから書き込める
 		@param[in]	srcHandle:	コピー元となるハンドルの配列
 		*/
-		DescriptorHeap*	RequireAdhocDescriptorHeap(uint32_t size, uint32_t &startIndex, const D3D12_CPU_DESCRIPTOR_HANDLE *srcHandle);
+		//DescriptorHeap*	RequireAdhocDescriptorHeap(uint32_t size, uint32_t &startIndex, const D3D12_CPU_DESCRIPTOR_HANDLE *srcHandle);
 
 
 		/***************************************************************

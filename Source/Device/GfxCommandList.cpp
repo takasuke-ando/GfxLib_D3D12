@@ -141,12 +141,15 @@ D3D12_GPU_VIRTUAL_ADDRESS	CommandList::AllocateGpuBuffer(void * &cpuAddress, uin
 @param[out]	startIndex:	ヒープのこのインデックスから書き込める
 
 */
+#if 0
 DescriptorHeap*	CommandList::RequireAdhocDescriptorHeap(uint32_t size, uint32_t &startIndex)
 {
 
 	return m_DescHeapAllocator.Require(size, startIndex);
 
 }
+#endif
+
 
 /***************************************************************
 @brief	利用可能なデスクリプタヒープを取得する
@@ -157,6 +160,7 @@ DescriptorHeap*	CommandList::RequireAdhocDescriptorHeap(uint32_t size, uint32_t 
 @param[out]	startIndex:	ヒープのこのインデックスから書き込める
 @param[in]	srcHandle:	コピー元となるハンドルの配列
 */
+#if 0
 DescriptorHeap*	CommandList::RequireAdhocDescriptorHeap(uint32_t size, uint32_t &startIndex, const D3D12_CPU_DESCRIPTOR_HANDLE *srcHandle)
 {
 
@@ -178,6 +182,7 @@ DescriptorHeap*	CommandList::RequireAdhocDescriptorHeap(uint32_t size, uint32_t 
 
 	return heap;
 }
+#endif
 
 
 

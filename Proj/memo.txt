@@ -31,12 +31,6 @@ D3D12
 ・パイプラインステートのキャッシング
 
 
-・アドホック定数バッファ
-
-
-  CPU_HANDLE CreateAdhocConstantBuffer( size , ptr );	的な？
-
-  SRV用デスクリプタヒープも同様
 
 
 ◆ノウハウ

@@ -39,6 +39,15 @@ namespace GfxLib
 		@param
 		*/
 		void	CopyHandle(uint32_t index, const D3D12_CPU_DESCRIPTOR_HANDLE *handle , uint32_t count );
+		
+
+		/***************************************************************
+		@brief	定数バッファのセット
+		@par	[説明]
+			GPUアドレスからCBVをセットする
+		@param
+		*/
+		void	SetConstantBuffer(uint32_t index, D3D12_GPU_VIRTUAL_ADDRESS gpuAddress, uint32_t size);
 
 
 		D3D12_GPU_DESCRIPTOR_HANDLE		GetGPUDescriptorHandle() const;

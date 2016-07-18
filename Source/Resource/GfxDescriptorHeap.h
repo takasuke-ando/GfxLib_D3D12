@@ -37,10 +37,25 @@ namespace GfxLib
 		/*
 			指定インデックスのデスクリプタハンドルを取得する
 		*/
-		D3D12_CPU_DESCRIPTOR_HANDLE		GetCPUDescriptorHandleByIndex( uint32_t idx ) const;
+		D3D12_CPU_DESCRIPTOR_HANDLE		GetCPUDescriptorHandleByIndex(uint32_t idx) const;
+		D3D12_GPU_DESCRIPTOR_HANDLE		GetGPUDescriptorHandleByIndex( uint32_t idx ) const;
 
 
 		ID3D12DescriptorHeap*	GetD3DDescriptorHeap() const { return	m_descriptorHeap; }
+
+
+		/*
+			バッファ数
+		*/
+		uint32_t				GetBufferCount() const {
+			return m_maxBufferCount;
+		}
+
+
+		D3D12_DESCRIPTOR_HEAP_TYPE		GetHeapType() const {
+			return m_heapType;
+		}
+
 
 
 	private:

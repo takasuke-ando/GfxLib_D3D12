@@ -30,6 +30,20 @@ namespace GfxLib
 
 
 
+	/***************************************************************
+	@brief	特定の値の倍数に繰り上げを行う
+	@par	[説明]
+	ある値を、何かの倍数に繰り上げる
+	UpperBounds( 200 , 128 ) => 256
+	@param
+	*/
+	inline uint64_t	UpperBounds(uint64_t x, uint64_t bounds)
+	{
+
+		return (x + bounds - 1) / bounds*bounds;
+
+	}
+
 }
 
 

@@ -13,6 +13,14 @@
 namespace GfxLib
 {
 
+
+	// 定数
+	enum {
+		MAX_FRAME_QUEUE = 3,
+	};
+
+
+
 	/*
 		リソースバリアタイプ
 	*/

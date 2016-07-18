@@ -9,6 +9,9 @@
 #include "System/GfxCoreSystem.h"
 #include "System/GfxFence.h"
 #include "System/GfxDescriptorAllocator.h"
+#include "System/GfxAdhocDescriptorHeap.h"
+#include "Resource/GfxDescriptorHeap.h"
+#include "System/GfxAdhocGpuBuffer.h"
 
 
 using namespace GfxLib;
@@ -22,7 +25,9 @@ CoreSystem::CoreSystem()
 	:m_pd3dDev(NULL)
 	, m_featureLevel(D3D_FEATURE_LEVEL_11_0)
 	, m_driverType(D3D_DRIVER_TYPE_HARDWARE)
-	, m_pDescriptorAllocator( nullptr )
+	, m_pDescriptorAllocator(nullptr)
+	, m_pAdhocDescriptorHeap(nullptr)
+	, m_pAdhocGpuBuffer(nullptr)
 	, m_bInsideBeginEnd(false)
 	, m_nUpdateCount(0)
 	, m_nFrameCount(0)
@@ -66,6 +71,12 @@ void CoreSystem::Finalize()
 
 	}
 
+
+	delete m_pAdhocDescriptorHeap;
+	m_pAdhocDescriptorHeap = nullptr;
+
+	delete m_pAdhocGpuBuffer;
+	m_pAdhocGpuBuffer = nullptr;
 
 	//m_CmdQueue.Release();
 	m_CommandQueue.Finalize();
@@ -180,7 +191,8 @@ bool	CoreSystem::Initialize()
 
 
 	m_pDescriptorAllocator = new DescriptorAllocator;
-
+	m_pAdhocDescriptorHeap = new AdhocDescriptorHeap(DescriptorHeapType::CBV_SRV_UAV);
+	m_pAdhocGpuBuffer = new AdhocGpuBuffer;
 
 
 	return true;
@@ -246,6 +258,9 @@ bool		CoreSystem::Begin()
 	// GPU待機の直後に行う
 	m_DelayDelete.Update();
 
+	m_pAdhocDescriptorHeap->NextFrame();
+	m_pAdhocGpuBuffer->NextFrame();
+
 	m_aCmdAllocator[m_nCurrentCmdAllocatorIndex]->Reset();
 
 
@@ -265,6 +280,73 @@ void		CoreSystem::End()
 	m_bInsideBeginEnd = false;
 
 }
+
+
+
+#if 0
+/***************************************************************
+@brief	利用可能なデスクリプタヒープを取得する
+@par	[説明]
+このフレームの間だけ、利用可能なデスクリプタヒープを取得する
+@param[in]	size:		要求サイズ
+@param[out]	startIndex:	ヒープのこのインデックスから書き込める
+
+*/
+DescriptorHeap*	CoreSystem::RequireAdhocDescriptorHeap(uint32_t size, uint32_t &startIndex)
+{
+
+	return m_pAdhocDescriptorHeap->Require(size, startIndex);
+
+}
+
+/***************************************************************
+@brief	利用可能なデスクリプタヒープを取得する
+@par	[説明]
+このフレームの間だけ、利用可能なデスクリプタヒープを取得する
+同時に、ハンドルコピーも行う
+@param[in]	size:		要求サイズ
+@param[out]	startIndex:	ヒープのこのインデックスから書き込める
+@param[in]	srcHandle:	コピー元となるハンドルの配列
+*/
+DescriptorHeap*	CoreSystem::RequireAdhocDescriptorHeap(uint32_t size, uint32_t &startIndex, const D3D12_CPU_DESCRIPTOR_HANDLE *srcHandle)
+{
+
+	DescriptorHeap *heap=  m_pAdhocDescriptorHeap->Require(size, startIndex);
+	if (!heap) {
+		return heap;
+	}
+
+	for (uint32_t i = 0; i < size; ++i) {
+
+		m_pd3dDev->CopyDescriptorsSimple(1,
+			heap->GetCPUDescriptorHandleByIndex(startIndex + i),
+			srcHandle[i],
+			D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	}
+
+
+	return heap;
+}
+
+
+#endif
+
+
+#if 0
+/***************************************************************
+@brief	GPUバッファを確保
+@par	[説明]
+定数バッファ、頂点バッファなどに利用可能なGPUアドレスの確保
+このフレームでしか利用できない
+@param
+*/
+D3D12_GPU_VIRTUAL_ADDRESS	CoreSystem::AllocateGpuBuffer(void* &cpuBuffer, uint32_t size, uint32_t alignment)
+{
+
+	return m_pAdhocGpuBuffer->Require(cpuBuffer, size, alignment);
+
+}
+#endif
 
 
 

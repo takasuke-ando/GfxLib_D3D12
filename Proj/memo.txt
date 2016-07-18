@@ -31,12 +31,6 @@ D3D12
 ・パイプラインステートのキャッシング
 
 
-・アドホック定数バッファ
-
-
-  CPU_HANDLE CreateAdhocConstantBuffer( size , ptr );	的な？
-
-  SRV用デスクリプタヒープも同様
 
 
 ◆ノウハウ
@@ -95,3 +89,15 @@ DirectX-Graphics-Samples\MiniEngine\Core\DescriptorHeap.h
 　SetGraphicsRootShaderResourceViewの第2引数がGPU_VIRTUAL_ADDRESS だし...
 　あんまり使わないほうが良いか
 
+
+・Buffer作成
+
+	D3D12_RESOURCE_DESC resDesc = {};
+	resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+
+	//Alignment=D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT とすると、↓のエラーが発生
+	//D3D12 ERROR: ID3D12Device::CreateCommittedResource: D3D12_RESOURCE_DESC::Alignment is invalid. The value is 256. 
+	//Buffers must have this field set to 65536 (aka. D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT) or 0. [ STATE_CREATION ERROR #721: CREATERESOURCE_INVALIDALIGNMENT]
+	resDesc.Alignment = 0; // こちらならOK
+
+	//逆に言うと64kアライメント強制的にされる

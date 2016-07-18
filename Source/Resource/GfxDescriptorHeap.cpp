@@ -220,4 +220,21 @@ D3D12_CPU_DESCRIPTOR_HANDLE		DescriptorHeap::GetCPUDescriptorHandleByIndex(uint3
 }
 
 
+D3D12_GPU_DESCRIPTOR_HANDLE		DescriptorHeap::GetGPUDescriptorHandleByIndex(uint32_t idx) const
+{
+
+	if (m_maxBufferCount <= idx) {
+		D3D12_GPU_DESCRIPTOR_HANDLE handle = { 0 };
+		return handle;
+	}
+
+	D3D12_GPU_DESCRIPTOR_HANDLE handle = m_descriptorHeap->GetGPUDescriptorHandleForHeapStart();
+
+	handle.ptr += (m_descriptorSize * idx);
+
+	return handle;
+
+}
+
+
 

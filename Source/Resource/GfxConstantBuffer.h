@@ -17,6 +17,16 @@ namespace GfxLib
 
 		bool	Initialize(uint32_t byteSize);
 
+
+		/***************************************************************
+			@brief	既存のリソースのサブセットを指定して、初期化
+			@par	[説明]
+				既存のリソースを部分的にマッピングし、ConstantBufferとして利用可能にする
+			@param
+		*/
+		bool	Initialize(ID3D12Resource* res, uint32_t buffWidth , D3D12_GPU_VIRTUAL_ADDRESS gpuAddr, void* cpuAddr);
+
+
 		void	SetData(const void*pData, uint32_t byteSize);
 
 
@@ -28,12 +38,8 @@ namespace GfxLib
 		*/
 		void	Finalize( bool delayed = GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FINALIZE );
 
-		const DescriptorHeap&	GetDescriptorHeap() const { return m_descHeap; }		//	とりあえず作ったCBV用。ここで持ちたくはない…
+		//const DescriptorHeap&	GetDescriptorHeap() const { return m_descHeap; }		//	とりあえず作ったCBV用。ここで持ちたくはない…
 
-
-		D3D12_GPU_DESCRIPTOR_HANDLE	GetGPUDescriptorHandleForHeapStart() const {
-			return m_descHeap.GetD3DDescriptorHeap()->GetGPUDescriptorHandleForHeapStart();
-		}
 
 		// CPU読み取り用のデスクリプタハンドル
 		D3D12_CPU_DESCRIPTOR_HANDLE	GetCbvDescHandle() const {
@@ -44,7 +50,6 @@ namespace GfxLib
 	private:
 
 		D3DPtr<ID3D12Resource>		m_d3dRes;
-		DescriptorHeap				m_descHeap;			//	とりあえず作ったCBV用。ここで持ちたくはない…
 
 		uint32_t					m_byteSize;
 		void*						m_pMappedAddr;		//	GPU書き込み先アドレス

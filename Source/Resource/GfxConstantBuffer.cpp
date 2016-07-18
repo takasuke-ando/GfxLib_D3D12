@@ -53,6 +53,10 @@ bool	ConstantBuffer::Initialize(uint32_t byteSize)
 
 	D3D12_RESOURCE_DESC resDesc = {};
 	resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+
+	//Alignment=D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT とすると、↓のエラーが発生
+	//D3D12 ERROR: ID3D12Device::CreateCommittedResource: D3D12_RESOURCE_DESC::Alignment is invalid. The value is 256. 
+	//Buffers must have this field set to 65536 (aka. D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT) or 0. [ STATE_CREATION ERROR #721: CREATERESOURCE_INVALIDALIGNMENT]
 	resDesc.Alignment = 0;
 
 	// D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT = 256使うべき？
@@ -78,11 +82,13 @@ bool	ConstantBuffer::Initialize(uint32_t byteSize)
 	}
 
 
-
+	/*
 	bool bOk = m_descHeap.InitializeCBV_SRV_UAV(1);
 	if (!bOk) {
 		return false;
 	}
+	*/
+
 
 
 	{	// CBV
@@ -96,7 +102,7 @@ bool	ConstantBuffer::Initialize(uint32_t byteSize)
 		viewDesc.SizeInBytes = (UINT)resDesc.Width;
 		viewDesc.BufferLocation = m_d3dRes->GetGPUVirtualAddress();
 
-		d3dDev->CreateConstantBufferView(&viewDesc, m_descHeap.GetCPUDescriptorHandleByIndex(0) );
+		//d3dDev->CreateConstantBufferView(&viewDesc, m_descHeap.GetCPUDescriptorHandleByIndex(0) );
 		d3dDev->CreateConstantBufferView(&viewDesc, m_CbvHandle);
 
 	}
@@ -104,6 +110,54 @@ bool	ConstantBuffer::Initialize(uint32_t byteSize)
 
 	m_byteSize = (uint32_t)resDesc.Width;
 	m_d3dRes->Map(0, nullptr, &m_pMappedAddr);
+
+
+
+	return true;
+
+}
+
+
+
+
+
+/***************************************************************
+@brief	既存のリソースのサブセットを指定して、初期化
+@par	[説明]
+	既存のリソースを部分的にマッピングし、ConstantBufferとして利用可能にする
+@param
+*/
+bool	ConstantBuffer::Initialize(ID3D12Resource* res, uint32_t buffWidth, D3D12_GPU_VIRTUAL_ADDRESS gpuAddr, void* cpuAddr)
+{
+
+	Finalize();
+
+
+	CoreSystem *coreSystem = CoreSystem::GetInstance();
+
+	ID3D12Device *d3dDev = coreSystem->GetD3DDevice();
+
+
+	m_byteSize = buffWidth;
+	m_pMappedAddr = cpuAddr;
+
+
+	{	// CBV
+		m_CbvHandle = GfxLib::AllocateDescriptorHandle(GfxLib::DescriptorHeapType::CBV_SRV_UAV);
+	}
+
+
+	{
+		D3D12_CONSTANT_BUFFER_VIEW_DESC viewDesc = {};
+
+		viewDesc.SizeInBytes = (UINT)m_byteSize;
+		viewDesc.BufferLocation = gpuAddr;
+
+		//d3dDev->CreateConstantBufferView(&viewDesc, m_descHeap.GetCPUDescriptorHandleByIndex(0) );
+		d3dDev->CreateConstantBufferView(&viewDesc, m_CbvHandle);
+
+	}
+
 
 
 
@@ -128,7 +182,7 @@ void ConstantBuffer::Finalize(bool delayed)
 	}
 
 	m_d3dRes.Release();
-	m_descHeap.Finalize(delayed);
+	//m_descHeap.Finalize(delayed);
 	m_pMappedAddr = nullptr;
 }
 

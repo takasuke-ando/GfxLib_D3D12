@@ -241,7 +241,7 @@ bool		Resource::_Initialize_Texture2D(Format format, uint32_t width, uint32_t he
 
 
 	//	ひとまずCPUアクセス可能なHeapにするが
-	//	
+	//	本来はD3D12_HEAP_TYPE_DEFAULTにして、UPLOADヒープからコピーするだけにしたい
 
 	heapProp.Type = D3D12_HEAP_TYPE_CUSTOM;		//@TODO		D3D12_HEAP_TYPE_DEFAULTにして、UPLOADヒープからコピーするだけにしたい
 	heapProp.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_COMBINE;	//	WRITE_COMBINEだと思うのだけれど、上記サイトではWRITE_BACKとしてた

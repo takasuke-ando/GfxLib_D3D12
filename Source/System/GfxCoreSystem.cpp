@@ -283,7 +283,7 @@ void		CoreSystem::End()
 
 
 
-
+#if 0
 /***************************************************************
 @brief	利用可能なデスクリプタヒープを取得する
 @par	[説明]
@@ -328,6 +328,8 @@ DescriptorHeap*	CoreSystem::RequireAdhocDescriptorHeap(uint32_t size, uint32_t &
 	return heap;
 }
 
+
+#endif
 
 
 #if 0

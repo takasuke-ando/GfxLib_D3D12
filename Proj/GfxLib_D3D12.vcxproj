@@ -144,6 +144,7 @@
     <ClInclude Include="..\Source\Resource\GfxBuffer.h" />
     <ClInclude Include="..\Source\Resource\GfxConstantBuffer.h" />
     <ClInclude Include="..\Source\Resource\GfxDepthStencil.h" />
+    <ClInclude Include="..\Source\Resource\GfxDescriptorBuffer.h" />
     <ClInclude Include="..\Source\Resource\GfxDescriptorHeap.h" />
     <ClInclude Include="..\Source\Resource\GfxRenderTarget.h" />
     <ClInclude Include="..\Source\Resource\GfxResource.h" />
@@ -175,6 +176,7 @@
     <ClCompile Include="..\Source\Resource\GfxBuffer.cpp" />
     <ClCompile Include="..\Source\Resource\GfxConstantBuffer.cpp" />
     <ClCompile Include="..\Source\Resource\GfxDepthStencil.cpp" />
+    <ClCompile Include="..\Source\Resource\GfxDescriptorBuffer.cpp" />
     <ClCompile Include="..\Source\Resource\GfxDescriptorHeap.cpp" />
     <ClCompile Include="..\Source\Resource\GfxRenderTarget.cpp" />
     <ClCompile Include="..\Source\Resource\GfxResource.cpp" />
@@ -200,6 +202,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Source\Resource\GfxDescriptorBuffer.inl" />
     <None Include="..\Source\Util\GfxD3DPtr.inl" />
     <None Include="..\Source\Util\GfxFormatUtil.inl" />
     <None Include="..\Source\Util\GfxMath.inl" />

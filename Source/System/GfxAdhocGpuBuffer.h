@@ -1,6 +1,16 @@
 ﻿#ifndef __INCLUDE_GFXADHOCCONSTANTBUFFER_H__
 #define __INCLUDE_GFXADHOCCONSTANTBUFFER_H__
 
+/***************************************************************
+@file	GfxAdhocGpuBuffer
+@par	[説明]
+
+	フレーム中に一時的に確保される定数・頂点・インデックスバッファを作成する
+
+/***************************************************************/
+
+
+
 
 #include <vector>
 

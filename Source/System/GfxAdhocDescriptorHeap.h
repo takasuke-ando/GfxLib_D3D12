@@ -42,8 +42,16 @@ namespace GfxLib
 			@param[out]	startIndex:	ヒープのこのインデックスから書き込める
 			
 		*/
-		DescriptorHeap*	Require( uint32_t size , uint32_t &startIndex );
+		//DescriptorHeap*	Require( uint32_t size , uint32_t &startIndex );
 		
+
+		/***************************************************************
+		@brief	利用可能なデスクリプタヒープを取得する
+		@par	[説明]
+			AdhocDescriptorHeapClientから呼び出される
+
+		*/
+		DescriptorHeap*	Require();
 
 		/***************************************************************
 		@brief	次のフレーム
@@ -61,12 +69,59 @@ namespace GfxLib
 		DescHeapVec		m_aUsingDescHeap[MAX_FRAME_QUEUE];		//!<	使用中のデスクリプタヒープのベクタ
 		DescHeapVec		m_FreeDescHeap;							//!<	未使用のデスクリプタヒープのプール
 		uint32_t		m_nCurrentIndex;
-		DescriptorHeap	*m_pCurrentHeap;
-		uint32_t		m_nCurrentHeapUsedSize;
+		//DescriptorHeap	*m_pCurrentHeap;
+		//uint32_t		m_nCurrentHeapUsedSize;
 		uint32_t		m_allocatedCount;
 
 
 	};
+
+
+
+	class AdhocDescriptorHeapClient
+	{
+	public:
+
+		AdhocDescriptorHeapClient();
+		~AdhocDescriptorHeapClient();
+
+
+		/***************************************************************
+		@brief	初期化
+		@par	[説明]
+		@param
+		*/
+		void	Initialize(AdhocDescriptorHeap* host);
+
+		/***************************************************************
+		@brief	リセット
+		@par	[説明]
+			再利用する場合、フレームの最初に呼び出す
+		@param
+		*/
+		void Reset();
+
+
+
+		/***************************************************************
+		@brief	利用可能なデスクリプタヒープを取得する
+		@par	[説明]
+		このフレームの間だけ、利用可能なデスクリプタヒープを取得する
+		@param[in]	size:		要求サイズ
+		@param[out]	startIndex:	ヒープのこのインデックスから書き込める
+
+		*/
+		DescriptorHeap*	Require(uint32_t size, uint32_t &startIndex);
+
+
+
+	private:
+		AdhocDescriptorHeap*	m_pHost;
+		DescriptorHeap	*m_pCurrentHeap;
+		uint32_t		m_nCurrentHeapUsedSize;
+
+	};
+
 
 
 

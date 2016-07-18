@@ -52,6 +52,12 @@ namespace GfxLib
 		}
 
 
+		D3D12_DESCRIPTOR_HEAP_TYPE		GetHeapType() const {
+			return m_heapType;
+		}
+
+
+
 	private:
 
 		D3DPtr<ID3D12DescriptorHeap>	m_descriptorHeap;

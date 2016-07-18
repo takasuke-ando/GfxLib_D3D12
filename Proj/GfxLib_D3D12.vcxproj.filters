@@ -127,6 +127,9 @@
     <ClInclude Include="..\Source\Resource\GfxBuffer.h">
       <Filter>Resource</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Resource\GfxDescriptorBuffer.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -204,6 +207,9 @@
     <ClCompile Include="..\Source\Resource\GfxBuffer.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Resource\GfxDescriptorBuffer.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Source\Util\GfxD3DPtr.inl">
@@ -214,6 +220,9 @@
     </None>
     <None Include="..\Source\Util\GfxFormatUtil.inl">
       <Filter>Util</Filter>
+    </None>
+    <None Include="..\Source\Resource\GfxDescriptorBuffer.inl">
+      <Filter>Resource</Filter>
     </None>
   </ItemGroup>
 </Project>

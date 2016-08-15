@@ -15,6 +15,9 @@
 #include <vector>
 
 #include "Resource/GfxBuffer.h"
+#include <mutex>
+
+
 
 namespace GfxLib
 {
@@ -47,6 +50,9 @@ namespace GfxLib
 		/***************************************************************
 		@brief	AdhocGpuBufferより呼び出される。Bufferオブジェクトの確保
 		@par	[説明]
+			次のバッファを要求する。
+			このメソッドはマルチスレッドセーフ
+
 		@param
 		*/
 		Buffer*	RequireBuffer();
@@ -69,6 +75,8 @@ namespace GfxLib
 		//Buffer			*m_pCurrentBuffer;
 		//uint32_t		m_nCurrentBufferUsedSize;
 		uint32_t		m_allocatedCount;
+
+		std::mutex		m_Mutex;
 
 
 	};

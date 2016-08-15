@@ -130,6 +130,9 @@
     <ClInclude Include="..\Source\Resource\GfxDescriptorBuffer.h">
       <Filter>Resource</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Device\GfxCommandAllocatorPool.h">
+      <Filter>Device</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -209,6 +212,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Resource\GfxDescriptorBuffer.cpp">
       <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Device\GfxCommandAllocatorPool.cpp">
+      <Filter>Device</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

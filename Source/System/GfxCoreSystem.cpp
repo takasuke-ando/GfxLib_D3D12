@@ -163,6 +163,8 @@ bool	CoreSystem::Initialize()
 	*/
 
 
+	// MiniEngineに倣って、CommandQueueに持たせるというのも手である
+
 	for (uint32_t i = 0; i < __crt_countof(m_aCmdAllocator); ++i) {
 		hr = m_pd3dDev->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(m_aCmdAllocator[i].InitialAccept()));
 		if (FAILED(hr)) {

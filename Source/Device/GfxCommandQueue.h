@@ -7,6 +7,7 @@
 namespace GfxLib
 {
 	class Fence;
+	class CommandAllocatorPool;
 
 	/***************************************************************
 		@brief		コマンドキュークラス
@@ -23,7 +24,24 @@ namespace GfxLib
 		~CommandQueue();
 
 
-		bool Initialize();
+		
+		/***************************************************************
+			@brief	初期化
+			@par	[説明]
+				コマンドキューの初期化を行う
+				CoreSystemの初期化より後に呼び出す必要がある
+			@param
+		*/
+		bool Initialize(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
+
+
+		/***************************************************************
+			@brief	コマンドキューのファイナライズ
+			@par	[説明]
+			コマンドキューを終了する
+			GPUの終了待機するため、このメソッドの呼び出しに時間がかかる可能性がある
+			@param
+		*/
 		void Finalize();
 
 
@@ -49,7 +67,12 @@ namespace GfxLib
 
 	private:
 		D3DPtr<ID3D12CommandQueue>		m_CmdQueue;
-		uint64_t			m_uFenceValue;
+		D3D12_COMMAND_LIST_TYPE			m_CmdListType;
+		CommandAllocatorPool*			m_pCmdAllocatorPool;
+		
+
+		//	フェンス
+		uint64_t				m_uFenceValue;
 		D3DPtr<ID3D12Fence>		m_d3dFence;
 
 

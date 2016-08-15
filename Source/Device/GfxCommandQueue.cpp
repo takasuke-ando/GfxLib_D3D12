@@ -15,6 +15,8 @@
 
 
 #include "GfxCommandQueue.h"
+
+#include "Device/GfxCommandAllocatorPool.h"
 #include "System/GfxCoreSystem.h"
 
 
@@ -27,7 +29,9 @@ using namespace GfxLib;
 
 
 CommandQueue::CommandQueue()
-: m_uFenceValue(1)
+:m_CmdListType(D3D12_COMMAND_LIST_TYPE_DIRECT)
+, m_pCmdAllocatorPool(nullptr)
+, m_uFenceValue(1)
 {
 
 
@@ -40,7 +44,7 @@ CommandQueue::~CommandQueue()
 }
 
 
-bool CommandQueue::Initialize()
+bool CommandQueue::Initialize(D3D12_COMMAND_LIST_TYPE type)
 {
 	Finalize();
 
@@ -52,7 +56,7 @@ bool CommandQueue::Initialize()
 
 	D3D12_COMMAND_QUEUE_DESC	desc = {};
 
-	desc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+	desc.Type = type;
 	desc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 
 	HRESULT hr;
@@ -71,16 +75,42 @@ bool CommandQueue::Initialize()
 		return false;
 	}
 
+	m_CmdListType = type;
+
+	m_pCmdAllocatorPool = new CommandAllocatorPool(pDevice, type);
+
 	return true;
 
 }
 
 
+/***************************************************************
+	@brief	コマンドキューのファイナライズ
+	@par	[説明]
+		コマンドキューを終了する
+		GPUの終了待機するため、このメソッドの呼び出しに時間がかかる可能性がある
+	@param
+*/
 void CommandQueue::Finalize()
 {
 
+	if (m_CmdQueue != nullptr) {
+		Fence fence;
+		fence.Initialize(true);
+
+		InsertFence(&fence);
+
+		// GPUの完了を待機
+		fence.Sync();
+		fence.Finalize();
+	}
+
+
 	m_CmdQueue.Release();
 	m_d3dFence.Release();
+
+	delete m_pCmdAllocatorPool;
+	m_pCmdAllocatorPool = nullptr;
 
 }
 

@@ -136,6 +136,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Source\Device\GfxCommandAllocatorPool.h" />
     <ClInclude Include="..\Source\Device\GfxCommandList.h" />
     <ClInclude Include="..\Source\Device\GfxCommandQueue.h" />
     <ClInclude Include="..\Source\Device\GfxSwapChain.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Source\Device\GfxCommandAllocatorPool.cpp" />
     <ClCompile Include="..\Source\Device\GfxCommandList.cpp" />
     <ClCompile Include="..\Source\Device\GfxCommandQueue.cpp" />
     <ClCompile Include="..\Source\Device\GfxSwapChain.cpp" />

@@ -24,10 +24,9 @@
 		AdhocConstantBuffer => AdhocGpuBuffer に変更
 
 
-		TODO:マルチスレッド処理を考慮すると、細かい単位で同期オブジェクトで制御しないといけないので
-		　　　スレッドローカルなオブジェクトを作れるようにする
+		マルチスレッド処理を考慮すると、細かい単位で同期オブジェクトで制御しないといけないので
+		スレッドローカルなオブジェクト(AdhocGpuBufferClient)を作成し、それ経由でバッファの要求を行う
 
-		   AdhocGpuBufferHost 的な
 
 
 /***************************************************************/
@@ -207,6 +206,7 @@ D3D12_GPU_VIRTUAL_ADDRESS	AdhocGpuBuffer::Require(void * &cpuAddress, uint32_t r
 */
 Buffer*	AdhocGpuBuffer::RequireBuffer()
 {
+	std::lock_guard<std::mutex> LockGuard(m_Mutex);
 
 	Buffer *buffer = nullptr;
 

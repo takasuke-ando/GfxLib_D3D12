@@ -76,6 +76,9 @@ namespace GfxLib
 		//! コマンドアロケータを要求する
 		ID3D12CommandAllocator*	RequireCommandAllocator();
 
+		//! コマンドアロケータを開放。通常は呼び出すことはない
+		void ReleaseCommandAllocator(uint64_t fence , ID3D12CommandAllocator* allocator);
+
 
 	private:
 		D3DPtr<ID3D12CommandQueue>		m_CmdQueue;

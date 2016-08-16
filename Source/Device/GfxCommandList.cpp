@@ -70,7 +70,9 @@ void	CommandList::Finalize()
 {
 
 	if (m_pCurCmdAllocator) {
-		// TODO リークする。CommandQueueに返却しないといけない
+		// CommandQueueに返却しないといけない
+		m_pCmdQueue->ReleaseCommandAllocator( m_pCmdQueue->InsertFence(), m_pCurCmdAllocator );
+
 		m_pCurCmdAllocator = nullptr;
 	}
 

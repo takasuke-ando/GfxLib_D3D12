@@ -219,3 +219,13 @@ ID3D12CommandAllocator*	CommandQueue::RequireCommandAllocator()
 
 }
 
+
+
+
+//! コマンドアロケータを開放。通常は呼び出すことはない
+void CommandQueue::ReleaseCommandAllocator(uint64_t fence, ID3D12CommandAllocator* allocator)
+{
+
+	m_pCmdAllocatorPool->Release(fence, allocator);
+
+}

@@ -17,6 +17,7 @@ namespace GfxLib
 	*/
 	
 	class CoreSystem;
+	class CommandQueue;
 
 	class CommandList
 	{
@@ -25,7 +26,7 @@ namespace GfxLib
 		~CommandList();
 
 
-		bool	Initialize();
+		bool	Initialize(CommandQueue *cmdQueue );
 		void	Finalize();
 
 		//	コマンドの書き込みを可能な状態にする。フレームの最初に呼び出す
@@ -93,12 +94,26 @@ namespace GfxLib
 		DescriptorBuffer AllocateDescriptorBuffer(uint32_t size);
 
 
+		/***************************************************************
+		@brief		アサインされたコマンドキューの取得
+		*/
+		CommandQueue *		GetAssingedCommandQueue() const {
+			return m_pCmdQueue;	
+		}
 
+		/***************************************************************
+		@brief		アロケータをデタッチする
+		*/
+		ID3D12CommandAllocator*	DetachAllocator();
 
 	private:
 
 		D3DPtr<ID3D12GraphicsCommandList>	m_pCmdList;
 		ID3D12Device*						m_pd3dDev;
+
+		CommandQueue *						m_pCmdQueue;		//!<	アサインするコマンドキュー
+
+		ID3D12CommandAllocator*				m_pCurCmdAllocator;	//!<	現在のコマンドアロケータ
 
 		AdhocGpuBufferClient				m_GpuBufferAllocator;
 		AdhocDescriptorHeapClient			m_DescHeapAllocator;

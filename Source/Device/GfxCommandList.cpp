@@ -8,6 +8,7 @@
 #include "GfxCommandList.h"
 #include "System/GfxCoreSystem.h"
 #include "Resource/GfxDescriptorHeap.h"
+#include "Device/GfxCommandQueue.h"
 
 
 using namespace GfxLib;
@@ -15,6 +16,8 @@ using namespace GfxLib;
 
 CommandList::CommandList()
 	:m_pd3dDev(nullptr)
+	,m_pCmdQueue(nullptr)
+	,m_pCurCmdAllocator(nullptr)
 {
 }
 
@@ -24,7 +27,7 @@ CommandList::~CommandList()
 }
 
 
-bool	CommandList::Initialize()
+bool	CommandList::Initialize( CommandQueue* cmdQueue )
 {
 
 	CoreSystem *coreSystem = CoreSystem::GetInstance();
@@ -32,7 +35,8 @@ bool	CommandList::Initialize()
 	HRESULT hr = coreSystem->GetD3DDevice()->CreateCommandList(
 		0,									//	Node Mask  マルチGPU識別用
 		D3D12_COMMAND_LIST_TYPE_DIRECT,
-		coreSystem->GetCurrentCommandAllocator(),
+		//coreSystem->GetCurrentCommandAllocator(),
+		m_pCurCmdAllocator = cmdQueue->RequireCommandAllocator(),
 		nullptr,
 		IID_PPV_ARGS(m_pCmdList.InitialAccept())
 	);
@@ -48,12 +52,13 @@ bool	CommandList::Initialize()
 
 
 	m_pd3dDev = coreSystem->GetD3DDevice();
+	m_pCmdQueue = cmdQueue;
 
 	m_GpuBufferAllocator.Initialize(coreSystem->GetAdhocGpuBufferHost());
 	m_DescHeapAllocator.Initialize(coreSystem->GetAdhocDescriptorHeapHost());
 
 	// おまじない
-	m_pCmdList->Close();
+	//m_pCmdList->Close();
 
 
 	return true;
@@ -64,8 +69,13 @@ bool	CommandList::Initialize()
 void	CommandList::Finalize()
 {
 
-	m_pCmdList.Release();
+	if (m_pCurCmdAllocator) {
+		// TODO リークする。CommandQueueに返却しないといけない
+		m_pCurCmdAllocator = nullptr;
+	}
 
+	m_pCmdList.Release();
+	m_pCmdQueue = nullptr;
 
 }
 
@@ -82,7 +92,10 @@ void	CommandList::Reset(bool frameBorder)
 
 	CoreSystem * coreSystem = CoreSystem::GetInstance();
 
-	m_pCmdList->Reset(coreSystem->GetCurrentCommandAllocator(), nullptr /*PSO*/);
+	//m_pCmdList->Reset(coreSystem->GetCurrentCommandAllocator(), nullptr /*PSO*/);
+	if (m_pCurCmdAllocator == nullptr) {
+		m_pCmdList->Reset(m_pCurCmdAllocator = m_pCmdQueue->RequireCommandAllocator(), nullptr /*PSO*/);
+	}
 
 	// 本来フレームの最初だけ↓を呼べばいい
 	// フレーム内での再利用を識別するため、フレームボーダーかどうかのフラグを持たせたほうが良さそう
@@ -207,3 +220,18 @@ DescriptorBuffer CommandList::AllocateDescriptorBuffer(uint32_t size)
 	return DescriptorBuffer(heap, startIndex, size);
 
 }
+
+
+
+/***************************************************************
+@brief		アロケータをデタッチする
+*/
+ID3D12CommandAllocator*	CommandList::DetachAllocator()
+{
+	ID3D12CommandAllocator *allocator = m_pCurCmdAllocator;
+	m_pCurCmdAllocator = nullptr;
+
+	return allocator;
+
+}
+

@@ -33,6 +33,13 @@ D3D12
 
 ・パイプラインステートのキャッシング
 
+・MiniEngineはCommandList毎にCommandAllocatorを確保していたが
+　これは必要か？
+
+必要ぽい
+同時に2つ以上のCommandListで同じCommandAllocatorを使うのは許されない
+D3D12 ERROR: ID3D12GraphicsCommandList::{Create,Reset}CommandList: The command allocator is currently in-use by another command list or is being reset in another thread. [ EXECUTION ERROR #540: COMMAND_ALLOCATOR_CONTENTION]
+D3D12 ERROR: ID3D12GraphicsCommandList::*: This API cannot be called on a closed command list. [ EXECUTION ERROR #547: COMMAND_LIST_CLOSED]
 
 
 

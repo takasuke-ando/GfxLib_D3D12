@@ -8,6 +8,7 @@ namespace GfxLib
 {
 	class Fence;
 	class CommandAllocatorPool;
+	class CommandList;
 
 	/***************************************************************
 		@brief		コマンドキュークラス
@@ -47,6 +48,14 @@ namespace GfxLib
 
 		ID3D12CommandQueue*	GetD3DCommandQueue() const { return m_CmdQueue;  }
 
+		/***************************************************************
+			@brief	コマンドリストの実行
+			@par	[説明]
+			@param[in]	count:	cmdListsの配列数
+			@param[in]	cmdLists:	コマンドリストのポインタ配列
+			@return		コマンド実行を認識するフェンスの値
+		*/
+		uint64_t				ExecuteCommandLists(uint32_t count, CommandList* cmdLists[]);
 
 
 		// フェンスを挿入 Fenceオブジェクトを使用して、GPUとの同期をとることが可能
@@ -63,6 +72,9 @@ namespace GfxLib
 
 		//	次にフェンスに書き込まれる予定の値を取得する
 		uint64_t				GetNextFenceValue() const { return m_uFenceValue; }
+
+		//! コマンドアロケータを要求する
+		ID3D12CommandAllocator*	RequireCommandAllocator();
 
 
 	private:

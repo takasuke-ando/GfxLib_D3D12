@@ -51,7 +51,8 @@ namespace GfxLib
 		//ID3D12CommandQueue*		GetCommandQueue() const { return m_CmdQueue; }
 
 		//コマンドキューの取得。自動的作成される、唯一のコマンドキュー
-		CommandQueue&			GetCommandQueue() { GFX_ASSERT(m_bInsideBeginEnd==true,L"This fucntion should call inside Begin/End");	 return m_CommandQueue; }
+		CommandQueue&			GetCommandQueue() {  return m_CommandQueue; }
+		//CommandQueue&			GetCommandQueue() { GFX_ASSERT(m_bInsideBeginEnd==true,L"This fucntion should call inside Begin/End");	 return m_CommandQueue; }
 
 		//デスクリプタアロケータの取得
 		DescriptorAllocator*	GetDescriptorAllocator() const { return m_pDescriptorAllocator; }

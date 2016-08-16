@@ -17,6 +17,7 @@
 #include "GfxCommandQueue.h"
 
 #include "Device/GfxCommandAllocatorPool.h"
+#include "Device/GfxCommandList.h"
 #include "System/GfxCoreSystem.h"
 
 
@@ -79,6 +80,9 @@ bool CommandQueue::Initialize(D3D12_COMMAND_LIST_TYPE type)
 
 	m_pCmdAllocatorPool = new CommandAllocatorPool(pDevice, type);
 
+	// 必ず一つは入れておく
+	InsertFence();
+
 	return true;
 
 }
@@ -115,6 +119,50 @@ void CommandQueue::Finalize()
 }
 
 
+/***************************************************************
+@brief	コマンドリストの実行
+@par	[説明]
+	コマンドリストの実行を行う
+	事前にCloseの呼び出しが必要
+
+	流れ的にはCommandListの内部で行ったほうがきれいだが
+	バッチ実行を行うためにCommandQueue側で処理…
+@param[in]	count:	cmdListsの配列数
+@param[in]	cmdLists:	コマンドリストのポインタ配列
+*/
+uint64_t	CommandQueue::ExecuteCommandLists(uint32_t count, CommandList* cmdLists[])
+{
+
+	ID3D12CommandList* ad3dLists[32];	//	...
+
+	GFX_ASSERT(count <= 32, L"Command List Count Over!");
+
+
+	for (uint32_t i = 0; i < count; ++i) {
+
+		ad3dLists[i] = cmdLists[i]->GetD3DCommandList();
+
+		GFX_ASSERT(cmdLists[i]->GetAssingedCommandQueue() == this, L"command list is not assigned to this Queue");
+
+	}
+
+	m_CmdQueue->ExecuteCommandLists(count, ad3dLists);
+
+	uint64_t fence = InsertFence();
+
+
+	// コマンドアロケータの回収
+	for (uint32_t i = 0; i < count; ++i) {
+
+		ID3D12CommandAllocator * allocator = cmdLists[i]->DetachAllocator();
+		m_pCmdAllocatorPool->Release(fence, allocator);
+
+	}
+
+
+
+	return fence;
+}
 
 
 void		CommandQueue::InsertFence(Fence *fence)
@@ -163,4 +211,11 @@ uint64_t	CommandQueue::Signal(ID3D12Fence *fence)
 
 
 
+//! コマンドアロケータを要求する
+ID3D12CommandAllocator*	CommandQueue::RequireCommandAllocator()
+{
+	// 完了したFence値を指定
+	return m_pCmdAllocatorPool->Require(m_d3dFence->GetCompletedValue());
+
+}
 

@@ -52,7 +52,7 @@ bool	Texture2D::Initialize(Format format, uint32_t width, uint32_t height, uint3
 	Finalize();
 
 
-	if (!SuperClass::_Initialize_Texture2D(format, width, height, mipLevels)) {
+	if (!SuperClass::_Initialize_Texture2D_Test(format, width, height, mipLevels)) {
 
 		GFX_ERROR(L"Texture2D Creation Error");
 

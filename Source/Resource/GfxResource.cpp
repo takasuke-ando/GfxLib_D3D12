@@ -231,7 +231,7 @@ bool		Resource::_Initialize_DepthStencil(Format format, uint32_t width, uint32_t
 	http://qiita.com/em7dfggbcadd9/items/b5a9b71a6ae29d86da50
 	さんこう
 */
-bool		Resource::_Initialize_Texture2D(Format format, uint32_t width, uint32_t height, uint32_t mipLevls)
+bool		Resource::_Initialize_Texture2D_Test(Format format, uint32_t width, uint32_t height, uint32_t mipLevls)
 {
 
 

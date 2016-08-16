@@ -12,6 +12,7 @@
 #include "System/GfxAdhocDescriptorHeap.h"
 #include "Resource/GfxDescriptorHeap.h"
 #include "System/GfxAdhocGpuBuffer.h"
+#include "Device/GfxCommandList.h"
 
 
 using namespace GfxLib;
@@ -71,6 +72,12 @@ void CoreSystem::Finalize()
 
 	}
 
+	if (m_pResourceInitCmdList) {
+		m_pResourceInitCmdList->Finalize();
+		delete m_pResourceInitCmdList;
+		m_pResourceInitCmdList = nullptr;
+	}
+
 
 	delete m_pAdhocDescriptorHeap;
 	m_pAdhocDescriptorHeap = nullptr;
@@ -80,9 +87,11 @@ void CoreSystem::Finalize()
 
 	//m_CmdQueue.Release();
 	m_CommandQueue.Finalize();
+	/*
 	for (uint32_t i = 0; i < __crt_countof(m_aCmdAllocator); ++i) {
 		m_aCmdAllocator[i].Release();
 	}
+	*/
 	m_GIFactory.Release();
 
 	for (auto & fence : m_aFence) {
@@ -165,6 +174,7 @@ bool	CoreSystem::Initialize()
 
 	// MiniEngineに倣って、CommandQueueに持たせるというのも手である
 
+	/*
 	for (uint32_t i = 0; i < __crt_countof(m_aCmdAllocator); ++i) {
 		hr = m_pd3dDev->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(m_aCmdAllocator[i].InitialAccept()));
 		if (FAILED(hr)) {
@@ -172,7 +182,7 @@ bool	CoreSystem::Initialize()
 			return false;
 		}
 	}
-
+	*/
 
 
 
@@ -196,6 +206,10 @@ bool	CoreSystem::Initialize()
 	m_pAdhocDescriptorHeap = new AdhocDescriptorHeap(DescriptorHeapType::CBV_SRV_UAV);
 	m_pAdhocGpuBuffer = new AdhocGpuBuffer;
 
+
+	m_pResourceInitCmdList = new CommandList;
+	m_pResourceInitCmdList->Initialize(&m_CommandQueue);
+	m_pResourceInitCmdList->Reset(false);
 
 	return true;
 
@@ -263,11 +277,20 @@ bool		CoreSystem::Begin()
 	m_pAdhocDescriptorHeap->NextFrame();
 	m_pAdhocGpuBuffer->NextFrame();
 
-	m_aCmdAllocator[m_nCurrentCmdAllocatorIndex]->Reset();
+	//m_aCmdAllocator[m_nCurrentCmdAllocatorIndex]->Reset();
 
 
 
 	m_bInsideBeginEnd = true;
+
+	// 予約されていたリソースコピーをキューイング
+	CommandList *c = m_pResourceInitCmdList;
+	m_pResourceInitCmdList->GetD3DCommandList()->Close();
+	m_CommandQueue.ExecuteCommandLists(1, &c);
+
+	// 次の予約に向けて準備
+	m_pResourceInitCmdList->Reset(true);
+
 
 	return true;
 }

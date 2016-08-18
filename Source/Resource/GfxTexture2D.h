@@ -28,13 +28,15 @@ namespace GfxLib
 		/***************************************************************
 		@brief	初期化
 		@par	[説明]
-			2Dテクスチャとして初期化する
+			Immutableな2Dテクスチャとして初期化する
 		@param[in]	format	:	バッファフォーマット
 		@param[in]	width	:	幅
 		@param[in]	height	:	高さ
 		@param[in]	mipLevels:	ミップレベル(0にすると、自動的に完全なミップを作成する)
+		@param[in]  subData:	初期化に使用するサブリソースデータ
 		*/
-		bool	Initialize( Format format, uint32_t width, uint32_t height, uint32_t mipLevels );
+		bool	Initialize(Format format, uint32_t width, uint32_t height, uint32_t mipLevels);
+		bool	Initialize( Format format, uint32_t width, uint32_t height, uint32_t mipLevels , uint32_t subDataNum, const D3D12_SUBRESOURCE_DATA subData [] );
 
 
 		/***************************************************************

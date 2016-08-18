@@ -140,6 +140,7 @@
     <ClInclude Include="..\Source\Device\GfxCommandList.h" />
     <ClInclude Include="..\Source\Device\GfxCommandQueue.h" />
     <ClInclude Include="..\Source\Device\GfxSwapChain.h" />
+    <ClInclude Include="..\Source\External\DirectX-Graphics-Samples\d3dx12.h" />
     <ClInclude Include="..\Source\GfxLib.h" />
     <ClInclude Include="..\Source\GfxLibStdAfx.h" />
     <ClInclude Include="..\Source\Resource\GfxBuffer.h" />

@@ -288,3 +288,69 @@ bool		Resource::_Initialize_Texture2D_Test(Format format, uint32_t width, uint32
 
 
 }
+
+
+/***************************************************************
+	@brief	Immutableなリソースとして初期化
+	@par	[説明]
+		HEAP_TYPE_DEFAULTで作成するので
+		UPLOADヒープを経由して初期化を行う必要がある
+
+		リソースステートはCOPY_DESTになる
+	@param
+*/
+bool		Resource::_Initialize_Texture2D(Format format, uint32_t width, uint32_t height, uint32_t mipLevls)
+{
+
+	ID3D12Device *pDev = CoreSystem::GetInstance()->GetD3DDevice();
+
+	D3D12_HEAP_PROPERTIES heapProp = {};
+
+
+	//	ひとまずCPUアクセス可能なHeapにするが
+	//	本来はD3D12_HEAP_TYPE_DEFAULTにして、UPLOADヒープからコピーするだけにしたい
+
+	heapProp.Type = D3D12_HEAP_TYPE_DEFAULT;		
+	heapProp.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;	
+	heapProp.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+	heapProp.CreationNodeMask = 0;
+	heapProp.VisibleNodeMask = 0;
+
+
+	D3D12_RESOURCE_DESC resDesc = {};
+
+	resDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	resDesc.Alignment = 0;
+	resDesc.Width = width;
+	resDesc.Height = height;
+	resDesc.DepthOrArraySize = 1;
+	resDesc.MipLevels = mipLevls;
+	resDesc.Format = (DXGI_FORMAT)format;
+	resDesc.SampleDesc.Count = 1;
+	resDesc.SampleDesc.Quality = 0;
+	resDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+	resDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+
+
+
+	HRESULT hr = pDev->CreateCommittedResource(
+		&heapProp,
+		D3D12_HEAP_FLAG_NONE,
+		&resDesc,
+		D3D12_RESOURCE_STATE_COPY_DEST,
+		nullptr,
+		IID_PPV_ARGS(m_d3dRes.InitialAccept())
+		);
+
+
+	if (FAILED(hr)) {
+		GFX_ERROR(L"CreateCommittedResource Error ! (%08x)", hr);
+		return false;
+	}
+
+
+	return true;
+
+
+
+}

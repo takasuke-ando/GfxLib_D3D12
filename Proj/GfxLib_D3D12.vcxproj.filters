@@ -31,6 +31,12 @@
     <Filter Include="State">
       <UniqueIdentifier>{1c3a581d-9c37-453b-b346-2583c50e4aa1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="External">
+      <UniqueIdentifier>{0554032e-02cb-4510-b9f1-ed18798b1e85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\DirectX-Graphics-Samples">
+      <UniqueIdentifier>{5f9f16a7-9bf6-4b6f-b3e5-d715cfe5b7a7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -132,6 +138,9 @@
     </ClInclude>
     <ClInclude Include="..\Source\Device\GfxCommandAllocatorPool.h">
       <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\External\DirectX-Graphics-Samples\d3dx12.h">
+      <Filter>External\DirectX-Graphics-Samples</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -57,31 +57,6 @@ namespace GfxLib
 		D3D12_GPU_VIRTUAL_ADDRESS	AllocateGpuBuffer(void * &cpuAddress, uint32_t size, uint32_t alignment);
 
 
-
-		/***************************************************************
-		@brief	利用可能なデスクリプタヒープを取得する
-		@par	[説明]
-		このフレームの間だけ、利用可能なデスクリプタヒープを取得する
-		@param[in]	size:		要求サイズ
-		@param[out]	startIndex:	ヒープのこのインデックスから書き込める
-
-		*/
-		//DescriptorHeap*	RequireAdhocDescriptorHeap(uint32_t size, uint32_t &startIndex);
-
-
-
-		/***************************************************************
-		@brief	利用可能なデスクリプタヒープを取得する
-		@par	[説明]
-		このフレームの間だけ、利用可能なデスクリプタヒープを取得する
-		同時に、ハンドルコピーも行う
-		@param[in]	size:		要求サイズ
-		@param[out]	startIndex:	ヒープのこのインデックスから書き込める
-		@param[in]	srcHandle:	コピー元となるハンドルの配列
-		*/
-		//DescriptorHeap*	RequireAdhocDescriptorHeap(uint32_t size, uint32_t &startIndex, const D3D12_CPU_DESCRIPTOR_HANDLE *srcHandle);
-
-
 		/***************************************************************
 			@brief	デスクリプタバッファの確保
 			@par	[説明]
@@ -92,6 +67,7 @@ namespace GfxLib
 			@param[in]	size
 		*/
 		DescriptorBuffer AllocateDescriptorBuffer(uint32_t size);
+
 
 
 		/***************************************************************

@@ -219,11 +219,32 @@ DescriptorBuffer CommandList::AllocateDescriptorBuffer(uint32_t size)
 		return DescriptorBuffer();
 	}
 
-	return DescriptorBuffer(heap, startIndex, size);
+	return DescriptorBuffer(heap, startIndex, size,this );
 
 }
 
 
+#if 0
+/***************************************************************
+@brief	デスクリプタバッファに定数を設定する
+@par	[説明]
+デスクリプタバッファに定数バッファを設定する
+@param
+*/
+void	CommandList::SetConstantBuffer(DescriptorBuffer& descBuff, uint32_t index, const void* pData, uint32_t size)
+{
+
+	void* cpuAddr = nullptr;
+	D3D12_GPU_VIRTUAL_ADDRESS gpuAddr = AllocateGpuBuffer(cpuAddr,
+		GfxLib::UpperBounds(size, 256), D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
+
+	
+	memcpy(cpuAddr, pData , size);
+
+	descBuff.SetConstantBuffer( index , gpuAddr , size )
+
+}
+#endif
 
 /***************************************************************
 @brief		アロケータをデタッチする

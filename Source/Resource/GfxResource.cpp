@@ -52,7 +52,7 @@ void Resource::Finalize(bool delayed)
 
 
 
-bool		Resource::_Initialize_Buffer(size_t sizeInBytes)
+bool		Resource::_Initialize_Buffer(size_t sizeInBytes, D3D12_HEAP_TYPE heapType, D3D12_RESOURCE_STATES initState)
 {
 
 
@@ -61,7 +61,7 @@ bool		Resource::_Initialize_Buffer(size_t sizeInBytes)
 	D3D12_HEAP_PROPERTIES heapProp = {};
 
 
-	heapProp.Type = D3D12_HEAP_TYPE_UPLOAD;
+	heapProp.Type = heapType;
 	heapProp.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
 	heapProp.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
 	heapProp.CreationNodeMask = 1;
@@ -87,7 +87,7 @@ bool		Resource::_Initialize_Buffer(size_t sizeInBytes)
 		&heapProp,
 		D3D12_HEAP_FLAG_NONE,
 		&resDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
+		initState,
 		nullptr,
 		IID_PPV_ARGS(m_d3dRes.InitialAccept())
 	);

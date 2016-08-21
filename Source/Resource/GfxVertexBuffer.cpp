@@ -31,12 +31,13 @@ VertexBuffer::~VertexBuffer()
 bool VertexBuffer::Initialize(const void* pVtxData, size_t strideSize, size_t vtxCount)
 {
 	Finalize();
-
-
+	
 	const size_t sizeInBytes = strideSize * vtxCount;
 
+#if 0
 
-	bool b = _Initialize_Buffer(sizeInBytes);
+
+	bool b = _Initialize_Buffer(sizeInBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_GENERIC_READ);
 
 	void* pAddr = nullptr;
 	HRESULT hr = m_d3dRes->Map(0, nullptr, &pAddr);
@@ -57,9 +58,19 @@ bool VertexBuffer::Initialize(const void* pVtxData, size_t strideSize, size_t vt
 	m_vtxBuffView.BufferLocation = m_d3dRes->GetGPUVirtualAddress();
 	m_vtxBuffView.StrideInBytes = (UINT)strideSize;
 	m_vtxBuffView.SizeInBytes = (UINT)sizeInBytes;
+#endif
+
+	bool b = InitializeImmutable(pVtxData, sizeInBytes);
+
+	if (b) {
+
+		m_vtxBuffView.BufferLocation = m_d3dRes->GetGPUVirtualAddress();
+		m_vtxBuffView.StrideInBytes = (UINT)strideSize;
+		m_vtxBuffView.SizeInBytes = (UINT)sizeInBytes;
+	}
 
 
-	return true;
+	return b;
 
 }
 

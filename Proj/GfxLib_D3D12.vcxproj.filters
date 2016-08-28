@@ -142,6 +142,9 @@
     <ClInclude Include="..\Source\External\DirectX-Graphics-Samples\d3dx12.h">
       <Filter>External\DirectX-Graphics-Samples</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Resource\GfxIndexBuffer.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -224,6 +227,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Device\GfxCommandAllocatorPool.cpp">
       <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Resource\GfxIndexBuffer.cpp">
+      <Filter>Resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -22,6 +22,7 @@
 #include "Resource/GfxRootSignature.h"
 #include "Resource/GfxRootSignatureDesc.h"
 #include "Resource/GfxVertexBuffer.h"
+#include "Resource/GfxIndexBuffer.h"
 #include "Resource/GfxConstantBuffer.h"
 #include "Resource/GfxRenderTarget.h"
 #include "Resource/GfxDepthStencil.h"

@@ -12,6 +12,7 @@
 #include "Device/GfxCommandList.h"
 
 #include "External/DirectX-Graphics-Samples/d3dx12.h"
+#include "External/DirectX-Graphics-Samples/DDSTextureLoader.h"
 
 using namespace GfxLib;
 
@@ -136,10 +137,14 @@ bool	Texture2D::Initialize(
 	{
 		// @TODO	マルチスレッド処理の場合はどうするのか
 
-		UINT64 uploadBufferSize = d3dx12::GetRequiredIntermediateSize(GetD3DResource(), 0, subDataNum);
-
 
 		CommandList *initCmdList = CoreSystem::GetInstance()->GetResourceInitCommandList();
+
+		initCmdList->InitializeResource(GetD3DResource(), subDataNum, subData);
+
+#if 0
+		UINT64 uploadBufferSize = d3dx12::GetRequiredIntermediateSize(GetD3DResource(), 0, subDataNum);
+
 
 		D3DPtr<ID3D12Resource>	d3dResForUpload;
 
@@ -160,7 +165,7 @@ bool	Texture2D::Initialize(
 		resDesc.Width = uploadBufferSize;
 		resDesc.Height = 1;
 		resDesc.DepthOrArraySize = 1;
-		resDesc.MipLevels = mipLevels;
+		resDesc.MipLevels = 1;
 		resDesc.Format = DXGI_FORMAT_UNKNOWN;
 		resDesc.SampleDesc.Count = 1;
 		resDesc.SampleDesc.Quality = 0;
@@ -192,6 +197,9 @@ bool	Texture2D::Initialize(
 
 		// 遅延開放に登録
 		CoreSystem::GetInstance()->GetDelayDelete().Regist((ID3D12Resource*)d3dResForUpload);
+
+#endif
+
 
 
 	}
@@ -226,6 +234,47 @@ bool	Texture2D::Initialize(
 
 
 	return true;
+}
+
+
+
+
+/***************************************************************
+	@brief	ファイルから初期化
+	@par	[説明]
+	@param
+*/
+bool	Texture2D::InitializeFromFile(const wchar_t *filePath)
+{
+	Finalize();
+
+
+	//ID3D12Resource *resource = nullptr;
+
+	ID3D12Device *d3dDev = GfxLib::CoreSystem::GetInstance()->GetD3DDevice();
+	m_SrvHandle = GfxLib::AllocateDescriptorHandle(GfxLib::DescriptorHeapType::CBV_SRV_UAV);
+
+	HRESULT hr = CreateDDSTextureFromFile(
+		d3dDev,
+		filePath,
+		4096,
+		false,
+		m_d3dRes.InitialAccept(),
+		m_SrvHandle
+	);
+
+	if (FAILED(hr)) {
+		GFX_ERROR(L"InitializeFromFile (%08x)", hr);
+
+		GfxLib::FreeDescriptorHandle(DescriptorHeapType::CBV_SRV_UAV, m_SrvHandle);
+		m_SrvHandle.ptr = 0;
+
+		return false;
+	}
+
+
+	return true;
+
 }
 
 

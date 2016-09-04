@@ -145,6 +145,18 @@
     <ClInclude Include="..\Source\Resource\GfxIndexBuffer.h">
       <Filter>Resource</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\External\DirectX-Graphics-Samples\Utility.h">
+      <Filter>External\DirectX-Graphics-Samples</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\External\DirectX-Graphics-Samples\DDSTextureLoader.h">
+      <Filter>External\DirectX-Graphics-Samples</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\External\DirectX-Graphics-Samples\dds.h">
+      <Filter>External\DirectX-Graphics-Samples</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\External\DirectX-Graphics-Samples\pch.h">
+      <Filter>External\DirectX-Graphics-Samples</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -230,6 +242,12 @@
     </ClCompile>
     <ClCompile Include="..\Source\Resource\GfxIndexBuffer.cpp">
       <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\External\DirectX-Graphics-Samples\Utility.cpp">
+      <Filter>External\DirectX-Graphics-Samples</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\External\DirectX-Graphics-Samples\DDSTextureLoader.cpp">
+      <Filter>External\DirectX-Graphics-Samples</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -82,6 +82,19 @@ namespace GfxLib
 		*/
 		ID3D12CommandAllocator*	DetachAllocator();
 
+
+		/***************************************************************
+			@brief	リソースの初期化コピーを行う
+			@par	[説明]
+			@param
+		*/
+		bool	InitializeResource(
+			ID3D12Resource* dstResource , 
+			uint32_t subDataNum,
+			const D3D12_SUBRESOURCE_DATA subData[]);
+
+
+
 	private:
 
 		D3DPtr<ID3D12GraphicsCommandList>	m_pCmdList;

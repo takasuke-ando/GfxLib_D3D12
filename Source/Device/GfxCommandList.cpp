@@ -10,6 +10,7 @@
 #include "Resource/GfxDescriptorHeap.h"
 #include "Device/GfxCommandQueue.h"
 
+#include "External/DirectX-Graphics-Samples/d3dx12.h"
 
 using namespace GfxLib;
 
@@ -257,4 +258,77 @@ ID3D12CommandAllocator*	CommandList::DetachAllocator()
 	return allocator;
 
 }
+
+
+/***************************************************************
+@brief	リソースの初期化コピーを行う
+@par	[説明]
+@param
+*/
+bool	CommandList::InitializeResource(
+	ID3D12Resource* dstResource,
+	uint32_t subDataNum,
+	const D3D12_SUBRESOURCE_DATA subData[])
+{
+
+	UINT64 uploadBufferSize = d3dx12::GetRequiredIntermediateSize(dstResource, 0, subDataNum);
+	ID3D12Device *d3dDev = GfxLib::CoreSystem::GetInstance()->GetD3DDevice();
+	
+
+	// @TODO 小さい初期化の場合、アドホックなバッファを使うこともできるように
+	D3DPtr<ID3D12Resource>	d3dResForUpload;
+	D3D12_HEAP_PROPERTIES heapProp = {};
+
+
+	heapProp.Type = D3D12_HEAP_TYPE_UPLOAD;
+	heapProp.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+	heapProp.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+	heapProp.CreationNodeMask = 0;
+	heapProp.VisibleNodeMask = 0;
+
+
+	D3D12_RESOURCE_DESC resDesc = {};
+
+	resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;	//	TextureへのUpload中間バッファは、Bufferとして作る必要がある
+	resDesc.Alignment = 0;
+	resDesc.Width = uploadBufferSize;
+	resDesc.Height = 1;
+	resDesc.DepthOrArraySize = 1;
+	resDesc.MipLevels = 1;
+	resDesc.Format = DXGI_FORMAT_UNKNOWN;
+	resDesc.SampleDesc.Count = 1;
+	resDesc.SampleDesc.Quality = 0;
+	resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;	//	RowMajor→UNKNOWN へのコピー可能？
+	resDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+
+
+
+	HRESULT hr = d3dDev->CreateCommittedResource(
+		&heapProp,
+		D3D12_HEAP_FLAG_NONE,
+		&resDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,		//	変更不可
+		nullptr,
+		IID_PPV_ARGS(d3dResForUpload.InitialAccept())
+		);
+
+
+	if (FAILED(hr)) {
+		GFX_ERROR(L"Create Committed Resource Failed (%08x)", hr);
+		return false;
+	}
+
+
+
+	d3dx12::UpdateSubresources(GetD3DCommandList(), dstResource, d3dResForUpload, 0, 0, subDataNum, subData);
+	ResourceTransitionBarrier(dstResource, ResourceStates::CopyDest, ResourceStates::GenericRead);
+
+
+	// 遅延開放に登録
+	CoreSystem::GetInstance()->GetDelayDelete().Regist((ID3D12Resource*)d3dResForUpload);
+
+	return true;
+
+}
+
 

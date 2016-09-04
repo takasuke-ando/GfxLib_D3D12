@@ -38,6 +38,8 @@ namespace GfxLib
 		bool	Initialize(Format format, uint32_t width, uint32_t height, uint32_t mipLevels);
 		bool	Initialize( Format format, uint32_t width, uint32_t height, uint32_t mipLevels , uint32_t subDataNum, const D3D12_SUBRESOURCE_DATA subData [] );
 
+		bool	InitializeFromFile(const wchar_t *filePath);
+
 
 		/***************************************************************
 		@brief	開放

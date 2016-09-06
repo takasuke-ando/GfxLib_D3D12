@@ -32,7 +32,7 @@ using namespace GfxLib;
 CommandQueue::CommandQueue()
 :m_CmdListType(D3D12_COMMAND_LIST_TYPE_DIRECT)
 , m_pCmdAllocatorPool(nullptr)
-, m_uFenceValue(1)
+, m_uFenceValue(0)
 {
 
 
@@ -189,7 +189,7 @@ uint64_t	CommandQueue::InsertFence()
 // フェンスを待機しているか
 bool		CommandQueue::IsFencePending(uint64_t fenceValue)
 {
-	GFX_ASSERT( fenceValue < m_uFenceValue , L"Invalid Fence Value" )
+	GFX_ASSERT( fenceValue <= m_uFenceValue , L"Invalid Fence Value" )
 	return m_d3dFence->GetCompletedValue() < fenceValue;
 
 }
@@ -200,10 +200,10 @@ bool		CommandQueue::IsFencePending(uint64_t fenceValue)
 uint64_t	CommandQueue::Signal(ID3D12Fence *fence)
 {
 
-	uint64_t fv = m_uFenceValue;
+	uint64_t fv = ++m_uFenceValue;
 	//m_CmdQueue->Signal(fence, m_uFenceValue);
 	m_CmdQueue->Signal(fence, m_uFenceValue);
-	++m_uFenceValue;
+	//++m_uFenceValue;
 
 
 	return fv;

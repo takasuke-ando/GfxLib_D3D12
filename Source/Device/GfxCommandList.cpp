@@ -142,7 +142,7 @@ void	CommandList::ResourceTransitionBarrier(ID3D12Resource* res , ResourceStates
 D3D12_GPU_VIRTUAL_ADDRESS	CommandList::AllocateGpuBuffer(void * &cpuAddress, uint32_t size, uint32_t alignment)
 {
 
-	return m_GpuBufferAllocator.Require(cpuAddress, size, alignment);
+	return m_GpuBufferAllocator.Require(cpuAddress, m_pCmdQueue->GetCompletedFence(), size, alignment);
 
 }
 

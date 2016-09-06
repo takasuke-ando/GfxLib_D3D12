@@ -174,29 +174,29 @@ bool	Texture2D::Initialize(
 
 
 
-		HRESULT hr = d3dDev->CreateCommittedResource(
-			&heapProp,
-			D3D12_HEAP_FLAG_NONE,
-			&resDesc,
-			D3D12_RESOURCE_STATE_GENERIC_READ,		//	変更不可
-			nullptr,
-			IID_PPV_ARGS(d3dResForUpload.InitialAccept())
-			);
+HRESULT hr = d3dDev->CreateCommittedResource(
+	&heapProp,
+	D3D12_HEAP_FLAG_NONE,
+	&resDesc,
+	D3D12_RESOURCE_STATE_GENERIC_READ,		//	変更不可
+	nullptr,
+	IID_PPV_ARGS(d3dResForUpload.InitialAccept())
+	);
 
 
-		if (FAILED(hr)) {
-			GFX_ERROR(L"Create Committed Resource Failed (%08x)",hr);
-			return false;
-		}
+if (FAILED(hr)) {
+	GFX_ERROR(L"Create Committed Resource Failed (%08x)", hr);
+	return false;
+}
 
 
 
-		d3dx12::UpdateSubresources( initCmdList->GetD3DCommandList() , GetD3DResource(), d3dResForUpload, 0, 0, subDataNum, subData);
-		initCmdList->ResourceTransitionBarrier(GetD3DResource(), ResourceStates::CopyDest, ResourceStates::GenericRead);
+d3dx12::UpdateSubresources(initCmdList->GetD3DCommandList(), GetD3DResource(), d3dResForUpload, 0, 0, subDataNum, subData);
+initCmdList->ResourceTransitionBarrier(GetD3DResource(), ResourceStates::CopyDest, ResourceStates::GenericRead);
 
 
-		// 遅延開放に登録
-		CoreSystem::GetInstance()->GetDelayDelete().Regist((ID3D12Resource*)d3dResForUpload);
+// 遅延開放に登録
+CoreSystem::GetInstance()->GetDelayDelete().Regist((ID3D12Resource*)d3dResForUpload);
 
 #endif
 
@@ -254,6 +254,7 @@ bool	Texture2D::InitializeFromFile(const wchar_t *filePath)
 	ID3D12Device *d3dDev = GfxLib::CoreSystem::GetInstance()->GetD3DDevice();
 	m_SrvHandle = GfxLib::AllocateDescriptorHandle(GfxLib::DescriptorHeapType::CBV_SRV_UAV);
 
+	//	DDSファイルから、読み込む
 	HRESULT hr = CreateDDSTextureFromFile(
 		d3dDev,
 		filePath,
@@ -269,6 +270,16 @@ bool	Texture2D::InitializeFromFile(const wchar_t *filePath)
 		GfxLib::FreeDescriptorHandle(DescriptorHeapType::CBV_SRV_UAV, m_SrvHandle);
 		m_SrvHandle.ptr = 0;
 
+		return false;
+	}
+
+	const D3D12_RESOURCE_DESC desc = GetD3DResource()->GetDesc();
+
+	if ( desc.Dimension != D3D12_RESOURCE_DIMENSION_TEXTURE2D ){
+		// テクスチャ2Dではなかった
+		GFX_ERROR( L"Texture Dimension mismatch (%d)" , desc.Dimension );
+		// コピー処理がキューイングされているため、遅延開放する必要がある
+		Finalize(true);
 		return false;
 	}
 
@@ -297,7 +308,7 @@ void	Texture2D::Finalize(bool delayed /* = GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FINA
 	}
 
 
-	SuperClass::Finalize();
+	SuperClass::Finalize(delayed);
 }
 
 
@@ -306,24 +317,9 @@ void	Texture2D::Finalize(bool delayed /* = GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FINA
 /***************************************************************
 @brief	テクスチャへの書き込み
 @par	[説明]
-Initialize後に呼び出し、初期化を行う
-現状はD3D12_HEAP_TYPE_UPLOADに対して
-あまり効率は良くないはず
-
-UPLOADからDEFAULTへのコピーを行う
-
-Initialize関数に初期化構造体を渡すようにするかも
-
-
-typedef struct D3D11_SUBRESOURCE_DATA {
-const void *pSysMem;
-UINT       SysMemPitch;
-UINT       SysMemSlicePitch;
-} D3D11_SUBRESOURCE_DATA;
-
-的な
-
-しかしその場合呼び出し側でミップレベル数を知っておく必要がある
+	Initialize後に呼び出し、初期化を行う
+	現状はD3D12_HEAP_TYPE_UPLOADに対して
+	あまり効率は良くない
 
 @param
 */

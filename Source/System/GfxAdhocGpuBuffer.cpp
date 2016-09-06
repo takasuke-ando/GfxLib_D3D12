@@ -70,21 +70,25 @@ AdhocGpuBuffer::AdhocGpuBuffer()
 AdhocGpuBuffer::~AdhocGpuBuffer()
 {
 
-	for (auto &vec : m_aUsingBuffer) {
 
-		for (auto &desc : vec) {
-			delete desc;
-		}
-
-		vec.clear();
-
-	}
-
-
-	for (auto &desc : m_FreeBuffer) {
+	for (auto &desc : m_UsingBuffer) {
 		delete desc;
 	}
+
+	m_UsingBuffer.clear();
+
+
+	/*
+	for (auto &desc : m_FreeBuffer) {
+		delete desc.second;
+	}
 	m_FreeBuffer.clear();
+	*/
+	while (!m_FreeBuffer.empty()) {
+		auto &it = m_FreeBuffer.front();
+		delete it.second;
+		m_FreeBuffer.pop();
+	}
 
 	//delete m_pCurrentBuffer;
 	//m_pCurrentBuffer = nullptr;
@@ -204,13 +208,26 @@ D3D12_GPU_VIRTUAL_ADDRESS	AdhocGpuBuffer::Require(void * &cpuAddress, uint32_t r
 @par	[説明]
 @param
 */
-Buffer*	AdhocGpuBuffer::RequireBuffer()
+Buffer*	AdhocGpuBuffer::RequireBuffer(uint64_t finished_fence)
 {
 	std::lock_guard<std::mutex> LockGuard(m_Mutex);
 
 	Buffer *buffer = nullptr;
 
-	if (m_FreeBuffer.size() == 0) {
+
+
+	if (m_FreeBuffer.size() > 0){
+
+		// 未使用リストから取り出す
+		auto &fence_and_buffer = m_FreeBuffer.front();
+
+		if (finished_fence >= fence_and_buffer.first) {
+			buffer = fence_and_buffer.second;
+			m_FreeBuffer.pop();
+		}
+
+	}
+	if (!buffer) {
 		// 新たにDescHeapの作成
 		buffer = new Buffer;
 
@@ -223,15 +240,9 @@ Buffer*	AdhocGpuBuffer::RequireBuffer()
 		}
 		++m_allocatedCount;
 	}
-	else {
 
-		// 未使用リストから取り出す
-		buffer = m_FreeBuffer.back();
-		m_FreeBuffer.pop_back();
 
-	}
-
-	m_aUsingBuffer[m_nCurrentIndex].push_back(buffer);
+	m_UsingBuffer.push_back(buffer);
 
 
 	return buffer;
@@ -245,9 +256,9 @@ Buffer*	AdhocGpuBuffer::RequireBuffer()
 @par	[説明]
 毎フレーム呼び出す
 MAX_FRAME_QUEUEフレーム前の描画が完全に完了していることが保証されていないといけない
-@param
+@param[in]	borderFence:	バッファの使用終了タイミングを識別するためのフェンス値
 */
-void AdhocGpuBuffer::NextFrame()
+void AdhocGpuBuffer::NextFrame(uint64_t borderFence)
 {
 	//if (m_pCurrentBuffer) {
 	//	m_aUsingBuffer[m_nCurrentIndex].push_back(m_pCurrentBuffer);
@@ -255,15 +266,15 @@ void AdhocGpuBuffer::NextFrame()
 	//}
 
 	// Rotate Index
-	m_nCurrentIndex = (m_nCurrentIndex + 1) % _countof(m_aUsingBuffer);
+	//m_nCurrentIndex = (m_nCurrentIndex + 1) % _countof(m_aUsingBuffer);
 
 	// 再利用可能になったヒープを回収する
-	for (auto &desc : m_aUsingBuffer[m_nCurrentIndex]) {
+	for (auto &desc : m_UsingBuffer) {
 
-		m_FreeBuffer.push_back(desc);
+		m_FreeBuffer.push(std::make_pair(borderFence, desc )  );
 
 	}
-	m_aUsingBuffer[m_nCurrentIndex].clear();
+	m_UsingBuffer.clear();
 
 }
 
@@ -325,7 +336,7 @@ void	AdhocGpuBufferClient::Reset()
 @param[in]	alignment:	アライメント
 
 */
-D3D12_GPU_VIRTUAL_ADDRESS	AdhocGpuBufferClient::Require(void * &cpuAddress, uint32_t requestSize, uint32_t alignment)
+D3D12_GPU_VIRTUAL_ADDRESS	AdhocGpuBufferClient::Require(void * &cpuAddress, uint64_t fence, uint32_t requestSize, uint32_t alignment)
 {
 
 	//	最大アライメント制限をオーバーしている
@@ -384,7 +395,7 @@ D3D12_GPU_VIRTUAL_ADDRESS	AdhocGpuBufferClient::Require(void * &cpuAddress, uint
 		return 0;
 	}
 
-	m_pCurrentBuffer = m_pHost->RequireBuffer();
+	m_pCurrentBuffer = m_pHost->RequireBuffer(fence);
 
 
 	// 新規バッファのアドレスを調整

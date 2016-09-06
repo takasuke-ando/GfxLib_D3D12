@@ -13,6 +13,7 @@
 
 
 #include <vector>
+#include <queue>
 
 #include "Resource/GfxBuffer.h"
 #include <mutex>
@@ -53,24 +54,25 @@ namespace GfxLib
 			次のバッファを要求する。
 			このメソッドはマルチスレッドセーフ
 
-		@param
+		@param[in]	fence:	再利用タイミングを識別するための、現在のフェンス値
 		*/
-		Buffer*	RequireBuffer();
+		Buffer*	RequireBuffer(uint64_t fence);
 
 		/***************************************************************
 		@brief	次のフレーム
 		@par	[説明]
 		@param
 		*/
-		void NextFrame();
+		void NextFrame(uint64_t borderFence);
 
 
 	private:
 
 		
 		typedef std::vector< GfxLib::Buffer* >	BufferVec;
-		BufferVec		m_aUsingBuffer[MAX_FRAME_QUEUE];		//!<	使用中のデスクリプタヒープのベクタ
-		BufferVec		m_FreeBuffer;							//!<	未使用のデスクリプタヒープのプール
+		typedef std::queue< std::pair<uint64_t,GfxLib::Buffer*> >	FenceAndBufferVec;
+		BufferVec		m_UsingBuffer;							//!<	使用中のデスクリプタヒープのベクタ
+		FenceAndBufferVec		m_FreeBuffer;					//!<	再利用街のデスクリプタヒープのプール
 		uint32_t		m_nCurrentIndex;
 		//Buffer			*m_pCurrentBuffer;
 		//uint32_t		m_nCurrentBufferUsedSize;
@@ -118,11 +120,12 @@ namespace GfxLib
 		このフレームの間だけ、利用可能なGPUアサインされたバッファを確保します
 		数フレーム後にはこの領域は再利用されるため、継続して保持することはできません
 		@param[out]  cpuAddress:	成功時に、CPUマップ済みアドレスが返される
+		@param[in]	fence:		再利用タイミングを識別するフェンス値
 		@param[in]	size:		要求サイズ
 		@param[in]	alignment:	アライメント
 
 		*/
-		D3D12_GPU_VIRTUAL_ADDRESS	Require(void * &cpuAddress, uint32_t size, uint32_t alignment);
+		D3D12_GPU_VIRTUAL_ADDRESS	Require(void * &cpuAddress, uint64_t fence,  uint32_t size, uint32_t alignment);
 
 
 

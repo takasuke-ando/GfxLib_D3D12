@@ -71,7 +71,12 @@ namespace GfxLib
 		uint64_t				Signal(ID3D12Fence *fence);
 
 		//	次にフェンスに書き込まれる予定の値を取得する
-		uint64_t				GetNextFenceValue() const { return m_uFenceValue; }
+		uint64_t				GetNextFenceValue() const { return m_uFenceValue+1; }
+
+		//	最後にフェンスに書き込まれた値を取得する
+		uint64_t				GetLastFenceValue() const { return m_uFenceValue; }
+
+		uint64_t				GetCompletedFence() const { return  m_d3dFence->GetCompletedValue(); }
 
 		//! コマンドアロケータを要求する
 		ID3D12CommandAllocator*	RequireCommandAllocator();

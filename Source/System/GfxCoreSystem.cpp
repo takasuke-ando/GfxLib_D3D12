@@ -267,6 +267,7 @@ bool		CoreSystem::Begin()
 		m_nCurrentCmdAllocatorIndex = 0;
 	}
 
+	const uint64_t borderFence = m_CommandQueue.InsertFence();
 
 	// コマンドアロケータの再利用の前
 	m_aFence[m_nCurrentCmdAllocatorIndex].Sync();
@@ -275,7 +276,7 @@ bool		CoreSystem::Begin()
 	m_DelayDelete.Update();
 
 	m_pAdhocDescriptorHeap->NextFrame();
-	m_pAdhocGpuBuffer->NextFrame();
+	m_pAdhocGpuBuffer->NextFrame(borderFence);
 
 	//m_aCmdAllocator[m_nCurrentCmdAllocatorIndex]->Reset();
 

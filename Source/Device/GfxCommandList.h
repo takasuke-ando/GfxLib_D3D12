@@ -95,6 +95,15 @@ namespace GfxLib
 
 
 
+		/***************************************************************
+			@brief	ExecuteCommandListが呼び出された
+			@par	[説明]
+				ExecuteCommandListが呼び出された後に呼ばれる
+			@param
+		*/
+		void	OnExecute(uint64_t fence);
+
+
 	private:
 
 		D3DPtr<ID3D12GraphicsCommandList>	m_pCmdList;

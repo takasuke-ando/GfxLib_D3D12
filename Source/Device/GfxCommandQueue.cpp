@@ -19,6 +19,7 @@
 #include "Device/GfxCommandAllocatorPool.h"
 #include "Device/GfxCommandList.h"
 #include "System/GfxCoreSystem.h"
+#include "System/GfxAdhocGpuBuffer.h"
 
 
 
@@ -32,6 +33,7 @@ using namespace GfxLib;
 CommandQueue::CommandQueue()
 :m_CmdListType(D3D12_COMMAND_LIST_TYPE_DIRECT)
 , m_pCmdAllocatorPool(nullptr)
+, m_pAdhocGpuBuffer(nullptr)
 , m_uFenceValue(0)
 {
 
@@ -79,6 +81,7 @@ bool CommandQueue::Initialize(D3D12_COMMAND_LIST_TYPE type)
 	m_CmdListType = type;
 
 	m_pCmdAllocatorPool = new CommandAllocatorPool(pDevice, type);
+	m_pAdhocGpuBuffer = new AdhocGpuBuffer;
 
 	// 必ず一つは入れておく
 	InsertFence();
@@ -115,6 +118,9 @@ void CommandQueue::Finalize()
 
 	delete m_pCmdAllocatorPool;
 	m_pCmdAllocatorPool = nullptr;
+
+	delete m_pAdhocGpuBuffer;
+	m_pAdhocGpuBuffer = nullptr;
 
 }
 
@@ -153,6 +159,9 @@ uint64_t	CommandQueue::ExecuteCommandLists(uint32_t count, CommandList* cmdLists
 
 	// コマンドアロケータの回収
 	for (uint32_t i = 0; i < count; ++i) {
+
+
+		cmdLists[i]->OnExecute(fence);
 
 		ID3D12CommandAllocator * allocator = cmdLists[i]->DetachAllocator();
 		m_pCmdAllocatorPool->Release(fence, allocator);

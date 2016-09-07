@@ -9,6 +9,7 @@ namespace GfxLib
 	class Fence;
 	class CommandAllocatorPool;
 	class CommandList;
+	class AdhocGpuBuffer;
 
 	/***************************************************************
 		@brief		コマンドキュークラス
@@ -85,11 +86,16 @@ namespace GfxLib
 		void ReleaseCommandAllocator(uint64_t fence , ID3D12CommandAllocator* allocator);
 
 
+		//AdhocGpuBuffer*		GetAdhocGpuBufferHost() const {
+		//	return m_pAdhocGpuBuffer;
+		//}
+
 	private:
 		D3DPtr<ID3D12CommandQueue>		m_CmdQueue;
 		D3D12_COMMAND_LIST_TYPE			m_CmdListType;
 		CommandAllocatorPool*			m_pCmdAllocatorPool;
-		
+		AdhocGpuBuffer*			m_pAdhocGpuBuffer;
+
 
 		//	フェンス
 		uint64_t				m_uFenceValue;

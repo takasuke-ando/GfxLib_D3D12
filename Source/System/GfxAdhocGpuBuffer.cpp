@@ -70,20 +70,13 @@ AdhocGpuBuffer::AdhocGpuBuffer()
 AdhocGpuBuffer::~AdhocGpuBuffer()
 {
 
-
+	/*
 	for (auto &desc : m_UsingBuffer) {
 		delete desc;
 	}
-
 	m_UsingBuffer.clear();
-
-
-	/*
-	for (auto &desc : m_FreeBuffer) {
-		delete desc.second;
-	}
-	m_FreeBuffer.clear();
 	*/
+
 	while (!m_FreeBuffer.empty()) {
 		auto &it = m_FreeBuffer.front();
 		delete it.second;
@@ -242,10 +235,32 @@ Buffer*	AdhocGpuBuffer::RequireBuffer(uint64_t finished_fence)
 	}
 
 
-	m_UsingBuffer.push_back(buffer);
+	//UsingBuffer使いません
+	//m_UsingBuffer.push_back(buffer);
 
 
 	return buffer;
+
+}
+
+
+/***************************************************************
+@brief	バッファの回収を行う
+@par	[説明]
+FenceValueを0にすると、使わなかったバッファということで待機なしでの回収になる
+@param
+*/
+void	AdhocGpuBuffer::ReleaseBuffer(uint64_t FenceValue, Buffer* buffer)
+{
+
+	if (FenceValue) {
+		m_FreeBuffer.push(std::make_pair(FenceValue, buffer));
+	}
+	else {
+		//	@TODO:	待機せずに使いまわしたい
+		m_FreeBuffer.push(std::make_pair(FenceValue, buffer));
+	}
+
 
 }
 
@@ -269,13 +284,14 @@ void AdhocGpuBuffer::NextFrame(uint64_t borderFence)
 	//m_nCurrentIndex = (m_nCurrentIndex + 1) % _countof(m_aUsingBuffer);
 
 	// 再利用可能になったヒープを回収する
+	/*
 	for (auto &desc : m_UsingBuffer) {
 
 		m_FreeBuffer.push(std::make_pair(borderFence, desc )  );
 
 	}
 	m_UsingBuffer.clear();
-
+	*/
 }
 
 
@@ -298,7 +314,10 @@ AdhocGpuBufferClient::AdhocGpuBufferClient()
 AdhocGpuBufferClient::~AdhocGpuBufferClient()
 {
 
-
+	for (auto buffer : m_vecUsingBuffer) {
+		m_pHost->ReleaseBuffer(0, buffer);
+	}
+	m_vecUsingBuffer.clear();
 
 }
 
@@ -315,10 +334,17 @@ void	AdhocGpuBufferClient::Initialize(AdhocGpuBuffer *host)
 /***************************************************************
 @brief	フレームの最初に呼び出す
 @par	[説明]
+	再利用を可能にするため、
+	所持していたバッファの返却などを行います
 @param
 */
-void	AdhocGpuBufferClient::Reset()
+void	AdhocGpuBufferClient::Reset(uint64_t fence )
 {
+
+	for (auto buffer : m_vecUsingBuffer) {
+		m_pHost->ReleaseBuffer(fence, buffer);
+	}
+	m_vecUsingBuffer.clear();
 
 	m_pCurrentBuffer = nullptr;
 	m_nCurrentBufferUsedSize = 0;
@@ -397,6 +423,7 @@ D3D12_GPU_VIRTUAL_ADDRESS	AdhocGpuBufferClient::Require(void * &cpuAddress, uint
 
 	m_pCurrentBuffer = m_pHost->RequireBuffer(fence);
 
+	m_vecUsingBuffer.push_back(m_pCurrentBuffer);
 
 	// 新規バッファのアドレスを調整
 	D3D12_GPU_VIRTUAL_ADDRESS result = m_pCurrentBuffer->GetGpuVirtualAddress();

@@ -103,7 +103,7 @@ void	CommandList::Reset(bool frameBorder)
 	// 本来フレームの最初だけ↓を呼べばいい
 	// フレーム内での再利用を識別するため、フレームボーダーかどうかのフラグを持たせたほうが良さそう
 	if (frameBorder) {
-		m_GpuBufferAllocator.Reset();
+		m_GpuBufferAllocator.Reset(0);	//	OnExecuteが呼ばれなかった場合、こちらで回収を行う
 		m_DescHeapAllocator.Reset();
 	}
 
@@ -332,3 +332,18 @@ bool	CommandList::InitializeResource(
 }
 
 
+
+
+/***************************************************************
+@brief	ExecuteCommandListが呼び出された
+@par	[説明]
+ExecuteCommandListが呼び出された後に呼ばれる
+@param[in]	fence:	コマンドがGPU側で完了したことを識別するフェンス
+*/
+void	CommandList::OnExecute(uint64_t fence)
+{
+
+	m_GpuBufferAllocator.Reset(fence);
+
+
+}

@@ -58,6 +58,15 @@ namespace GfxLib
 		*/
 		Buffer*	RequireBuffer(uint64_t fence);
 
+
+		/***************************************************************
+			@brief	バッファの回収を行う
+			@par	[説明]
+				FenceValueを0にすると、使わなかったバッファということで待機なしでの回収になる
+			@param
+		*/
+		void	ReleaseBuffer(uint64_t FenceValue, Buffer*);
+
 		/***************************************************************
 		@brief	次のフレーム
 		@par	[説明]
@@ -69,9 +78,9 @@ namespace GfxLib
 	private:
 
 		
-		typedef std::vector< GfxLib::Buffer* >	BufferVec;
+		//typedef std::vector< GfxLib::Buffer* >	BufferVec;
 		typedef std::queue< std::pair<uint64_t,GfxLib::Buffer*> >	FenceAndBufferVec;
-		BufferVec		m_UsingBuffer;							//!<	使用中のデスクリプタヒープのベクタ
+		//BufferVec		m_UsingBuffer;							//!<	使用中のデスクリプタヒープのベクタ
 		FenceAndBufferVec		m_FreeBuffer;					//!<	再利用街のデスクリプタヒープのプール
 		uint32_t		m_nCurrentIndex;
 		//Buffer			*m_pCurrentBuffer;
@@ -107,11 +116,13 @@ namespace GfxLib
 
 
 		/***************************************************************
-		@brief	フレームの最初に呼び出す
+		@brief	内部状態のリセット
 		@par	[説明]
+			再利用を可能にするため、
+			所持していたバッファの返却などを行います
 		@param
 		*/
-		void	Reset();
+		void	Reset(uint64_t fence);
 
 
 		/***************************************************************
@@ -130,7 +141,12 @@ namespace GfxLib
 
 
 	private:
+
+		// immutable 
 		AdhocGpuBuffer	*m_pHost;
+
+		// work
+		std::vector<Buffer*> m_vecUsingBuffer;
 		Buffer			*m_pCurrentBuffer;
 		uint32_t		m_nCurrentBufferUsedSize;
 	};

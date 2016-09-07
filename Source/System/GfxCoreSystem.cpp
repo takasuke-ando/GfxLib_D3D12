@@ -28,7 +28,7 @@ CoreSystem::CoreSystem()
 	, m_driverType(D3D_DRIVER_TYPE_HARDWARE)
 	, m_pDescriptorAllocator(nullptr)
 	, m_pAdhocDescriptorHeap(nullptr)
-	, m_pAdhocGpuBuffer(nullptr)
+	//, m_pAdhocGpuBuffer(nullptr)
 	, m_bInsideBeginEnd(false)
 	, m_nUpdateCount(0)
 	, m_nFrameCount(0)
@@ -82,8 +82,8 @@ void CoreSystem::Finalize()
 	delete m_pAdhocDescriptorHeap;
 	m_pAdhocDescriptorHeap = nullptr;
 
-	delete m_pAdhocGpuBuffer;
-	m_pAdhocGpuBuffer = nullptr;
+	//delete m_pAdhocGpuBuffer;
+	//m_pAdhocGpuBuffer = nullptr;
 
 	//m_CmdQueue.Release();
 	m_CommandQueue.Finalize();
@@ -204,7 +204,7 @@ bool	CoreSystem::Initialize()
 
 	m_pDescriptorAllocator = new DescriptorAllocator;
 	m_pAdhocDescriptorHeap = new AdhocDescriptorHeap(DescriptorHeapType::CBV_SRV_UAV);
-	m_pAdhocGpuBuffer = new AdhocGpuBuffer;
+	//m_pAdhocGpuBuffer = new AdhocGpuBuffer;
 
 
 	m_pResourceInitCmdList = new CommandList;
@@ -276,7 +276,7 @@ bool		CoreSystem::Begin()
 	m_DelayDelete.Update();
 
 	m_pAdhocDescriptorHeap->NextFrame();
-	m_pAdhocGpuBuffer->NextFrame(borderFence);
+	//m_pAdhocGpuBuffer->NextFrame(borderFence);
 
 	//m_aCmdAllocator[m_nCurrentCmdAllocatorIndex]->Reset();
 

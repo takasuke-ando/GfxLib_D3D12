@@ -55,7 +55,7 @@ bool	CommandList::Initialize( CommandQueue* cmdQueue )
 	m_pd3dDev = coreSystem->GetD3DDevice();
 	m_pCmdQueue = cmdQueue;
 
-	m_GpuBufferAllocator.Initialize(coreSystem->GetAdhocGpuBufferHost());
+	m_GpuBufferAllocator.Initialize(cmdQueue->GetAdhocGpuBufferHost());
 	m_DescHeapAllocator.Initialize(coreSystem->GetAdhocDescriptorHeapHost());
 
 	// おまじない

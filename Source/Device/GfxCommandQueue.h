@@ -86,9 +86,9 @@ namespace GfxLib
 		void ReleaseCommandAllocator(uint64_t fence , ID3D12CommandAllocator* allocator);
 
 
-		//AdhocGpuBuffer*		GetAdhocGpuBufferHost() const {
-		//	return m_pAdhocGpuBuffer;
-		//}
+		AdhocGpuBuffer*		GetAdhocGpuBufferHost() const {
+			return m_pAdhocGpuBuffer;
+		}
 
 	private:
 		D3DPtr<ID3D12CommandQueue>		m_CmdQueue;

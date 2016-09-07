@@ -13,7 +13,7 @@
 
 
 #include <vector>
-#include <queue>
+#include <deque>
 
 #include "Resource/GfxBuffer.h"
 #include <mutex>
@@ -79,7 +79,7 @@ namespace GfxLib
 
 		
 		//typedef std::vector< GfxLib::Buffer* >	BufferVec;
-		typedef std::queue< std::pair<uint64_t,GfxLib::Buffer*> >	FenceAndBufferVec;
+		typedef std::deque< std::pair<uint64_t,GfxLib::Buffer*> >	FenceAndBufferVec;
 		//BufferVec		m_UsingBuffer;							//!<	使用中のデスクリプタヒープのベクタ
 		FenceAndBufferVec		m_FreeBuffer;					//!<	再利用街のデスクリプタヒープのプール
 		uint32_t		m_nCurrentIndex;

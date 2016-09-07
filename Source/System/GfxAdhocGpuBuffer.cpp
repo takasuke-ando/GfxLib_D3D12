@@ -80,7 +80,7 @@ AdhocGpuBuffer::~AdhocGpuBuffer()
 	while (!m_FreeBuffer.empty()) {
 		auto &it = m_FreeBuffer.front();
 		delete it.second;
-		m_FreeBuffer.pop();
+		m_FreeBuffer.pop_front();
 	}
 
 	//delete m_pCurrentBuffer;
@@ -216,7 +216,7 @@ Buffer*	AdhocGpuBuffer::RequireBuffer(uint64_t finished_fence)
 
 		if (finished_fence >= fence_and_buffer.first) {
 			buffer = fence_and_buffer.second;
-			m_FreeBuffer.pop();
+			m_FreeBuffer.pop_front();
 		}
 
 	}
@@ -254,11 +254,11 @@ void	AdhocGpuBuffer::ReleaseBuffer(uint64_t FenceValue, Buffer* buffer)
 {
 
 	if (FenceValue) {
-		m_FreeBuffer.push(std::make_pair(FenceValue, buffer));
+		m_FreeBuffer.push_back(std::make_pair(FenceValue, buffer));
 	}
 	else {
-		//	@TODO:	待機せずに使いまわしたい
-		m_FreeBuffer.push(std::make_pair(FenceValue, buffer));
+		//	待機せずに使いまわしたい
+		m_FreeBuffer.push_front(std::make_pair(FenceValue, buffer));
 	}
 
 
@@ -336,7 +336,7 @@ void	AdhocGpuBufferClient::Initialize(AdhocGpuBuffer *host)
 @par	[説明]
 	再利用を可能にするため、
 	所持していたバッファの返却などを行います
-@param
+@param[in]	fence:	すべてのバッファが使用完了することが保証される、フェンス値
 */
 void	AdhocGpuBufferClient::Reset(uint64_t fence )
 {

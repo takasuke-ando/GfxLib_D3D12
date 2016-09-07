@@ -116,9 +116,9 @@ namespace GfxLib
 		HRESULT _CreateSwapChain(DXGI_SWAP_CHAIN_DESC& desc ,IDXGISwapChain* &swapChain);
 
 
-		AdhocGpuBuffer*		GetAdhocGpuBufferHost() const {
-			return m_pAdhocGpuBuffer;
-		}
+		//AdhocGpuBuffer*		GetAdhocGpuBufferHost() const {
+		//	return m_pAdhocGpuBuffer;
+		//}
 
 		AdhocDescriptorHeap* GetAdhocDescriptorHeapHost() const {
 			return m_pAdhocDescriptorHeap;
@@ -142,7 +142,7 @@ namespace GfxLib
 
 		DescriptorAllocator*	m_pDescriptorAllocator;
 		AdhocDescriptorHeap*	m_pAdhocDescriptorHeap;
-		AdhocGpuBuffer*			m_pAdhocGpuBuffer;
+		//AdhocGpuBuffer*			m_pAdhocGpuBuffer;
 
 
 		//	描画管理

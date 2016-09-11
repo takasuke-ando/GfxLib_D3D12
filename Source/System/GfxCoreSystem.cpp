@@ -275,9 +275,6 @@ bool		CoreSystem::Begin()
 	// GPU待機の直後に行う
 	m_DelayDelete.Update();
 
-	m_pAdhocDescriptorHeap->NextFrame();
-	//m_pAdhocGpuBuffer->NextFrame(borderFence);
-
 	//m_aCmdAllocator[m_nCurrentCmdAllocatorIndex]->Reset();
 
 

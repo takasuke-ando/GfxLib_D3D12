@@ -37,17 +37,6 @@ namespace GfxLib
 
 
 		/***************************************************************
-			@brief	利用可能なデスクリプタヒープを取得する
-			@par	[説明]
-				このフレームの間だけ、利用可能なデスクリプタヒープを取得する
-			@param[in]	size:		要求サイズ
-			@param[out]	startIndex:	ヒープのこのインデックスから書き込める
-			
-		*/
-		//DescriptorHeap*	Require( uint32_t size , uint32_t &startIndex );
-		
-
-		/***************************************************************
 		@brief	利用可能なデスクリプタヒープを取得する
 		@par	[説明]
 			AdhocDescriptorHeapClientから呼び出される
@@ -66,25 +55,14 @@ namespace GfxLib
 		void	Release(uint64_t FenceValue, DescriptorHeap* heap);
 
 
-		/***************************************************************
-		@brief	次のフレーム
-		@par	[説明]
-		@param
-		*/
-		void NextFrame();
 
 	private:
 
 
 		DescriptorHeapType m_heapType;
 
-		typedef std::vector< DescriptorHeap* >	DescHeapVec;
-		DescHeapVec		m_aUsingDescHeap[MAX_FRAME_QUEUE];		//!<	使用中のデスクリプタヒープのベクタ
 		typedef std::deque< std::pair< uint64_t, DescriptorHeap* > >	FenceAndDescHeapVec;
 		FenceAndDescHeapVec		m_FreeDescHeap;							//!<	未使用のデスクリプタヒープのプール
-		uint32_t		m_nCurrentIndex;
-		//DescriptorHeap	*m_pCurrentHeap;
-		//uint32_t		m_nCurrentHeapUsedSize;
 		uint32_t		m_allocatedCount;
 
 

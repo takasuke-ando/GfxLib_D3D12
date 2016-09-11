@@ -51,7 +51,6 @@ namespace {
 */
 AdhocDescriptorHeap::AdhocDescriptorHeap(DescriptorHeapType heapType )
 	: m_heapType(heapType)
-	, m_nCurrentIndex(0)
 	//, m_pCurrentHeap(nullptr)
 	//, m_nCurrentHeapUsedSize(0)
 	, m_allocatedCount(0)
@@ -68,24 +67,6 @@ AdhocDescriptorHeap::AdhocDescriptorHeap(DescriptorHeapType heapType )
 AdhocDescriptorHeap::~AdhocDescriptorHeap()
 {
 
-	/*
-	for ( auto &vec : m_aUsingDescHeap ) {
-
-		for (auto &desc : vec) {
-			delete desc;
-		}
-
-		vec.clear();
-
-	}
-	*/
-
-	/*
-	for (auto &desc : m_FreeDescHeap ) {
-		delete desc;
-	}
-	m_FreeDescHeap.clear();
-	*/
 	while (m_FreeDescHeap.size() > 0) {
 
 		auto &info = m_FreeDescHeap.front();
@@ -96,9 +77,6 @@ AdhocDescriptorHeap::~AdhocDescriptorHeap()
 
 	}
 
-	//delete m_pCurrentHeap;
-	//m_pCurrentHeap = nullptr;
-	
 }
 
 
@@ -148,17 +126,6 @@ DescriptorHeap*	AdhocDescriptorHeap::Require(uint64_t completedFence)
 		++m_allocatedCount;
 	}
 
-	/*
-	else {
-
-		// 未使用リストから取り出す
-		descHeap = m_FreeDescHeap.back();
-		m_FreeDescHeap.pop_back();
-
-	}
-	*/
-
-	//m_aUsingDescHeap[m_nCurrentIndex].push_back(descHeap);
 
 
 	return descHeap;
@@ -189,35 +156,6 @@ void	AdhocDescriptorHeap::Release(uint64_t FenceValue, DescriptorHeap* heap)
 	}
 
 
-}
-
-
-/***************************************************************
-@brief	次のフレーム
-@par	[説明]
-	毎フレーム呼び出す
-	MAX_FRAME_QUEUEフレーム前の描画が完全に完了していることが保証されていないといけない
-@param
-*/
-void AdhocDescriptorHeap::NextFrame()
-{
-	//if (m_pCurrentHeap) {
-	//	m_aUsingDescHeap[m_nCurrentIndex].push_back(m_pCurrentHeap);
-	//	m_pCurrentHeap = nullptr;
-	//}
-
-	// Rotate Index
-	//m_nCurrentIndex = (m_nCurrentIndex+1) % _countof(m_aUsingDescHeap);
-
-	// 再利用可能になったヒープを回収する
-	/*
-	for (auto &desc : m_aUsingDescHeap[m_nCurrentIndex]) {
-
-		m_FreeDescHeap.push_back(desc);
-
-	}
-	m_aUsingDescHeap[m_nCurrentIndex].clear();
-	*/
 }
 
 

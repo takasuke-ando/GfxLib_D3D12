@@ -35,18 +35,6 @@ namespace GfxLib
 
 
 
-		/***************************************************************
-		@brief	バッファの確保を行います
-		@par	[説明]
-			このフレームの間だけ、利用可能なGPUアサインされたバッファを確保します
-			数フレーム後にはこの領域は再利用されるため、継続して保持することはできません
-		@param[out]  cpuAddress:	成功時に、CPUマップ済みアドレスが返される
-		@param[in]	size:		要求サイズ
-		@param[in]	alignment:	アライメント
-
-		*/
-		//D3D12_GPU_VIRTUAL_ADDRESS	Require( void * &cpuAddress , uint32_t size, uint32_t alignment);
-
 
 		/***************************************************************
 		@brief	AdhocGpuBufferより呼び出される。Bufferオブジェクトの確保
@@ -67,24 +55,14 @@ namespace GfxLib
 		*/
 		void	ReleaseBuffer(uint64_t FenceValue, Buffer*);
 
-		/***************************************************************
-		@brief	次のフレーム
-		@par	[説明]
-		@param
-		*/
-		void NextFrame(uint64_t borderFence);
 
 
 	private:
 
 		
-		//typedef std::vector< GfxLib::Buffer* >	BufferVec;
 		typedef std::deque< std::pair<uint64_t,GfxLib::Buffer*> >	FenceAndBufferVec;
-		//BufferVec		m_UsingBuffer;							//!<	使用中のデスクリプタヒープのベクタ
 		FenceAndBufferVec		m_FreeBuffer;					//!<	再利用街のデスクリプタヒープのプール
-		uint32_t		m_nCurrentIndex;
-		//Buffer			*m_pCurrentBuffer;
-		//uint32_t		m_nCurrentBufferUsedSize;
+
 		uint32_t		m_allocatedCount;
 
 		std::mutex		m_Mutex;

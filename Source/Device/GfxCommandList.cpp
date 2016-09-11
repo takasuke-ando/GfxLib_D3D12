@@ -69,6 +69,10 @@ bool	CommandList::Initialize( CommandQueue* cmdQueue )
 
 void	CommandList::Finalize()
 {
+	
+	//	OnExecuteが呼ばれなかった場合、こちらで回収を行う
+	m_GpuBufferAllocator.Reset(0);	
+	m_DescHeapAllocator.Reset(0);
 
 	if (m_pCurCmdAllocator) {
 		// CommandQueueに返却しないといけない
@@ -104,7 +108,7 @@ void	CommandList::Reset(bool frameBorder)
 	// フレーム内での再利用を識別するため、フレームボーダーかどうかのフラグを持たせたほうが良さそう
 	if (frameBorder) {
 		m_GpuBufferAllocator.Reset(0);	//	OnExecuteが呼ばれなかった場合、こちらで回収を行う
-		m_DescHeapAllocator.Reset();
+		m_DescHeapAllocator.Reset(0);
 	}
 
 }
@@ -142,7 +146,8 @@ void	CommandList::ResourceTransitionBarrier(ID3D12Resource* res , ResourceStates
 D3D12_GPU_VIRTUAL_ADDRESS	CommandList::AllocateGpuBuffer(void * &cpuAddress, uint32_t size, uint32_t alignment)
 {
 
-	return m_GpuBufferAllocator.Require(cpuAddress, m_pCmdQueue->GetCompletedFence(), size, alignment);
+	
+	return m_GpuBufferAllocator.Require(cpuAddress, m_pCmdQueue, size, alignment);
 
 }
 
@@ -215,7 +220,7 @@ DescriptorBuffer CommandList::AllocateDescriptorBuffer(uint32_t size)
 {
 
 	uint32_t startIndex = 0;
-	DescriptorHeap *heap = m_DescHeapAllocator.Require(size, startIndex);
+	DescriptorHeap *heap = m_DescHeapAllocator.Require(startIndex, m_pCmdQueue, size);
 	if (!heap) {
 		return DescriptorBuffer();
 	}
@@ -344,6 +349,6 @@ void	CommandList::OnExecute(uint64_t fence)
 {
 
 	m_GpuBufferAllocator.Reset(fence);
-
+	m_DescHeapAllocator.Reset(fence);
 
 }

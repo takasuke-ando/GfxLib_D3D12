@@ -24,7 +24,7 @@ namespace GfxLib
 {
 
 	class ConstantBuffer;
-
+	class CommandQueue;
 
 
 	class AdhocGpuBuffer
@@ -131,12 +131,12 @@ namespace GfxLib
 		このフレームの間だけ、利用可能なGPUアサインされたバッファを確保します
 		数フレーム後にはこの領域は再利用されるため、継続して保持することはできません
 		@param[out]  cpuAddress:	成功時に、CPUマップ済みアドレスが返される
-		@param[in]	fence:		再利用タイミングを識別するフェンス値
+		@param[in]	fenceOwnQueue:		再利用タイミングを識別するフェンス値を取得するためのキュー
 		@param[in]	size:		要求サイズ
 		@param[in]	alignment:	アライメント
 
 		*/
-		D3D12_GPU_VIRTUAL_ADDRESS	Require(void * &cpuAddress, uint64_t fence,  uint32_t size, uint32_t alignment);
+		D3D12_GPU_VIRTUAL_ADDRESS	Require(void * &cpuAddress, CommandQueue *fenceOwnQueue,  uint32_t size, uint32_t alignment);
 
 
 

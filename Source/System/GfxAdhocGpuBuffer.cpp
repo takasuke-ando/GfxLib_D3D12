@@ -40,6 +40,7 @@
 
 
 #include "System/GfxAdhocGpuBuffer.h"
+#include "Device/GfxCommandQueue.h"
 #include "Util/GfxMath.h"
 
 
@@ -362,7 +363,7 @@ void	AdhocGpuBufferClient::Reset(uint64_t fence )
 @param[in]	alignment:	アライメント
 
 */
-D3D12_GPU_VIRTUAL_ADDRESS	AdhocGpuBufferClient::Require(void * &cpuAddress, uint64_t fence, uint32_t requestSize, uint32_t alignment)
+D3D12_GPU_VIRTUAL_ADDRESS	AdhocGpuBufferClient::Require(void * &cpuAddress, CommandQueue *fenceOwnQueue, uint32_t requestSize, uint32_t alignment)
 {
 
 	//	最大アライメント制限をオーバーしている
@@ -421,6 +422,7 @@ D3D12_GPU_VIRTUAL_ADDRESS	AdhocGpuBufferClient::Require(void * &cpuAddress, uint
 		return 0;
 	}
 
+	const uint64_t fence = fenceOwnQueue->GetCompletedFence();
 	m_pCurrentBuffer = m_pHost->RequireBuffer(fence);
 
 	m_vecUsingBuffer.push_back(m_pCurrentBuffer);

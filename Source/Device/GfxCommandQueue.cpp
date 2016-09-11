@@ -20,6 +20,7 @@
 #include "Device/GfxCommandList.h"
 #include "System/GfxCoreSystem.h"
 #include "System/GfxAdhocGpuBuffer.h"
+#include "System/GfxAdhocDescriptorHeap.h"
 
 
 
@@ -34,6 +35,7 @@ CommandQueue::CommandQueue()
 :m_CmdListType(D3D12_COMMAND_LIST_TYPE_DIRECT)
 , m_pCmdAllocatorPool(nullptr)
 , m_pAdhocGpuBuffer(nullptr)
+, m_pAdhocDescriptorHeap(nullptr)
 , m_uFenceValue(0)
 {
 
@@ -82,6 +84,7 @@ bool CommandQueue::Initialize(D3D12_COMMAND_LIST_TYPE type)
 
 	m_pCmdAllocatorPool = new CommandAllocatorPool(pDevice, type);
 	m_pAdhocGpuBuffer = new AdhocGpuBuffer;
+	m_pAdhocDescriptorHeap = new AdhocDescriptorHeap(DescriptorHeapType::CBV_SRV_UAV);
 
 	// 必ず一つは入れておく
 	InsertFence();
@@ -121,6 +124,9 @@ void CommandQueue::Finalize()
 
 	delete m_pAdhocGpuBuffer;
 	m_pAdhocGpuBuffer = nullptr;
+
+	delete m_pAdhocDescriptorHeap;
+	m_pAdhocDescriptorHeap = nullptr;
 
 }
 

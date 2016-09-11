@@ -10,6 +10,7 @@ namespace GfxLib
 	class CommandAllocatorPool;
 	class CommandList;
 	class AdhocGpuBuffer;
+	class AdhocDescriptorHeap;
 
 	/***************************************************************
 		@brief		コマンドキュークラス
@@ -90,11 +91,16 @@ namespace GfxLib
 			return m_pAdhocGpuBuffer;
 		}
 
+		AdhocDescriptorHeap* GetAdhocDescriptorHeapHost() const {
+			return m_pAdhocDescriptorHeap;
+		}
+
 	private:
 		D3DPtr<ID3D12CommandQueue>		m_CmdQueue;
 		D3D12_COMMAND_LIST_TYPE			m_CmdListType;
 		CommandAllocatorPool*			m_pCmdAllocatorPool;
 		AdhocGpuBuffer*			m_pAdhocGpuBuffer;
+		AdhocDescriptorHeap*	m_pAdhocDescriptorHeap;
 
 
 		//	フェンス

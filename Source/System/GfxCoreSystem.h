@@ -120,9 +120,9 @@ namespace GfxLib
 		//	return m_pAdhocGpuBuffer;
 		//}
 
-		AdhocDescriptorHeap* GetAdhocDescriptorHeapHost() const {
-			return m_pAdhocDescriptorHeap;
-		}
+		//AdhocDescriptorHeap* GetAdhocDescriptorHeapHost() const {
+		//	return m_pAdhocDescriptorHeap;
+		//}
 
 	private:
 
@@ -141,7 +141,7 @@ namespace GfxLib
 		DelayDelete			m_DelayDelete;
 
 		DescriptorAllocator*	m_pDescriptorAllocator;
-		AdhocDescriptorHeap*	m_pAdhocDescriptorHeap;
+		//AdhocDescriptorHeap*	m_pAdhocDescriptorHeap;
 		//AdhocGpuBuffer*			m_pAdhocGpuBuffer;
 
 

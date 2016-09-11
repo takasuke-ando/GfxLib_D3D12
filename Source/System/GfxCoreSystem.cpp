@@ -27,7 +27,7 @@ CoreSystem::CoreSystem()
 	, m_featureLevel(D3D_FEATURE_LEVEL_11_0)
 	, m_driverType(D3D_DRIVER_TYPE_HARDWARE)
 	, m_pDescriptorAllocator(nullptr)
-	, m_pAdhocDescriptorHeap(nullptr)
+	//, m_pAdhocDescriptorHeap(nullptr)
 	//, m_pAdhocGpuBuffer(nullptr)
 	, m_bInsideBeginEnd(false)
 	, m_nUpdateCount(0)
@@ -79,8 +79,8 @@ void CoreSystem::Finalize()
 	}
 
 
-	delete m_pAdhocDescriptorHeap;
-	m_pAdhocDescriptorHeap = nullptr;
+	//delete m_pAdhocDescriptorHeap;
+	//m_pAdhocDescriptorHeap = nullptr;
 
 	//delete m_pAdhocGpuBuffer;
 	//m_pAdhocGpuBuffer = nullptr;
@@ -203,7 +203,7 @@ bool	CoreSystem::Initialize()
 
 
 	m_pDescriptorAllocator = new DescriptorAllocator;
-	m_pAdhocDescriptorHeap = new AdhocDescriptorHeap(DescriptorHeapType::CBV_SRV_UAV);
+	//m_pAdhocDescriptorHeap = new AdhocDescriptorHeap(DescriptorHeapType::CBV_SRV_UAV);
 	//m_pAdhocGpuBuffer = new AdhocGpuBuffer;
 
 

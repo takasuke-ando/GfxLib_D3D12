@@ -56,7 +56,7 @@ bool	CommandList::Initialize( CommandQueue* cmdQueue )
 	m_pCmdQueue = cmdQueue;
 
 	m_GpuBufferAllocator.Initialize(cmdQueue->GetAdhocGpuBufferHost());
-	m_DescHeapAllocator.Initialize(coreSystem->GetAdhocDescriptorHeapHost());
+	m_DescHeapAllocator.Initialize(cmdQueue->GetAdhocDescriptorHeapHost());
 
 	// おまじない
 	//m_pCmdList->Close();

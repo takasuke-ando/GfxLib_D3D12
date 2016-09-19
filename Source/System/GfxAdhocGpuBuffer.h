@@ -16,6 +16,7 @@
 #include <deque>
 
 #include "Resource/GfxBuffer.h"
+#include "Resource/GfxGpuBufferRange.h"
 #include <mutex>
 
 
@@ -114,7 +115,8 @@ namespace GfxLib
 		@param[in]	alignment:	アライメント
 
 		*/
-		D3D12_GPU_VIRTUAL_ADDRESS	Require(void * &cpuAddress, CommandQueue *fenceOwnQueue,  uint32_t size, uint32_t alignment);
+		//D3D12_GPU_VIRTUAL_ADDRESS	Require(void * &cpuAddress, CommandQueue *fenceOwnQueue,  uint32_t size, uint32_t alignment);
+		GpuBufferRange	Require( CommandQueue *fenceOwnQueue, uint32_t size, uint32_t alignment);
 
 
 

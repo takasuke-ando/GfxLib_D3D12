@@ -25,13 +25,11 @@ using namespace GfxLib;
 void	DescriptorBuffer::SetConstantBuffer(uint32_t index, const void* pData, uint32_t size)
 {
 
-	void* cpuAddr = nullptr;
-	D3D12_GPU_VIRTUAL_ADDRESS gpuAddr = m_cmdList->AllocateGpuBuffer(cpuAddr,
-		GfxLib::UpperBounds(size, 256), D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
+	GpuBufferRange gpuBuffer = m_cmdList->AllocateGpuBuffer(GfxLib::UpperBounds(size, 256), D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
 
 
-	memcpy(cpuAddr, pData, size);
+	memcpy(gpuBuffer.GetCpuAddr(), pData, size);
 
-	SetConstantBuffer(index, gpuAddr, size);
+	SetConstantBuffer(index, gpuBuffer.GetGpuAddr(), size);
 
 }

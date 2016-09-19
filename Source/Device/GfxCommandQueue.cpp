@@ -156,6 +156,8 @@ uint64_t	CommandQueue::ExecuteCommandLists(uint32_t count, CommandList* cmdLists
 
 		GFX_ASSERT(cmdLists[i]->GetAssingedCommandQueue() == this, L"command list is not assigned to this Queue");
 
+		cmdLists[i]->PreExecute();
+
 	}
 
 	m_CmdQueue->ExecuteCommandLists(count, ad3dLists);
@@ -167,7 +169,7 @@ uint64_t	CommandQueue::ExecuteCommandLists(uint32_t count, CommandList* cmdLists
 	for (uint32_t i = 0; i < count; ++i) {
 
 
-		cmdLists[i]->OnExecute(fence);
+		cmdLists[i]->PostExecute(fence);
 
 		ID3D12CommandAllocator * allocator = cmdLists[i]->DetachAllocator();
 		m_pCmdAllocatorPool->Release(fence, allocator);

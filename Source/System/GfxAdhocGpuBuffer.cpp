@@ -215,17 +215,17 @@ void	AdhocGpuBufferClient::Reset(uint64_t fence )
 @param[in]	alignment:	アライメント
 
 */
-D3D12_GPU_VIRTUAL_ADDRESS	AdhocGpuBufferClient::Require(void * &cpuAddress, CommandQueue *fenceOwnQueue, uint32_t requestSize, uint32_t alignment)
+GpuBufferRange	AdhocGpuBufferClient::Require(CommandQueue *fenceOwnQueue, uint32_t requestSize, uint32_t alignment)
 {
 
 	//	最大アライメント制限をオーバーしている
 	if (alignment > MaxBufferAlignemnt) {
 		GFX_ERROR(L"AdhocGpuBufferClient::Require alignment over (%d)", alignment);
-		return 0;
+		return GpuBufferRange();
 	}
 	
 
-	cpuAddress = nullptr;
+	void *cpuAddress = nullptr;
 
 
 	uint32_t srcDataSize = requestSize;
@@ -247,11 +247,12 @@ D3D12_GPU_VIRTUAL_ADDRESS	AdhocGpuBufferClient::Require(void * &cpuAddress, Comm
 			D3D12_GPU_VIRTUAL_ADDRESS result = nowTop + addressOffset;
 
 			//memcpy(((uint8_t*)m_pCurrentBuffer->GetCpuAddress()) + m_nCurrentBufferUsedSize + addressOffset, srcData, srcDataSize);
-			cpuAddress = ((uint8_t*)m_pCurrentBuffer->GetCpuAddress()) + m_nCurrentBufferUsedSize + addressOffset;
+			uint64_t offset = m_nCurrentBufferUsedSize + addressOffset;
+			cpuAddress = ((uint8_t*)m_pCurrentBuffer->GetCpuAddress()) + offset;
 
 			m_nCurrentBufferUsedSize += uint32_t(requestSize + addressOffset);
 
-			return result;
+			return GpuBufferRange(m_pCurrentBuffer->GetD3DResource(), offset, cpuAddress, result, requestSize );
 		}
 		else {
 
@@ -269,7 +270,7 @@ D3D12_GPU_VIRTUAL_ADDRESS	AdhocGpuBufferClient::Require(void * &cpuAddress, Comm
 
 	if (requestSize > MaxBufferSize) {
 		GFX_ERROR(L"AdhocDescriptorHeap::Require size over (%d)", requestSize);
-		return 0;
+		return GpuBufferRange();
 	}
 
 	const uint64_t fence = fenceOwnQueue->GetCompletedFence();
@@ -289,7 +290,7 @@ D3D12_GPU_VIRTUAL_ADDRESS	AdhocGpuBufferClient::Require(void * &cpuAddress, Comm
 	m_nCurrentBufferUsedSize = (uint32_t)(requestSize + addressOffset);
 
 
-	return result + addressOffset;
+	return GpuBufferRange(m_pCurrentBuffer->GetD3DResource(), addressOffset, cpuAddress, result + addressOffset, requestSize);
 
 }
 

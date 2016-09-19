@@ -157,6 +157,9 @@
     <ClInclude Include="..\Source\External\DirectX-Graphics-Samples\pch.h">
       <Filter>External\DirectX-Graphics-Samples</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Resource\GfxGpuBufferRange.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -248,6 +251,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\External\DirectX-Graphics-Samples\DDSTextureLoader.cpp">
       <Filter>External\DirectX-Graphics-Samples</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Resource\GfxGpuBufferRange.cpp">
+      <Filter>Resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

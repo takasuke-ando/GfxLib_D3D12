@@ -138,16 +138,15 @@ void	CommandList::ResourceTransitionBarrier(ID3D12Resource* res , ResourceStates
 @par	[説明]
 このフレームの間だけ、利用可能なGPUアサインされたバッファを確保します
 数フレーム後にはこの領域は再利用されるため、継続して保持することはできません
-@param[out]  cpuAddress:	成功時に、CPUマップ済みアドレスが返される
 @param[in]	size:		要求サイズ
 @param[in]	alignment:	アライメント
 
 */
-D3D12_GPU_VIRTUAL_ADDRESS	CommandList::AllocateGpuBuffer(void * &cpuAddress, uint32_t size, uint32_t alignment)
+GpuBufferRange	CommandList::AllocateGpuBuffer( uint32_t size, uint32_t alignment)
 {
 
 	
-	return m_GpuBufferAllocator.Require(cpuAddress, m_pCmdQueue, size, alignment);
+	return m_GpuBufferAllocator.Require(m_pCmdQueue, size, alignment);
 
 }
 
@@ -337,6 +336,108 @@ bool	CommandList::InitializeResource(
 }
 
 
+/***************************************************************
+@brief	リソースの初期化コピーを行う
+@par	[説明]
+バッファーリソースの初期化コピー
+@param
+*/
+bool	CommandList::InitializeResource(
+	ID3D12Resource* dstResource,
+	const void *srcData,
+	const size_t byteSize)
+{
+
+
+	ID3D12Device *d3dDev = GfxLib::CoreSystem::GetInstance()->GetD3DDevice();
+
+	
+	// @TODO	マルチスレッド処理の場合はどうするのか
+
+
+	D3DPtr<ID3D12Resource>	d3dResForUpload;
+
+	D3D12_HEAP_PROPERTIES heapProp = {};
+
+
+	heapProp.Type = D3D12_HEAP_TYPE_UPLOAD;
+	heapProp.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+	heapProp.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+	heapProp.CreationNodeMask = 0;
+	heapProp.VisibleNodeMask = 0;
+
+
+	D3D12_RESOURCE_DESC resDesc = {};
+
+	resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;	//	TextureへのUpload中間バッファは、Bufferとして作る必要がある
+	resDesc.Alignment = 0;
+	resDesc.Width = byteSize;
+	resDesc.Height = 1;
+	resDesc.DepthOrArraySize = 1;
+	resDesc.MipLevels = 1;
+	resDesc.Format = DXGI_FORMAT_UNKNOWN;
+	resDesc.SampleDesc.Count = 1;
+	resDesc.SampleDesc.Quality = 0;
+	resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;	//	RowMajor→UNKNOWN へのコピー可能？
+	resDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+
+
+
+	HRESULT hr = d3dDev->CreateCommittedResource(
+		&heapProp,
+		D3D12_HEAP_FLAG_NONE,
+		&resDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,		//	変更不可
+		nullptr,
+		IID_PPV_ARGS(d3dResForUpload.InitialAccept())
+		);
+
+
+	if (FAILED(hr)) {
+		GFX_ERROR(L"Create Committed Resource Failed (%08x)", hr);
+		return false;
+	}
+
+	void *pInterBuff;
+	hr = d3dResForUpload->Map(0, nullptr, &pInterBuff);
+	if (FAILED(hr)) {
+		GFX_ERROR(L"Intermediate Resouce Map Failed (%08x)", hr);
+		return false;
+	}
+
+	// CPU Copy
+	memcpy(pInterBuff, srcData, byteSize);
+
+	d3dResForUpload->Unmap(0, nullptr);
+
+	// Defaultバッファにコピーを行う
+	GetD3DCommandList()->CopyBufferRegion(dstResource, 0, d3dResForUpload, 0, byteSize);
+	ResourceTransitionBarrier(dstResource, ResourceStates::CopyDest, ResourceStates::GenericRead);
+
+
+	// 遅延開放に登録
+	CoreSystem::GetInstance()->GetDelayDelete().Regist((ID3D12Resource*)d3dResForUpload);
+
+
+
+	return true;
+
+}
+
+
+
+/***************************************************************
+@brief	ExecuteCommandListが呼び出される
+@par	[説明]
+ExecuteCommandListが呼び出される直前に呼ばれる
+@param
+*/
+void	CommandList::PreExecute()
+{
+
+	GetD3DCommandList()->Close();
+
+}
 
 
 /***************************************************************
@@ -345,7 +446,7 @@ bool	CommandList::InitializeResource(
 ExecuteCommandListが呼び出された後に呼ばれる
 @param[in]	fence:	コマンドがGPU側で完了したことを識別するフェンス
 */
-void	CommandList::OnExecute(uint64_t fence)
+void	CommandList::PostExecute(uint64_t fence)
 {
 
 	m_GpuBufferAllocator.Reset(fence);

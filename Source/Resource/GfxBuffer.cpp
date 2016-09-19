@@ -93,6 +93,7 @@ bool Buffer::InitializeImmutable(const void* pData, size_t byteSize)
 	}
 
 	//	CopyQueueを使って転送する
+#if 0
 	{
 		ID3D12Device *d3dDev = GfxLib::CoreSystem::GetInstance()->GetD3DDevice();
 
@@ -165,6 +166,12 @@ bool Buffer::InitializeImmutable(const void* pData, size_t byteSize)
 		CoreSystem::GetInstance()->GetDelayDelete().Regist((ID3D12Resource*)d3dResForUpload);
 
 
+	}
+#endif
+
+	{
+		CommandList *initCmdList = CoreSystem::GetInstance()->GetResourceInitCommandList();
+		initCmdList->InitializeResource(GetD3DResource(), pData, byteSize);
 	}
 
 

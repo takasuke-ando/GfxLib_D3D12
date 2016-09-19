@@ -152,6 +152,7 @@
     <ClInclude Include="..\Source\Resource\GfxDepthStencil.h" />
     <ClInclude Include="..\Source\Resource\GfxDescriptorBuffer.h" />
     <ClInclude Include="..\Source\Resource\GfxDescriptorHeap.h" />
+    <ClInclude Include="..\Source\Resource\GfxGpuBufferRange.h" />
     <ClInclude Include="..\Source\Resource\GfxIndexBuffer.h" />
     <ClInclude Include="..\Source\Resource\GfxRenderTarget.h" />
     <ClInclude Include="..\Source\Resource\GfxResource.h" />
@@ -188,6 +189,7 @@
     <ClCompile Include="..\Source\Resource\GfxDepthStencil.cpp" />
     <ClCompile Include="..\Source\Resource\GfxDescriptorBuffer.cpp" />
     <ClCompile Include="..\Source\Resource\GfxDescriptorHeap.cpp" />
+    <ClCompile Include="..\Source\Resource\GfxGpuBufferRange.cpp" />
     <ClCompile Include="..\Source\Resource\GfxIndexBuffer.cpp" />
     <ClCompile Include="..\Source\Resource\GfxRenderTarget.cpp" />
     <ClCompile Include="..\Source\Resource\GfxResource.cpp" />

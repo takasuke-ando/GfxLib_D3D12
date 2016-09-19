@@ -49,12 +49,11 @@ namespace GfxLib
 		@par	[説明]
 		このフレームの間だけ、利用可能なGPUアサインされたバッファを確保します
 		数フレーム後にはこの領域は再利用されるため、継続して保持することはできません
-		@param[out]  cpuAddress:	成功時に、CPUマップ済みアドレスが返される
 		@param[in]	size:		要求サイズ
 		@param[in]	alignment:	アライメント
-
+		@return		GpuBufferRange:	GPUバッファリソースサブ領域を示す
 		*/
-		D3D12_GPU_VIRTUAL_ADDRESS	AllocateGpuBuffer(void * &cpuAddress, uint32_t size, uint32_t alignment);
+		GpuBufferRange	AllocateGpuBuffer( uint32_t size, uint32_t alignment);
 
 
 		/***************************************************************
@@ -86,6 +85,7 @@ namespace GfxLib
 		/***************************************************************
 			@brief	リソースの初期化コピーを行う
 			@par	[説明]
+				テクスチャリソースの初期化コピー
 			@param
 		*/
 		bool	InitializeResource(
@@ -93,6 +93,24 @@ namespace GfxLib
 			uint32_t subDataNum,
 			const D3D12_SUBRESOURCE_DATA subData[]);
 
+		/***************************************************************
+		@brief	リソースの初期化コピーを行う
+		@par	[説明]
+			バッファーリソースの初期化コピー
+		@param
+		*/
+		bool	InitializeResource(
+			ID3D12Resource* dstResource,
+			const void *srcData,
+			const size_t byteSize );
+
+		/***************************************************************
+		@brief	ExecuteCommandListが呼び出される
+		@par	[説明]
+		ExecuteCommandListが呼び出される直前に呼ばれる
+		@param
+		*/
+		void	PreExecute();
 
 
 		/***************************************************************
@@ -101,7 +119,7 @@ namespace GfxLib
 				ExecuteCommandListが呼び出された後に呼ばれる
 			@param
 		*/
-		void	OnExecute(uint64_t fence);
+		void	PostExecute(uint64_t fence);
 
 
 	private:

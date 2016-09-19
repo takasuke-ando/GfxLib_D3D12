@@ -283,7 +283,7 @@ bool		CoreSystem::Begin()
 
 	// 予約されていたリソースコピーをキューイング
 	CommandList *c = m_pResourceInitCmdList;
-	m_pResourceInitCmdList->GetD3DCommandList()->Close();
+	//m_pResourceInitCmdList->GetD3DCommandList()->Close();
 	m_CommandQueue.ExecuteCommandLists(1, &c);
 
 	// 次の予約に向けて準備

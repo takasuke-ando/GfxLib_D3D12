@@ -12,6 +12,19 @@
 
 #include "External/DirectX-Graphics-Samples/d3dx12.h"
 
+
+
+namespace {
+
+
+	//	このサイズ以下で当てれば、転送にAdhocバッファを使用する
+	const uint32_t	USE_ADHOC_BUFFER_SIZE_MAX = 1024 * 1024;
+
+
+}
+
+
+
 using namespace GfxLib;
 
 
@@ -267,6 +280,7 @@ ID3D12CommandAllocator*	CommandList::DetachAllocator()
 /***************************************************************
 @brief	リソースの初期化コピーを行う
 @par	[説明]
+	テクスチャで使用される
 @param
 */
 bool	CommandList::InitializeResource(
@@ -279,57 +293,73 @@ bool	CommandList::InitializeResource(
 	ID3D12Device *d3dDev = GfxLib::CoreSystem::GetInstance()->GetD3DDevice();
 	
 
-	// @TODO 小さい初期化の場合、アドホックなバッファを使うこともできるように
-	D3DPtr<ID3D12Resource>	d3dResForUpload;
-	D3D12_HEAP_PROPERTIES heapProp = {};
+	//  小さい初期化の場合、アドホックなバッファを使うこともできるように
+
+	if (uploadBufferSize <= USE_ADHOC_BUFFER_SIZE_MAX) {
+
+		GpuBufferRange buffer = AllocateGpuBuffer((uint32_t)uploadBufferSize, D3D12_TEXTURE_DATA_PLACEMENT_ALIGNMENT);
+
+		// CPU Copy
+		d3dx12::UpdateSubresources(GetD3DCommandList(), dstResource, buffer.GetD3DResource(), buffer.GetStartOffset(),
+			0, subDataNum, subData);
+
+	}
+	else {
+
+		D3DPtr<ID3D12Resource>	d3dResForUpload;
+		D3D12_HEAP_PROPERTIES heapProp = {};
 
 
-	heapProp.Type = D3D12_HEAP_TYPE_UPLOAD;
-	heapProp.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
-	heapProp.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
-	heapProp.CreationNodeMask = 0;
-	heapProp.VisibleNodeMask = 0;
+		heapProp.Type = D3D12_HEAP_TYPE_UPLOAD;
+		heapProp.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+		heapProp.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+		heapProp.CreationNodeMask = 0;
+		heapProp.VisibleNodeMask = 0;
 
 
-	D3D12_RESOURCE_DESC resDesc = {};
+		D3D12_RESOURCE_DESC resDesc = {};
 
-	resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;	//	TextureへのUpload中間バッファは、Bufferとして作る必要がある
-	resDesc.Alignment = 0;
-	resDesc.Width = uploadBufferSize;
-	resDesc.Height = 1;
-	resDesc.DepthOrArraySize = 1;
-	resDesc.MipLevels = 1;
-	resDesc.Format = DXGI_FORMAT_UNKNOWN;
-	resDesc.SampleDesc.Count = 1;
-	resDesc.SampleDesc.Quality = 0;
-	resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;	//	RowMajor→UNKNOWN へのコピー可能？
-	resDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
-
-
-
-	HRESULT hr = d3dDev->CreateCommittedResource(
-		&heapProp,
-		D3D12_HEAP_FLAG_NONE,
-		&resDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,		//	変更不可
-		nullptr,
-		IID_PPV_ARGS(d3dResForUpload.InitialAccept())
-		);
+		resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;	//	TextureへのUpload中間バッファは、Bufferとして作る必要がある
+		resDesc.Alignment = 0;
+		resDesc.Width = uploadBufferSize;
+		resDesc.Height = 1;
+		resDesc.DepthOrArraySize = 1;
+		resDesc.MipLevels = 1;
+		resDesc.Format = DXGI_FORMAT_UNKNOWN;
+		resDesc.SampleDesc.Count = 1;
+		resDesc.SampleDesc.Quality = 0;
+		resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;	//	RowMajor→UNKNOWN へのコピー可能？
+		resDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
 
 
-	if (FAILED(hr)) {
-		GFX_ERROR(L"Create Committed Resource Failed (%08x)", hr);
-		return false;
+
+		HRESULT hr = d3dDev->CreateCommittedResource(
+			&heapProp,
+			D3D12_HEAP_FLAG_NONE,
+			&resDesc,
+			D3D12_RESOURCE_STATE_GENERIC_READ,		//	変更不可
+			nullptr,
+			IID_PPV_ARGS(d3dResForUpload.InitialAccept())
+			);
+
+
+		if (FAILED(hr)) {
+			GFX_ERROR(L"Create Committed Resource Failed (%08x)", hr);
+			return false;
+		}
+
+
+
+		d3dx12::UpdateSubresources(GetD3DCommandList(), dstResource, d3dResForUpload, 0, 0, subDataNum, subData);
+
+
+		// 遅延開放に登録
+		CoreSystem::GetInstance()->GetDelayDelete().Regist((ID3D12Resource*)d3dResForUpload);
 	}
 
-
-
-	d3dx12::UpdateSubresources(GetD3DCommandList(), dstResource, d3dResForUpload, 0, 0, subDataNum, subData);
+	// バリヤを設定
 	ResourceTransitionBarrier(dstResource, ResourceStates::CopyDest, ResourceStates::GenericRead);
 
-
-	// 遅延開放に登録
-	CoreSystem::GetInstance()->GetDelayDelete().Regist((ID3D12Resource*)d3dResForUpload);
 
 	return true;
 
@@ -352,71 +382,80 @@ bool	CommandList::InitializeResource(
 	ID3D12Device *d3dDev = GfxLib::CoreSystem::GetInstance()->GetD3DDevice();
 
 	
-	// @TODO	マルチスレッド処理の場合はどうするのか
 
+	if (byteSize <= USE_ADHOC_BUFFER_SIZE_MAX ) {
 
-	D3DPtr<ID3D12Resource>	d3dResForUpload;
+		GpuBufferRange buffer = AllocateGpuBuffer( (uint32_t)byteSize, 16);
 
-	D3D12_HEAP_PROPERTIES heapProp = {};
-
-
-	heapProp.Type = D3D12_HEAP_TYPE_UPLOAD;
-	heapProp.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
-	heapProp.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
-	heapProp.CreationNodeMask = 0;
-	heapProp.VisibleNodeMask = 0;
-
-
-	D3D12_RESOURCE_DESC resDesc = {};
-
-	resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;	//	TextureへのUpload中間バッファは、Bufferとして作る必要がある
-	resDesc.Alignment = 0;
-	resDesc.Width = byteSize;
-	resDesc.Height = 1;
-	resDesc.DepthOrArraySize = 1;
-	resDesc.MipLevels = 1;
-	resDesc.Format = DXGI_FORMAT_UNKNOWN;
-	resDesc.SampleDesc.Count = 1;
-	resDesc.SampleDesc.Quality = 0;
-	resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;	//	RowMajor→UNKNOWN へのコピー可能？
-	resDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
-
-
-
-	HRESULT hr = d3dDev->CreateCommittedResource(
-		&heapProp,
-		D3D12_HEAP_FLAG_NONE,
-		&resDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,		//	変更不可
-		nullptr,
-		IID_PPV_ARGS(d3dResForUpload.InitialAccept())
-		);
-
-
-	if (FAILED(hr)) {
-		GFX_ERROR(L"Create Committed Resource Failed (%08x)", hr);
-		return false;
+		// CPU Copy
+		memcpy(buffer.GetCpuAddr(), srcData, byteSize);
+		GetD3DCommandList()->CopyBufferRegion(dstResource, 0, buffer.GetD3DResource(), buffer.GetStartOffset(), byteSize);
 	}
+	else {
+		D3DPtr<ID3D12Resource>	d3dResForUpload;
 
-	void *pInterBuff;
-	hr = d3dResForUpload->Map(0, nullptr, &pInterBuff);
-	if (FAILED(hr)) {
-		GFX_ERROR(L"Intermediate Resouce Map Failed (%08x)", hr);
-		return false;
+		D3D12_HEAP_PROPERTIES heapProp = {};
+
+
+		heapProp.Type = D3D12_HEAP_TYPE_UPLOAD;
+		heapProp.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+		heapProp.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+		heapProp.CreationNodeMask = 0;
+		heapProp.VisibleNodeMask = 0;
+
+
+		D3D12_RESOURCE_DESC resDesc = {};
+
+		resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;	//	TextureへのUpload中間バッファは、Bufferとして作る必要がある
+		resDesc.Alignment = 0;
+		resDesc.Width = byteSize;
+		resDesc.Height = 1;
+		resDesc.DepthOrArraySize = 1;
+		resDesc.MipLevels = 1;
+		resDesc.Format = DXGI_FORMAT_UNKNOWN;
+		resDesc.SampleDesc.Count = 1;
+		resDesc.SampleDesc.Quality = 0;
+		resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;	//	RowMajor→UNKNOWN へのコピー可能？
+		resDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+
+
+
+		HRESULT hr = d3dDev->CreateCommittedResource(
+			&heapProp,
+			D3D12_HEAP_FLAG_NONE,
+			&resDesc,
+			D3D12_RESOURCE_STATE_GENERIC_READ,		//	変更不可
+			nullptr,
+			IID_PPV_ARGS(d3dResForUpload.InitialAccept())
+			);
+
+
+		if (FAILED(hr)) {
+			GFX_ERROR(L"Create Committed Resource Failed (%08x)", hr);
+			return false;
+		}
+
+		void *pInterBuff;
+		hr = d3dResForUpload->Map(0, nullptr, &pInterBuff);
+		if (FAILED(hr)) {
+			GFX_ERROR(L"Intermediate Resouce Map Failed (%08x)", hr);
+			return false;
+		}
+
+		// CPU Copy
+		memcpy(pInterBuff, srcData, byteSize);
+
+		d3dResForUpload->Unmap(0, nullptr);
+
+		// Defaultバッファにコピーを行う
+		GetD3DCommandList()->CopyBufferRegion(dstResource, 0, d3dResForUpload, 0, byteSize);
+
+		// 遅延開放に登録
+		CoreSystem::GetInstance()->GetDelayDelete().Regist((ID3D12Resource*)d3dResForUpload);
 	}
-
-	// CPU Copy
-	memcpy(pInterBuff, srcData, byteSize);
-
-	d3dResForUpload->Unmap(0, nullptr);
-
-	// Defaultバッファにコピーを行う
-	GetD3DCommandList()->CopyBufferRegion(dstResource, 0, d3dResForUpload, 0, byteSize);
 	ResourceTransitionBarrier(dstResource, ResourceStates::CopyDest, ResourceStates::GenericRead);
 
 
-	// 遅延開放に登録
-	CoreSystem::GetInstance()->GetDelayDelete().Regist((ID3D12Resource*)d3dResForUpload);
 
 
 

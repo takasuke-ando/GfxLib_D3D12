@@ -162,7 +162,11 @@
     <ClInclude Include="..\Source\Resource\GfxTexture2D.h" />
     <ClInclude Include="..\Source\Resource\GfxVertexBuffer.h" />
     <ClInclude Include="..\Source\Shader\GfxShader.h" />
+    <ClInclude Include="..\Source\State\GfxBlendState.h" />
+    <ClInclude Include="..\Source\State\GfxDepthStencilState.h" />
+    <ClInclude Include="..\Source\State\GfxInputLayout.h" />
     <ClInclude Include="..\Source\State\GfxPipelineState.h" />
+    <ClInclude Include="..\Source\State\GfxRasterizerState.h" />
     <ClInclude Include="..\Source\System\GfxAdhocDescriptorHeap.h" />
     <ClInclude Include="..\Source\System\GfxAdhocGpuBuffer.h" />
     <ClInclude Include="..\Source\System\GfxCoreSystem.h" />
@@ -200,7 +204,11 @@
     <ClCompile Include="..\Source\Resource\GfxTexture2D.cpp" />
     <ClCompile Include="..\Source\Resource\GfxVertexBuffer.cpp" />
     <ClCompile Include="..\Source\Shader\GfxShader.cpp" />
+    <ClCompile Include="..\Source\State\GfxBlendState.cpp" />
+    <ClCompile Include="..\Source\State\GfxDepthStencilState.cpp" />
+    <ClCompile Include="..\Source\State\GfxInputLayout.cpp" />
     <ClCompile Include="..\Source\State\GfxPipelineState.cpp" />
+    <ClCompile Include="..\Source\State\GfxRasterizerState.cpp" />
     <ClCompile Include="..\Source\System\GfxAdhocDescriptorHeap.cpp" />
     <ClCompile Include="..\Source\System\GfxAdhocGpuBuffer.cpp" />
     <ClCompile Include="..\Source\System\GfxCoreSystem.cpp" />

@@ -163,6 +163,18 @@
     <ClInclude Include="..\Source\Device\GfxGraphicsCommandList.h">
       <Filter>Device</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\State\GfxDepthStencilState.h">
+      <Filter>State</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\State\GfxBlendState.h">
+      <Filter>State</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\State\GfxRasterizerState.h">
+      <Filter>State</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\State\GfxInputLayout.h">
+      <Filter>State</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -260,6 +272,18 @@
     </ClCompile>
     <ClCompile Include="..\Source\Device\GfxGraphicsCommandList.cpp">
       <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\State\GfxDepthStencilState.cpp">
+      <Filter>State</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\State\GfxBlendState.cpp">
+      <Filter>State</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\State\GfxRasterizerState.cpp">
+      <Filter>State</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\State\GfxInputLayout.cpp">
+      <Filter>State</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

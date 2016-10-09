@@ -95,7 +95,7 @@ bool Buffer::InitializeImmutable(const void* pData, size_t byteSize)
 
 
 	{
-		CommandList *initCmdList = CoreSystem::GetInstance()->GetResourceInitCommandList();
+		auto *initCmdList = CoreSystem::GetInstance()->GetResourceInitCommandList();
 		initCmdList->InitializeResource(GetD3DResource(), pData, byteSize);
 	}
 

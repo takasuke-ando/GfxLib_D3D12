@@ -139,7 +139,7 @@ bool	Texture2D::Initialize(
 		// @TODO	マルチスレッド処理の場合はどうするのか
 
 
-		CommandList *initCmdList = CoreSystem::GetInstance()->GetResourceInitCommandList();
+		auto *initCmdList = CoreSystem::GetInstance()->GetResourceInitCommandList();
 
 		initCmdList->InitializeResource(GetD3DResource(), subDataNum, subData);
 

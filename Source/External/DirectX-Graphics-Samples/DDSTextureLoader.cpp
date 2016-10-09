@@ -1220,7 +1220,7 @@ static HRESULT CreateTextureFromDDS( _In_ ID3D12Device* d3dDevice,
 			*/
 
 
-			CommandList *initCmdList = CoreSystem::GetInstance()->GetResourceInitCommandList();
+			auto *initCmdList = CoreSystem::GetInstance()->GetResourceInitCommandList();
 			initCmdList->InitializeResource(*texture, subresourceCount, initData.get());
 		}
 	}

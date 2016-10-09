@@ -160,6 +160,9 @@
     <ClInclude Include="..\Source\Resource\GfxGpuBufferRange.h">
       <Filter>Resource</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Device\GfxGraphicsCommandList.h">
+      <Filter>Device</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -254,6 +257,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Resource\GfxGpuBufferRange.cpp">
       <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Device\GfxGraphicsCommandList.cpp">
+      <Filter>Device</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

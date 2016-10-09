@@ -30,6 +30,7 @@
 
 #include "System/GfxCoreSystem.h"
 #include "Device/GfxCommandList.h"
+#include "Device/GfxGraphicsCommandList.h"
 
 #include "d3dx12.h"
 

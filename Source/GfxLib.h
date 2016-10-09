@@ -17,6 +17,7 @@
 #include "System/GfxDescriptorAllocator.h"
 
 #include "Device/GfxCommandList.h"
+#include "Device/GfxGraphicsCommandList.h"
 #include "Device/GfxSwapChain.h"
 
 #include "Resource/GfxRootSignature.h"

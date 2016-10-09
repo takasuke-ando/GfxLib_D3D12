@@ -17,6 +17,7 @@ namespace GfxLib
 
 	class CoreSystem;
 	class CommandList;
+	class GraphicsCommandList;
 
 	template< DescriptorHeapType heapType >
 	class AutoDescriptorHandle;
@@ -39,7 +40,7 @@ namespace GfxLib
 			呼び出しを忘れるとハザード制御が行われず、表示中のバックバッファを描画に使ってしまうことがあります
 		@param[in]	cmdList:	コマンドリスト
 		*/
-		void	Begin(CommandList& cmdList);
+		void	Begin(GraphicsCommandList& cmdList);
 
 		/***************************************************************
 		@brief		フレームの終了
@@ -49,7 +50,7 @@ namespace GfxLib
 			ExecuteCommandList,Presentの順で呼び出します
 		@param[in]	cmdList:	コマンドリスト
 		*/
-		void	End(CommandList& cmdList );
+		void	End(GraphicsCommandList& cmdList );
 
 		void	Present(uint32_t SyncInterval, uint32_t Flags);
 

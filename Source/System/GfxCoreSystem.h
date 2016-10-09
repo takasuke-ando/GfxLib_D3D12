@@ -16,6 +16,7 @@ namespace GfxLib
 	class AdhocGpuBuffer;
 	class DescriptorHeap;
 	class CommandList;
+	class GraphicsCommandList;
 
 	class CoreSystem
 	{
@@ -73,7 +74,7 @@ namespace GfxLib
 
 			@param
 		*/
-		CommandList*		GetResourceInitCommandList()	const {
+		GraphicsCommandList*		GetResourceInitCommandList()	const {
 			return m_pResourceInitCmdList;		
 		}
 
@@ -156,7 +157,7 @@ namespace GfxLib
 
 		uint32_t			m_nCurrentCmdAllocatorIndex;
 
-		CommandList*		m_pResourceInitCmdList;		//!<	リソース初期化用コマンドリスト。フレームの最初にFlushされる
+		GraphicsCommandList*	m_pResourceInitCmdList;		//!<	リソース初期化用コマンドリスト。フレームの最初にFlushされる
 
 
 		//	Singleton

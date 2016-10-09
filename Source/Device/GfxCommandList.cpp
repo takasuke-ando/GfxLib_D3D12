@@ -41,14 +41,16 @@ CommandList::~CommandList()
 }
 
 
-bool	CommandList::Initialize( CommandQueue* cmdQueue )
+bool	CommandList::Initialize( CommandQueue* cmdQueue, ID3D12GraphicsCommandList *cmdList)
 {
 
 	CoreSystem *coreSystem = CoreSystem::GetInstance();
 
+
+	/*
 	HRESULT hr = coreSystem->GetD3DDevice()->CreateCommandList(
 		0,									//	Node Mask  マルチGPU識別用
-		D3D12_COMMAND_LIST_TYPE_DIRECT,
+		cmdListType,
 		//coreSystem->GetCurrentCommandAllocator(),
 		m_pCurCmdAllocator = cmdQueue->RequireCommandAllocator(),
 		nullptr,
@@ -63,6 +65,9 @@ bool	CommandList::Initialize( CommandQueue* cmdQueue )
 		return false;
 
 	}
+	*/
+
+	m_pCmdList = cmdList;
 
 
 	m_pd3dDev = coreSystem->GetD3DDevice();

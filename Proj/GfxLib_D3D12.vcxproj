@@ -139,6 +139,7 @@
     <ClInclude Include="..\Source\Device\GfxCommandAllocatorPool.h" />
     <ClInclude Include="..\Source\Device\GfxCommandList.h" />
     <ClInclude Include="..\Source\Device\GfxCommandQueue.h" />
+    <ClInclude Include="..\Source\Device\GfxGraphicsCommandList.h" />
     <ClInclude Include="..\Source\Device\GfxSwapChain.h" />
     <ClInclude Include="..\Source\External\DirectX-Graphics-Samples\d3dx12.h" />
     <ClInclude Include="..\Source\External\DirectX-Graphics-Samples\dds.h" />
@@ -180,6 +181,7 @@
     <ClCompile Include="..\Source\Device\GfxCommandAllocatorPool.cpp" />
     <ClCompile Include="..\Source\Device\GfxCommandList.cpp" />
     <ClCompile Include="..\Source\Device\GfxCommandQueue.cpp" />
+    <ClCompile Include="..\Source\Device\GfxGraphicsCommandList.cpp" />
     <ClCompile Include="..\Source\Device\GfxSwapChain.cpp" />
     <ClCompile Include="..\Source\External\DirectX-Graphics-Samples\DDSTextureLoader.cpp" />
     <ClCompile Include="..\Source\External\DirectX-Graphics-Samples\Utility.cpp" />

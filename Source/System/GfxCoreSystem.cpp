@@ -13,6 +13,7 @@
 #include "Resource/GfxDescriptorHeap.h"
 #include "System/GfxAdhocGpuBuffer.h"
 #include "Device/GfxCommandList.h"
+#include "Device/GfxGraphicsCommandList.h"
 
 
 using namespace GfxLib;
@@ -207,7 +208,7 @@ bool	CoreSystem::Initialize()
 	//m_pAdhocGpuBuffer = new AdhocGpuBuffer;
 
 
-	m_pResourceInitCmdList = new CommandList;
+	m_pResourceInitCmdList = new GraphicsCommandList;
 	m_pResourceInitCmdList->Initialize(&m_CommandQueue);
 	m_pResourceInitCmdList->Reset(false);
 

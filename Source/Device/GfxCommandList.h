@@ -26,7 +26,15 @@ namespace GfxLib
 		~CommandList();
 
 
-		bool	Initialize(CommandQueue *cmdQueue );
+		/***************************************************************
+			@brief	初期化処理
+			@par	[説明]
+				コマンドリストオブジェクトの構築などを行う
+				D3D12ではGraphics-CommandList も、Compute- も、Copy- も
+				GraphicsCommandListになっている
+			@param
+		*/
+		bool	Initialize(CommandQueue *cmdQueue , ID3D12GraphicsCommandList *cmdList );
 		void	Finalize();
 
 		//	コマンドの書き込みを可能な状態にする。フレームの最初に呼び出す
@@ -124,15 +132,19 @@ namespace GfxLib
 
 	private:
 
-		D3DPtr<ID3D12GraphicsCommandList>	m_pCmdList;
+		D3DPtr<ID3D12GraphicsCommandList>			m_pCmdList;
 		ID3D12Device*						m_pd3dDev;
 
 		CommandQueue *						m_pCmdQueue;		//!<	アサインするコマンドキュー
 
-		ID3D12CommandAllocator*				m_pCurCmdAllocator;	//!<	現在のコマンドアロケータ
 
 		AdhocGpuBufferClient				m_GpuBufferAllocator;
 		AdhocDescriptorHeapClient			m_DescHeapAllocator;
+
+
+	protected:
+		ID3D12CommandAllocator*				m_pCurCmdAllocator;	//!<	現在のコマンドアロケータ
+
 
 	};
 

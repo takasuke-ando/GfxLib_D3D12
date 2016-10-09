@@ -9,6 +9,7 @@
 
 #include "System/GfxCoreSystem.h"
 #include "Device/GfxCommandList.h"
+#include "Device/GfxGraphicsCommandList.h"
 #include "Util/GfxAutoDescriptorHandle.h"
 
 
@@ -148,7 +149,7 @@ void	SwapChain::Finalize()
 
 
 
-void	SwapChain::Begin(CommandList& cmdList)
+void	SwapChain::Begin(GraphicsCommandList& cmdList)
 {
 
 	cmdList.ResourceTransitionBarrier(GetCurrentRenderTarget(), ResourceStates::Present, ResourceStates::RenderTarget);
@@ -157,7 +158,7 @@ void	SwapChain::Begin(CommandList& cmdList)
 }
 
 
-void	SwapChain::End(CommandList& cmdList)
+void	SwapChain::End(GraphicsCommandList& cmdList)
 {
 
 	cmdList.ResourceTransitionBarrier(GetCurrentRenderTarget(), ResourceStates::RenderTarget, ResourceStates::Present);

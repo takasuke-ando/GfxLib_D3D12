@@ -10,6 +10,7 @@
 #include "Resource/GfxTexture2D.h"
 #include "System/GfxCoreSystem.h"
 #include "Device/GfxCommandList.h"
+#include "Device/GfxGraphicsCommandList.h"
 
 #include "External/DirectX-Graphics-Samples/d3dx12.h"
 #include "External/DirectX-Graphics-Samples/DDSTextureLoader.h"

@@ -30,6 +30,12 @@
 #include "Resource/GfxTexture2D.h"
 
 #include "State/GfxPipelineState.h"
+#include "State/GfxBlendState.h"
+#include "State/GfxDepthStencilState.h"
+#include "State/GfxInputLayout.h"
+#include "State/GfxPipelineState.h"
+#include "State/GfxRasterizerState.h"
+
 #include "Shader/GfxShader.h"
 
 

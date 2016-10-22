@@ -24,7 +24,14 @@ namespace GfxLib
 		BlendState();
 		~BlendState();
 
-
+		/***************************************************************
+			@brief	ブレンドステートを作成する
+			@par	[説明]
+				ブレンドステートを作成する
+				パイプラインステートキャッシュ生成を補助するため
+				内部で多少の計算が行われる
+			@param
+		*/
 		bool	Initialize( const D3D12_BLEND_DESC &desc );
 		void	Finalize();
 
@@ -33,6 +40,7 @@ namespace GfxLib
 
 	private:
 		D3D12_BLEND_DESC	m_Desc;
+		uint32_t			m_HashValue;		//!<	ハッシュ値
 
 	};
 

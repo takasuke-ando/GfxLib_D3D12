@@ -175,6 +175,9 @@
     <ClInclude Include="..\Source\State\GfxInputLayout.h">
       <Filter>State</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Util\GfxCrc32.h">
+      <Filter>Util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -285,6 +288,9 @@
     <ClCompile Include="..\Source\State\GfxInputLayout.cpp">
       <Filter>State</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Util\GfxCrc32.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Source\Util\GfxD3DPtr.inl">
@@ -298,6 +304,9 @@
     </None>
     <None Include="..\Source\Resource\GfxDescriptorBuffer.inl">
       <Filter>Resource</Filter>
+    </None>
+    <None Include="..\Source\Device\GfxGraphicsCommandList.inl">
+      <Filter>Device</Filter>
     </None>
   </ItemGroup>
 </Project>

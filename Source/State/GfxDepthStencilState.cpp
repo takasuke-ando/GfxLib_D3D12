@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "GfxDepthStencilState.h"
 
+#include "Util/GfxCrc32.h"
 
 
 using namespace GfxLib;
@@ -12,6 +13,7 @@ using namespace GfxLib;
 
 
 DepthStencilState::DepthStencilState()
+	:m_HashValue(0)
 {
 
 
@@ -32,6 +34,12 @@ bool	DepthStencilState::Initialize(const D3D12_DEPTH_STENCIL_DESC &desc )
 {
 
 	m_Desc = desc;
+
+	//	ハッシュ計算
+	Crc32 crc;
+	crc.Update(&desc, sizeof(desc));
+	m_HashValue = crc.GetValue();
+
 
 	return true;
 

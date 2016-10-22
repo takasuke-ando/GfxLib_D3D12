@@ -33,6 +33,7 @@ namespace GfxLib
 
 	private:
 		D3D12_RASTERIZER_DESC	m_Desc;
+		uint32_t			m_HashValue;		//!<	ハッシュ値
 
 	};
 

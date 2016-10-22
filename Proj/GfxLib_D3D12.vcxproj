@@ -175,6 +175,7 @@
     <ClInclude Include="..\Source\System\GfxDescriptorAllocator.h" />
     <ClInclude Include="..\Source\System\GfxFence.h" />
     <ClInclude Include="..\Source\Util\GfxAutoDescriptorHandle.h" />
+    <ClInclude Include="..\Source\Util\GfxCrc32.h" />
     <ClInclude Include="..\Source\Util\GfxD3DPtr.h" />
     <ClInclude Include="..\Source\Util\GfxFormatUtil.h" />
     <ClInclude Include="..\Source\Util\GfxMath.h" />
@@ -216,6 +217,7 @@
     <ClCompile Include="..\Source\System\GfxDescriptorAllocator.cpp" />
     <ClCompile Include="..\Source\System\GfxFence.cpp" />
     <ClCompile Include="..\Source\Util\GfxAutoDescriptorHandle.cpp" />
+    <ClCompile Include="..\Source\Util\GfxCrc32.cpp" />
     <ClCompile Include="..\Source\Util\GfxMath.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -225,6 +227,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Source\Device\GfxGraphicsCommandList.inl" />
     <None Include="..\Source\Resource\GfxDescriptorBuffer.inl" />
     <None Include="..\Source\Util\GfxD3DPtr.inl" />
     <None Include="..\Source\Util\GfxFormatUtil.inl" />

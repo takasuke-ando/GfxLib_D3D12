@@ -10,10 +10,11 @@
 #include "System/GfxFence.h"
 #include "System/GfxDescriptorAllocator.h"
 #include "System/GfxAdhocDescriptorHeap.h"
-#include "Resource/GfxDescriptorHeap.h"
 #include "System/GfxAdhocGpuBuffer.h"
+#include "Resource/GfxDescriptorHeap.h"
 #include "Device/GfxCommandList.h"
 #include "Device/GfxGraphicsCommandList.h"
+#include "Util/GfxCrc32.h"
 
 
 using namespace GfxLib;
@@ -37,6 +38,8 @@ CoreSystem::CoreSystem()
 	, m_nCurrentCmdAllocatorIndex(0)
 {
 	QueryPerformanceCounter(&m_lastFpsUpdateTime);
+
+	Crc32::StaticInitialize();
 }
 
 CoreSystem::~CoreSystem()

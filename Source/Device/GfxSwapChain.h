@@ -18,6 +18,7 @@ namespace GfxLib
 	class CoreSystem;
 	class CommandList;
 	class GraphicsCommandList;
+	class RenderTarget;
 
 	template< DescriptorHeapType heapType >
 	class AutoDescriptorHandle;
@@ -66,9 +67,9 @@ namespace GfxLib
 
 
 		D3DPtr< IDXGISwapChain3 >	m_GISwapChain;
-		D3DPtr<ID3D12Resource>*		m_paRenderTargets;	//	Render Target Array
-//		DescriptorHeap				m_RTDescHeap;		//	Render Target View
-		AutoDescriptorHandle< DescriptorHeapType::RTV >	*m_paRTDescHandle;
+		//D3DPtr<ID3D12Resource>*		m_paRenderTargets;	//	Render Target Array
+		RenderTarget*				m_paRenderTargets;	//	Render Target Array
+		//AutoDescriptorHandle< DescriptorHeapType::RTV >	*m_paRTDescHandle;
 
 		uint32_t		m_Width;
 		uint32_t		m_Height;

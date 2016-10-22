@@ -354,3 +354,24 @@ bool		Resource::_Initialize_Texture2D(Format format, uint32_t width, uint32_t he
 
 
 }
+
+
+
+
+
+/*
+すでに作成済みのリソースを使い、初期化
+*/
+bool			Resource::_Initialize(ID3D12Resource *rtResource)
+{
+
+	if (!rtResource) {
+
+		return false;
+	}
+
+	m_d3dRes = rtResource;
+
+	return true;
+
+}

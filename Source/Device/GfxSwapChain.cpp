@@ -11,6 +11,7 @@
 #include "Device/GfxCommandList.h"
 #include "Device/GfxGraphicsCommandList.h"
 #include "Util/GfxAutoDescriptorHandle.h"
+#include "Resource/GfxRenderTarget.h"
 
 
 
@@ -20,7 +21,8 @@ using namespace GfxLib;
 
 
 SwapChain::SwapChain()
-	:m_paRTDescHandle(nullptr)
+	//:m_paRTDescHandle(nullptr)
+	:m_paRenderTargets(nullptr)
 	,m_Width(0)
 	,m_Height(0)
 	,m_nCurrentBackBufferIndex(0)
@@ -101,17 +103,18 @@ bool	SwapChain::Initialize( HWND hwnd)
 	//	return false;		
 	//}
 
-	m_paRTDescHandle = new AutoDescriptorHandle< DescriptorHeapType::RTV >[BufferCount];
+	//m_paRTDescHandle = new AutoDescriptorHandle< DescriptorHeapType::RTV >[BufferCount];
 
-	m_paRenderTargets = new D3DPtr<ID3D12Resource>[BufferCount];
+	//m_paRenderTargets = new D3DPtr<ID3D12Resource>[BufferCount];
+	m_paRenderTargets = new RenderTarget[BufferCount];
 
 
 	//	スワップチェーンから、レンダーターゲットを作成する
 	for (uint32_t i = 0; i < BufferCount; ++i ) {
-		//D3DPtr<ID3D12Resource>	  renderTarget;
-		HRESULT hr = m_GISwapChain->GetBuffer(i, IID_PPV_ARGS(m_paRenderTargets[i].InitialAccept()));
+		D3DPtr<ID3D12Resource>	  renderTarget;
+		HRESULT hr = m_GISwapChain->GetBuffer(i, IID_PPV_ARGS(renderTarget.InitialAccept()));
 		//D3D12_CPU_DESCRIPTOR_HANDLE	handle = m_RTDescHeap.GetCPUDescriptorHandleByIndex(i);
-		D3D12_CPU_DESCRIPTOR_HANDLE	handle = m_paRTDescHandle[i];
+		///D3D12_CPU_DESCRIPTOR_HANDLE	handle = m_paRTDescHandle[i];
 
 		if (FAILED(hr)) {
 			GFX_ERROR(L"SwapChain3::GetBuffer Failed %08x", hr);
@@ -122,7 +125,8 @@ bool	SwapChain::Initialize( HWND hwnd)
 
 			//D3D12_RESOURCE_DESC desc = resource->GetDesc();
 
-			coreSystem->GetD3DDevice()->CreateRenderTargetView(m_paRenderTargets[i], nullptr, handle );
+			//coreSystem->GetD3DDevice()->CreateRenderTargetView(m_paRenderTargets[i], nullptr, handle );
+			m_paRenderTargets[i].Initialize(renderTarget);
 			
 		}
 		
@@ -142,9 +146,8 @@ void	SwapChain::Finalize()
 	delete[] m_paRenderTargets;
 	m_paRenderTargets = nullptr;
 	m_GISwapChain.Release();
-	//m_RTDescHeap.Finalize();
-	delete[] m_paRTDescHandle;
-	m_paRTDescHandle = nullptr;
+	//delete[] m_paRTDescHandle;
+	//m_paRTDescHandle = nullptr;
 }
 
 
@@ -181,10 +184,11 @@ D3D12_CPU_DESCRIPTOR_HANDLE	SwapChain::GetCurrentRenderTargetHandle() const
 {
 
 
-	//D3D12_CPU_DESCRIPTOR_HANDLE	handle = m_RTDescHeap.GetCPUDescriptorHandleByIndex(m_nCurrentBackBufferIndex);
-	D3D12_CPU_DESCRIPTOR_HANDLE handle = m_paRTDescHandle[m_nCurrentBackBufferIndex];
+	//D3D12_CPU_DESCRIPTOR_HANDLE handle = m_paRTDescHandle[m_nCurrentBackBufferIndex];
+	//return handle;
+	
+	return m_paRenderTargets[m_nCurrentBackBufferIndex].GetRTVDescriptorHandle();
 
-	return handle;
 
 
 }
@@ -195,7 +199,7 @@ ID3D12Resource*				SwapChain::GetCurrentRenderTarget() const
 {
 
 
-	return m_paRenderTargets[m_nCurrentBackBufferIndex];
+	return m_paRenderTargets[m_nCurrentBackBufferIndex].GetD3DResource();
 
 
 }

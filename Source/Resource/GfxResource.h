@@ -58,6 +58,13 @@ namespace GfxLib
 		bool		_Initialize_Texture2D(Format format, uint32_t width, uint32_t height, uint32_t mipLevls );
 
 
+
+		/*
+			すでに作成済みのリソースを使い、初期化
+		*/
+		bool			_Initialize(ID3D12Resource *rtResource);
+
+
 		D3DPtr<ID3D12Resource>	m_d3dRes;
 		
 	private:

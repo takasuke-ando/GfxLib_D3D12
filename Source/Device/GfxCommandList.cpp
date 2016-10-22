@@ -150,6 +150,14 @@ void	CommandList::ResourceTransitionBarrier(ID3D12Resource* res , ResourceStates
 }
 
 
+void	CommandList::ResourceTransitionBarrier(Resource* resource, ResourceStates stateBefore, ResourceStates stateAfter)
+{
+	
+	ResourceTransitionBarrier(resource->GetD3DResource(), stateBefore, stateAfter);
+
+}
+
+
 
 /***************************************************************
 @brief	バッファの確保を行います

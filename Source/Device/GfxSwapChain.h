@@ -57,7 +57,7 @@ namespace GfxLib
 
 
 		D3D12_CPU_DESCRIPTOR_HANDLE	GetCurrentRenderTargetHandle() const;
-		ID3D12Resource*				GetCurrentRenderTarget() const;
+		RenderTarget*				GetCurrentRenderTarget() const;
 
 
 		uint32_t		GetWidth() const { return m_Width; }

@@ -134,6 +134,7 @@ bool	RenderTarget::Initialize( Format format, uint32_t width, uint32_t height, u
 
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 
+		//	@TODO	マルチサンプル対応
 		
 		srvDesc.Format = (DXGI_FORMAT)format;
 		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
@@ -212,6 +213,8 @@ bool	RenderTarget::_CreateRTV(DXGI_FORMAT format, uint32_t mipLevels)
 	for (uint32_t lv = 0; lv < mipLevels; ++lv) {
 
 		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc = {};
+
+		//	@TODO	マルチサンプル対応したい
 
 		rtvDesc.Format = (DXGI_FORMAT)format;
 		rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;

@@ -9,6 +9,11 @@
 		CommandListクラスの派生クラス
 		ID3D12GraphicsCommandListをカプセル化する
 
+		各種カプセル化やパイプラインステートの生成
+
+
+		今のところステートのシャドウキャッシュは行わない
+
 
 ***************************************************************/
 
@@ -23,6 +28,8 @@ namespace GfxLib
 	class BlendState;
 	class RasterizerState;
 	class InputLayout;
+	class RenderTarget;
+	class DepthStencil;
 
 	class GraphicsCommandList : 
 		public CommandList
@@ -56,6 +63,15 @@ namespace GfxLib
 
 		void	SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE topology);
 
+		/***************************************************************
+			@brief	レンダーターゲットの設定
+			@par	[説明]
+				
+			@param[in]	count:	レンダーターゲット配列の数
+			@param[in]	rtArray:	レンダーターゲット配列
+			@param[in]	depthStencil:	デプスステンシル。null可
+		*/
+		void	OMSetRenderTargets(uint32_t count, const RenderTarget* const * rtArray, const DepthStencil * depthStencil);
 
 
 	private:

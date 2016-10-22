@@ -19,6 +19,7 @@ using namespace GfxLib;
 
 
 DepthStencil::DepthStencil()
+	:m_DSVFormat( DXGI_FORMAT_UNKNOWN )
 {
 }
 
@@ -42,6 +43,7 @@ void	DepthStencil::Finalize(bool delayed /*= GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FI
 	m_DSVDescHeap.Finalize(delayed);
 	m_SRVDescHeap.Finalize(delayed);
 
+	m_DSVFormat = DXGI_FORMAT_UNKNOWN;
 
 }
 
@@ -57,7 +59,9 @@ void	DepthStencil::Finalize(bool delayed /*= GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FI
 @param[in]	mipLevels : ミップレベル。0: 完全ミップ
 @param[in]	rtvEnable:	ShaderResource有効
 */
-bool	DepthStencil::Initialize(Format format, uint32_t width, uint32_t height, uint32_t _mipLevels /*= 1*/, bool EnableShaderResource /*= true */ )
+bool	DepthStencil::Initialize(Format format, 
+	uint32_t width, uint32_t height, uint32_t _mipLevels /*= 1*/, 
+	bool EnableShaderResource /*= true */ )
 {
 
 
@@ -142,6 +146,9 @@ bool	DepthStencil::Initialize(Format format, uint32_t width, uint32_t height, ui
 		
 		
 	}
+
+
+	m_DSVFormat = (DXGI_FORMAT)format;
 
 
 	return true;

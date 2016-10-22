@@ -18,6 +18,7 @@ namespace GfxLib
 	
 	class CoreSystem;
 	class CommandQueue;
+	class Resource;
 
 	class CommandList
 	{
@@ -46,7 +47,8 @@ namespace GfxLib
 				トランジションリソースバリアを設定する
 			@param[in]	
 		*/
-		void	ResourceTransitionBarrier(ID3D12Resource* resource,ResourceStates stateBefore , ResourceStates stateAfter );
+		void	ResourceTransitionBarrier(ID3D12Resource* resource, ResourceStates stateBefore, ResourceStates stateAfter);
+		void	ResourceTransitionBarrier(Resource* resource,ResourceStates stateBefore , ResourceStates stateAfter );
 
 		ID3D12GraphicsCommandList*	GetD3DCommandList() const {		return m_pCmdList;		}
 

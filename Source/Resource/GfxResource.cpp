@@ -50,6 +50,19 @@ void Resource::Finalize(bool delayed)
 
 
 
+DXGI_FORMAT		Resource::GetFormat() const
+{
+	if (!m_d3dRes) {
+		return DXGI_FORMAT_UNKNOWN;
+	}
+
+	D3D12_RESOURCE_DESC desc = m_d3dRes->GetDesc();
+
+	return desc.Format;
+
+}
+
+
 
 
 bool		Resource::_Initialize_Buffer(size_t sizeInBytes, D3D12_HEAP_TYPE heapType, D3D12_RESOURCE_STATES initState)

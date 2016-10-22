@@ -38,6 +38,16 @@ namespace GfxLib
 		// D3Dリソース取得
 		ID3D12Resource*	GetD3DResource() const { return m_d3dRes; }
 
+		/***************************************************************
+			@brief	フォーマットの取得
+			@par	[説明]
+				D3DResourceから取得する
+				エイリアスしている場合など、
+				派生側でオーバーライドすることも可能
+		*/
+		virtual DXGI_FORMAT		GetFormat() const;
+
+
 	protected:
 
 		bool		_Initialize_Buffer( size_t sizeInBytes , D3D12_HEAP_TYPE heapType , D3D12_RESOURCE_STATES initState );

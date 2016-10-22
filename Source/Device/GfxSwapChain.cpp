@@ -195,11 +195,11 @@ D3D12_CPU_DESCRIPTOR_HANDLE	SwapChain::GetCurrentRenderTargetHandle() const
 
 
 
-ID3D12Resource*				SwapChain::GetCurrentRenderTarget() const
+RenderTarget*				SwapChain::GetCurrentRenderTarget() const
 {
 
 
-	return m_paRenderTargets[m_nCurrentBackBufferIndex].GetD3DResource();
+	return &m_paRenderTargets[m_nCurrentBackBufferIndex];
 
 
 }

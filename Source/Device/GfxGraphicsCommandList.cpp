@@ -33,6 +33,9 @@ ID3D12GraphicsCommandListをカプセル化する
 #include "State/GfxRasterizerState.h"
 #include "State/GfxInputLayout.h"
 
+#include "Resource/GfxRenderTarget.h"
+#include "Resource/GfxDepthStencil.h"
+
 
 
 using namespace GfxLib;
@@ -229,6 +232,34 @@ void	GraphicsCommandList::SetInputLayout(const InputLayout* layout)
 		m_PipelineState.InputLayout = D3D12_INPUT_LAYOUT_DESC{ nullptr , 0 };
 
 	}
+
+
+}
+
+
+
+void	GraphicsCommandList::OMSetRenderTargets(uint32_t count, const RenderTarget* const * rtArray, const DepthStencil * depthStencil)
+{
+
+	// 最大D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT
+
+	D3D12_CPU_DESCRIPTOR_HANDLE	aRTVDesc[D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT];
+
+	uint32_t i = 0;
+	for (; i < count; ++i) {
+		aRTVDesc[i] = rtArray[i]->GetRTVDescriptorHandle();
+		m_PipelineState.RTVFormats[i] = rtArray[i]->GetFormat();
+	}
+	for (; i < _countof(aRTVDesc); ++i) {
+		m_PipelineState.RTVFormats[i] = DXGI_FORMAT_UNKNOWN;
+	}
+	m_PipelineState.DSVFormat = depthStencil ? depthStencil->GetFormat() : DXGI_FORMAT_UNKNOWN;
+
+	m_pCmdList->OMSetRenderTargets(count, aRTVDesc, false,
+		depthStencil ? &D3D12_CPU_DESCRIPTOR_HANDLE( depthStencil->GetDSVDescriptorHandle() ):nullptr );
+
+	m_bPipelineDirty = true;
+	
 
 
 }

@@ -46,7 +46,7 @@ namespace GfxLib
 
 		enum {
 
-			MAX_FRAME_COUNT = MAX_FRAME_QUEUE,
+			MAX_FRAME_COUNT = MAX_FRAME_QUEUE+1,
 
 		};
 

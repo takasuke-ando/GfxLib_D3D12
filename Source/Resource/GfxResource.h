@@ -38,9 +38,19 @@ namespace GfxLib
 		// D3Dリソース取得
 		ID3D12Resource*	GetD3DResource() const { return m_d3dRes; }
 
+		/***************************************************************
+			@brief	フォーマットの取得
+			@par	[説明]
+				D3DResourceから取得する
+				エイリアスしている場合など、
+				派生側でオーバーライドすることも可能
+		*/
+		virtual DXGI_FORMAT		GetFormat() const;
+
+
 	protected:
 
-		bool		_Initialize_Buffer( size_t sizeInBytes );
+		bool		_Initialize_Buffer( size_t sizeInBytes , D3D12_HEAP_TYPE heapType , D3D12_RESOURCE_STATES initState );
 
 		bool		_Initialize_RenderTarget(Format format, uint32_t width, uint32_t height, uint32_t mipLevls, bool EnableShaderResource);
 
@@ -54,7 +64,15 @@ namespace GfxLib
 		/*
 			Texture2Dとして初期化
 		*/
+		bool		_Initialize_Texture2D_Test(Format format, uint32_t width, uint32_t height, uint32_t mipLevls);
 		bool		_Initialize_Texture2D(Format format, uint32_t width, uint32_t height, uint32_t mipLevls );
+
+
+
+		/*
+			すでに作成済みのリソースを使い、初期化
+		*/
+		bool			_Initialize(ID3D12Resource *rtResource);
 
 
 		D3DPtr<ID3D12Resource>	m_d3dRes;

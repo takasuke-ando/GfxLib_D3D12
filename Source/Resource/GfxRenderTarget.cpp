@@ -96,6 +96,15 @@ bool	RenderTarget::Initialize( Format format, uint32_t width, uint32_t height, u
 
 	//m_RTVDescHeap.InitializeRTV(mipLevels);
 
+	b = _CreateRTV((DXGI_FORMAT)format, mipLevels);
+
+	if (!b) {
+
+		return false;
+	}
+
+
+	/*
 	m_paRTVDescHandle = new AutoDescriptorHandle< DescriptorHeapType::RTV >[mipLevels];
 
 	
@@ -114,6 +123,7 @@ bool	RenderTarget::Initialize( Format format, uint32_t width, uint32_t height, u
 		d3dDev->CreateRenderTargetView(m_d3dRes, &rtvDesc, m_paRTVDescHandle[lv]);
 
 	}
+	*/
 
 
 	
@@ -124,6 +134,7 @@ bool	RenderTarget::Initialize( Format format, uint32_t width, uint32_t height, u
 
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 
+		//	@TODO	マルチサンプル対応
 		
 		srvDesc.Format = (DXGI_FORMAT)format;
 		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
@@ -143,6 +154,84 @@ bool	RenderTarget::Initialize( Format format, uint32_t width, uint32_t height, u
 	return true;
 }
 
+
+
+/***************************************************************
+@brief	初期化
+@par	[説明]
+	すでに作成済みのリソースを使って、初期化を行う
+@param	rtResource	:	レンダーターゲットリソース
+*/
+bool	RenderTarget::Initialize(ID3D12Resource *rtResource)
+{
+
+
+	Finalize();
+
+	CoreSystem *coreSystem = CoreSystem::GetInstance();
+	ID3D12Device* d3dDev = coreSystem->GetD3DDevice();
+
+	// レンダーターゲットとして初期化
+	bool b = _Initialize(rtResource);
+
+	if (!b) {
+
+		return false;
+	}
+
+
+	D3D12_RESOURCE_DESC resDesc = rtResource->GetDesc();
+
+	uint32_t mipLevels = resDesc.MipLevels;
+	DXGI_FORMAT format = resDesc.Format;
+
+	b = _CreateRTV(format, mipLevels);
+
+	
+
+	return b;
+}
+
+
+
+/***************************************************************
+	@brief	RTVハンドルを作成する
+	@par	[説明]
+	@param
+*/
+bool	RenderTarget::_CreateRTV(DXGI_FORMAT format, uint32_t mipLevels)
+{
+	
+	CoreSystem *coreSystem = CoreSystem::GetInstance();
+	ID3D12Device* d3dDev = coreSystem->GetD3DDevice();
+
+
+	
+	m_paRTVDescHandle = new AutoDescriptorHandle< DescriptorHeapType::RTV >[mipLevels];
+
+
+	for (uint32_t lv = 0; lv < mipLevels; ++lv) {
+
+		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc = {};
+
+		//	@TODO	マルチサンプル対応したい
+
+		rtvDesc.Format = (DXGI_FORMAT)format;
+		rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+		rtvDesc.Texture2D.MipSlice = lv;
+		rtvDesc.Texture2D.PlaneSlice = 0;
+
+
+		//m_paRTVDescHandle[lv] = AllocateDescriptorHandle(DescriptorHeapType::RTV);
+
+		d3dDev->CreateRenderTargetView(m_d3dRes, &rtvDesc, m_paRTVDescHandle[lv]);
+
+	}
+
+
+	return true;
+
+}
 
 
 

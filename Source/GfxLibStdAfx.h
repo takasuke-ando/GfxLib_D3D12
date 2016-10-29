@@ -49,7 +49,7 @@ namespace GfxLib {
 
 		Ignore = 0,	//	無視
 		Log,		//	ログを出す
-		Asset,		//	ログをだし、アサートする
+		Assert,		//	ログをだし、アサートする
 		
 	};
 

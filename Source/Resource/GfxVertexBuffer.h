@@ -2,17 +2,17 @@
 #define	__INCLUDE_GFXVERTEXBUFFER_H__
 
 
-#include "GfxResource.h"
+#include "GfxBuffer.h"
 
 
 namespace GfxLib
 {
 
 	class VertexBuffer : 
-		public Resource
+		public Buffer
 	{
 
-		typedef Resource SuperClass;
+		typedef Buffer SuperClass;
 
 	public:
 		VertexBuffer();

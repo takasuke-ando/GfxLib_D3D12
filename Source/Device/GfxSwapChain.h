@@ -17,6 +17,8 @@ namespace GfxLib
 
 	class CoreSystem;
 	class CommandList;
+	class GraphicsCommandList;
+	class RenderTarget;
 
 	template< DescriptorHeapType heapType >
 	class AutoDescriptorHandle;
@@ -39,7 +41,7 @@ namespace GfxLib
 			呼び出しを忘れるとハザード制御が行われず、表示中のバックバッファを描画に使ってしまうことがあります
 		@param[in]	cmdList:	コマンドリスト
 		*/
-		void	Begin(CommandList& cmdList);
+		void	Begin(GraphicsCommandList& cmdList);
 
 		/***************************************************************
 		@brief		フレームの終了
@@ -49,13 +51,13 @@ namespace GfxLib
 			ExecuteCommandList,Presentの順で呼び出します
 		@param[in]	cmdList:	コマンドリスト
 		*/
-		void	End(CommandList& cmdList );
+		void	End(GraphicsCommandList& cmdList );
 
 		void	Present(uint32_t SyncInterval, uint32_t Flags);
 
 
 		D3D12_CPU_DESCRIPTOR_HANDLE	GetCurrentRenderTargetHandle() const;
-		ID3D12Resource*				GetCurrentRenderTarget() const;
+		RenderTarget*				GetCurrentRenderTarget() const;
 
 
 		uint32_t		GetWidth() const { return m_Width; }
@@ -65,9 +67,9 @@ namespace GfxLib
 
 
 		D3DPtr< IDXGISwapChain3 >	m_GISwapChain;
-		D3DPtr<ID3D12Resource>*		m_paRenderTargets;	//	Render Target Array
-//		DescriptorHeap				m_RTDescHeap;		//	Render Target View
-		AutoDescriptorHandle< DescriptorHeapType::RTV >	*m_paRTDescHandle;
+		//D3DPtr<ID3D12Resource>*		m_paRenderTargets;	//	Render Target Array
+		RenderTarget*				m_paRenderTargets;	//	Render Target Array
+		//AutoDescriptorHandle< DescriptorHeapType::RTV >	*m_paRTDescHandle;
 
 		uint32_t		m_Width;
 		uint32_t		m_Height;

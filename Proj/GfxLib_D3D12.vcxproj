@@ -136,9 +136,16 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Source\Device\GfxCommandAllocatorPool.h" />
     <ClInclude Include="..\Source\Device\GfxCommandList.h" />
     <ClInclude Include="..\Source\Device\GfxCommandQueue.h" />
+    <ClInclude Include="..\Source\Device\GfxGraphicsCommandList.h" />
     <ClInclude Include="..\Source\Device\GfxSwapChain.h" />
+    <ClInclude Include="..\Source\External\DirectX-Graphics-Samples\d3dx12.h" />
+    <ClInclude Include="..\Source\External\DirectX-Graphics-Samples\dds.h" />
+    <ClInclude Include="..\Source\External\DirectX-Graphics-Samples\DDSTextureLoader.h" />
+    <ClInclude Include="..\Source\External\DirectX-Graphics-Samples\pch.h" />
+    <ClInclude Include="..\Source\External\DirectX-Graphics-Samples\Utility.h" />
     <ClInclude Include="..\Source\GfxLib.h" />
     <ClInclude Include="..\Source\GfxLibStdAfx.h" />
     <ClInclude Include="..\Source\Resource\GfxBuffer.h" />
@@ -146,6 +153,8 @@
     <ClInclude Include="..\Source\Resource\GfxDepthStencil.h" />
     <ClInclude Include="..\Source\Resource\GfxDescriptorBuffer.h" />
     <ClInclude Include="..\Source\Resource\GfxDescriptorHeap.h" />
+    <ClInclude Include="..\Source\Resource\GfxGpuBufferRange.h" />
+    <ClInclude Include="..\Source\Resource\GfxIndexBuffer.h" />
     <ClInclude Include="..\Source\Resource\GfxRenderTarget.h" />
     <ClInclude Include="..\Source\Resource\GfxResource.h" />
     <ClInclude Include="..\Source\Resource\GfxRootSignature.h" />
@@ -153,7 +162,11 @@
     <ClInclude Include="..\Source\Resource\GfxTexture2D.h" />
     <ClInclude Include="..\Source\Resource\GfxVertexBuffer.h" />
     <ClInclude Include="..\Source\Shader\GfxShader.h" />
+    <ClInclude Include="..\Source\State\GfxBlendState.h" />
+    <ClInclude Include="..\Source\State\GfxDepthStencilState.h" />
+    <ClInclude Include="..\Source\State\GfxInputLayout.h" />
     <ClInclude Include="..\Source\State\GfxPipelineState.h" />
+    <ClInclude Include="..\Source\State\GfxRasterizerState.h" />
     <ClInclude Include="..\Source\System\GfxAdhocDescriptorHeap.h" />
     <ClInclude Include="..\Source\System\GfxAdhocGpuBuffer.h" />
     <ClInclude Include="..\Source\System\GfxCoreSystem.h" />
@@ -162,6 +175,7 @@
     <ClInclude Include="..\Source\System\GfxDescriptorAllocator.h" />
     <ClInclude Include="..\Source\System\GfxFence.h" />
     <ClInclude Include="..\Source\Util\GfxAutoDescriptorHandle.h" />
+    <ClInclude Include="..\Source\Util\GfxCrc32.h" />
     <ClInclude Include="..\Source\Util\GfxD3DPtr.h" />
     <ClInclude Include="..\Source\Util\GfxFormatUtil.h" />
     <ClInclude Include="..\Source\Util\GfxMath.h" />
@@ -169,15 +183,21 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Source\Device\GfxCommandAllocatorPool.cpp" />
     <ClCompile Include="..\Source\Device\GfxCommandList.cpp" />
     <ClCompile Include="..\Source\Device\GfxCommandQueue.cpp" />
+    <ClCompile Include="..\Source\Device\GfxGraphicsCommandList.cpp" />
     <ClCompile Include="..\Source\Device\GfxSwapChain.cpp" />
+    <ClCompile Include="..\Source\External\DirectX-Graphics-Samples\DDSTextureLoader.cpp" />
+    <ClCompile Include="..\Source\External\DirectX-Graphics-Samples\Utility.cpp" />
     <ClCompile Include="..\Source\GfxLib.cpp" />
     <ClCompile Include="..\Source\Resource\GfxBuffer.cpp" />
     <ClCompile Include="..\Source\Resource\GfxConstantBuffer.cpp" />
     <ClCompile Include="..\Source\Resource\GfxDepthStencil.cpp" />
     <ClCompile Include="..\Source\Resource\GfxDescriptorBuffer.cpp" />
     <ClCompile Include="..\Source\Resource\GfxDescriptorHeap.cpp" />
+    <ClCompile Include="..\Source\Resource\GfxGpuBufferRange.cpp" />
+    <ClCompile Include="..\Source\Resource\GfxIndexBuffer.cpp" />
     <ClCompile Include="..\Source\Resource\GfxRenderTarget.cpp" />
     <ClCompile Include="..\Source\Resource\GfxResource.cpp" />
     <ClCompile Include="..\Source\Resource\GfxRootSignature.cpp" />
@@ -185,7 +205,11 @@
     <ClCompile Include="..\Source\Resource\GfxTexture2D.cpp" />
     <ClCompile Include="..\Source\Resource\GfxVertexBuffer.cpp" />
     <ClCompile Include="..\Source\Shader\GfxShader.cpp" />
+    <ClCompile Include="..\Source\State\GfxBlendState.cpp" />
+    <ClCompile Include="..\Source\State\GfxDepthStencilState.cpp" />
+    <ClCompile Include="..\Source\State\GfxInputLayout.cpp" />
     <ClCompile Include="..\Source\State\GfxPipelineState.cpp" />
+    <ClCompile Include="..\Source\State\GfxRasterizerState.cpp" />
     <ClCompile Include="..\Source\System\GfxAdhocDescriptorHeap.cpp" />
     <ClCompile Include="..\Source\System\GfxAdhocGpuBuffer.cpp" />
     <ClCompile Include="..\Source\System\GfxCoreSystem.cpp" />
@@ -193,6 +217,7 @@
     <ClCompile Include="..\Source\System\GfxDescriptorAllocator.cpp" />
     <ClCompile Include="..\Source\System\GfxFence.cpp" />
     <ClCompile Include="..\Source\Util\GfxAutoDescriptorHandle.cpp" />
+    <ClCompile Include="..\Source\Util\GfxCrc32.cpp" />
     <ClCompile Include="..\Source\Util\GfxMath.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -202,6 +227,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Source\Device\GfxGraphicsCommandList.inl" />
     <None Include="..\Source\Resource\GfxDescriptorBuffer.inl" />
     <None Include="..\Source\Util\GfxD3DPtr.inl" />
     <None Include="..\Source\Util\GfxFormatUtil.inl" />

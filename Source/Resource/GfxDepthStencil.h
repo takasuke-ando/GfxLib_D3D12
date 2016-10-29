@@ -57,6 +57,16 @@ namespace GfxLib
 		*/
 		void	CopySRVDescriptor(D3D12_CPU_DESCRIPTOR_HANDLE dstHandle);
 
+
+		/***************************************************************
+		@brief	フォーマットの取得
+		@par	[説明]
+			Resourceクラスから派生
+			リソースのフォーマットではなく、深度ステンシルのフォーマット(DXGI_D***)を返す
+		*/
+		virtual DXGI_FORMAT		GetFormat() const	override { return m_DSVFormat; }
+
+
 		D3D12_CPU_DESCRIPTOR_HANDLE	GetDSVDescriptorHandle() const { return m_DSVDescHeap.GetCPUDescriptorHandleByIndex(0); }
 
 	private:
@@ -65,6 +75,7 @@ namespace GfxLib
 		DescriptorHeap	m_DSVDescHeap;
 		DescriptorHeap  m_SRVDescHeap;
 
+		DXGI_FORMAT		m_DSVFormat;
 
 	};
 

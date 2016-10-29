@@ -14,11 +14,12 @@ namespace GfxLib
 
 
 
-	inline 		DescriptorBuffer::DescriptorBuffer(DescriptorHeap*heap, uint32_t startIndex, uint32_t size)
+	inline 		DescriptorBuffer::DescriptorBuffer(DescriptorHeap*heap, uint32_t startIndex, uint32_t size, CommandList *cmdList)
 		:m_heap(heap)
 		, m_d3dDev(CoreSystem::GetInstance()->GetD3DDevice())
 		, m_startIndex(startIndex)
 		, m_size(size)
+		, m_cmdList(cmdList)
 	{
 
 
@@ -29,6 +30,7 @@ namespace GfxLib
 		, m_d3dDev(CoreSystem::GetInstance()->GetD3DDevice())
 		, m_startIndex(0)
 		, m_size(0)
+		, m_cmdList(nullptr)
 	{
 	}
 
@@ -116,7 +118,6 @@ namespace GfxLib
 
 
 	}
-
 
 
 

@@ -16,12 +16,12 @@ namespace GfxLib
 {
 
 	class DescriptorHeap;
-
+	class CommandList;
 
 	class DescriptorBuffer
 	{
 	public:
-		DescriptorBuffer(DescriptorHeap*heap, uint32_t startIndex, uint32_t size);
+		DescriptorBuffer(DescriptorHeap*heap, uint32_t startIndex, uint32_t size, CommandList *cmdList);
 		DescriptorBuffer();
 		~DescriptorBuffer();
 
@@ -50,6 +50,9 @@ namespace GfxLib
 		void	SetConstantBuffer(uint32_t index, D3D12_GPU_VIRTUAL_ADDRESS gpuAddress, uint32_t size);
 
 
+		void	SetConstantBuffer(uint32_t index, const void* pData, uint32_t size);
+
+
 		D3D12_GPU_DESCRIPTOR_HANDLE		GetGPUDescriptorHandle() const;
 
 
@@ -61,7 +64,7 @@ namespace GfxLib
 		ID3D12Device*	const m_d3dDev;
 		uint32_t		const m_startIndex;
 		uint32_t		const m_size;
-
+		CommandList *	const m_cmdList;
 
 	};
 

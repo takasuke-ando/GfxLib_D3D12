@@ -54,6 +54,14 @@ namespace GfxLib {
 		bool	Initialize( Format format, uint32_t width ,uint32_t height , uint32_t mipLevels = 1, bool EnableShaderResource = true );
 
 
+		/***************************************************************
+		@brief	初期化
+		@par	[説明]
+			すでに作成済みのリソースを使って、初期化を行う
+		@param	rtResource	:	レンダーターゲットリソース
+		*/
+		bool	Initialize(ID3D12Resource *rtResource);
+
 
 		/***************************************************************
 		@brief	Descriptorのコピーを行う
@@ -66,6 +74,9 @@ namespace GfxLib {
 		D3D12_CPU_DESCRIPTOR_HANDLE	GetRTVDescriptorHandle() const;
 
 	private:
+
+		bool		_CreateRTV( DXGI_FORMAT format , uint32_t mipLevels );
+
 
 		//DescriptorHeap	m_RTVDescHeap;
 		//D3D12_CPU_DESCRIPTOR_HANDLE *m_paRTVDescHandle;

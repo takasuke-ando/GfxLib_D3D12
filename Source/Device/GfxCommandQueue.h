@@ -7,6 +7,10 @@
 namespace GfxLib
 {
 	class Fence;
+	class CommandAllocatorPool;
+	class CommandList;
+	class AdhocGpuBuffer;
+	class AdhocDescriptorHeap;
 
 	/***************************************************************
 		@brief		コマンドキュークラス
@@ -23,12 +27,37 @@ namespace GfxLib
 		~CommandQueue();
 
 
-		bool Initialize();
+		
+		/***************************************************************
+			@brief	初期化
+			@par	[説明]
+				コマンドキューの初期化を行う
+				CoreSystemの初期化より後に呼び出す必要がある
+			@param
+		*/
+		bool Initialize(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
+
+
+		/***************************************************************
+			@brief	コマンドキューのファイナライズ
+			@par	[説明]
+			コマンドキューを終了する
+			GPUの終了待機するため、このメソッドの呼び出しに時間がかかる可能性がある
+			@param
+		*/
 		void Finalize();
 
 
 		ID3D12CommandQueue*	GetD3DCommandQueue() const { return m_CmdQueue;  }
 
+		/***************************************************************
+			@brief	コマンドリストの実行
+			@par	[説明]
+			@param[in]	count:	cmdListsの配列数
+			@param[in]	cmdLists:	コマンドリストのポインタ配列
+			@return		コマンド実行を認識するフェンスの値
+		*/
+		uint64_t				ExecuteCommandLists(uint32_t count, CommandList* cmdLists[]);
 
 
 		// フェンスを挿入 Fenceオブジェクトを使用して、GPUとの同期をとることが可能
@@ -44,12 +73,38 @@ namespace GfxLib
 		uint64_t				Signal(ID3D12Fence *fence);
 
 		//	次にフェンスに書き込まれる予定の値を取得する
-		uint64_t				GetNextFenceValue() const { return m_uFenceValue; }
+		uint64_t				GetNextFenceValue() const { return m_uFenceValue+1; }
 
+		//	最後にフェンスに書き込まれた値を取得する
+		uint64_t				GetLastFenceValue() const { return m_uFenceValue; }
+
+		uint64_t				GetCompletedFence() const { return  m_d3dFence->GetCompletedValue(); }
+
+		//! コマンドアロケータを要求する
+		ID3D12CommandAllocator*	RequireCommandAllocator();
+
+		//! コマンドアロケータを開放。通常は呼び出すことはない
+		void ReleaseCommandAllocator(uint64_t fence , ID3D12CommandAllocator* allocator);
+
+
+		AdhocGpuBuffer*		GetAdhocGpuBufferHost() const {
+			return m_pAdhocGpuBuffer;
+		}
+
+		AdhocDescriptorHeap* GetAdhocDescriptorHeapHost() const {
+			return m_pAdhocDescriptorHeap;
+		}
 
 	private:
 		D3DPtr<ID3D12CommandQueue>		m_CmdQueue;
-		uint64_t			m_uFenceValue;
+		D3D12_COMMAND_LIST_TYPE			m_CmdListType;
+		CommandAllocatorPool*			m_pCmdAllocatorPool;
+		AdhocGpuBuffer*			m_pAdhocGpuBuffer;
+		AdhocDescriptorHeap*	m_pAdhocDescriptorHeap;
+
+
+		//	フェンス
+		uint64_t				m_uFenceValue;
 		D3DPtr<ID3D12Fence>		m_d3dFence;
 
 

@@ -17,6 +17,8 @@ namespace GfxLib
 	*/
 	
 	class CoreSystem;
+	class CommandQueue;
+	class Resource;
 
 	class CommandList
 	{
@@ -25,7 +27,15 @@ namespace GfxLib
 		~CommandList();
 
 
-		bool	Initialize();
+		/***************************************************************
+			@brief	初期化処理
+			@par	[説明]
+				コマンドリストオブジェクトの構築などを行う
+				D3D12ではGraphics-CommandList も、Compute- も、Copy- も
+				GraphicsCommandListになっている
+			@param
+		*/
+		bool	Initialize(CommandQueue *cmdQueue , ID3D12GraphicsCommandList *cmdList );
 		void	Finalize();
 
 		//	コマンドの書き込みを可能な状態にする。フレームの最初に呼び出す
@@ -37,7 +47,8 @@ namespace GfxLib
 				トランジションリソースバリアを設定する
 			@param[in]	
 		*/
-		void	ResourceTransitionBarrier(ID3D12Resource* resource,ResourceStates stateBefore , ResourceStates stateAfter );
+		void	ResourceTransitionBarrier(ID3D12Resource* resource, ResourceStates stateBefore, ResourceStates stateAfter);
+		void	ResourceTransitionBarrier(Resource* resource,ResourceStates stateBefore , ResourceStates stateAfter );
 
 		ID3D12GraphicsCommandList*	GetD3DCommandList() const {		return m_pCmdList;		}
 
@@ -48,37 +59,11 @@ namespace GfxLib
 		@par	[説明]
 		このフレームの間だけ、利用可能なGPUアサインされたバッファを確保します
 		数フレーム後にはこの領域は再利用されるため、継続して保持することはできません
-		@param[out]  cpuAddress:	成功時に、CPUマップ済みアドレスが返される
 		@param[in]	size:		要求サイズ
 		@param[in]	alignment:	アライメント
-
+		@return		GpuBufferRange:	GPUバッファリソースサブ領域を示す
 		*/
-		D3D12_GPU_VIRTUAL_ADDRESS	AllocateGpuBuffer(void * &cpuAddress, uint32_t size, uint32_t alignment);
-
-
-
-		/***************************************************************
-		@brief	利用可能なデスクリプタヒープを取得する
-		@par	[説明]
-		このフレームの間だけ、利用可能なデスクリプタヒープを取得する
-		@param[in]	size:		要求サイズ
-		@param[out]	startIndex:	ヒープのこのインデックスから書き込める
-
-		*/
-		//DescriptorHeap*	RequireAdhocDescriptorHeap(uint32_t size, uint32_t &startIndex);
-
-
-
-		/***************************************************************
-		@brief	利用可能なデスクリプタヒープを取得する
-		@par	[説明]
-		このフレームの間だけ、利用可能なデスクリプタヒープを取得する
-		同時に、ハンドルコピーも行う
-		@param[in]	size:		要求サイズ
-		@param[out]	startIndex:	ヒープのこのインデックスから書き込める
-		@param[in]	srcHandle:	コピー元となるハンドルの配列
-		*/
-		//DescriptorHeap*	RequireAdhocDescriptorHeap(uint32_t size, uint32_t &startIndex, const D3D12_CPU_DESCRIPTOR_HANDLE *srcHandle);
+		GpuBufferRange	AllocateGpuBuffer( uint32_t size, uint32_t alignment);
 
 
 		/***************************************************************
@@ -94,14 +79,74 @@ namespace GfxLib
 
 
 
+		/***************************************************************
+		@brief		アサインされたコマンドキューの取得
+		*/
+		CommandQueue *		GetAssingedCommandQueue() const {
+			return m_pCmdQueue;	
+		}
+
+		/***************************************************************
+		@brief		アロケータをデタッチする
+		*/
+		ID3D12CommandAllocator*	DetachAllocator();
+
+
+		/***************************************************************
+			@brief	リソースの初期化コピーを行う
+			@par	[説明]
+				テクスチャリソースの初期化コピー
+			@param
+		*/
+		bool	InitializeResource(
+			ID3D12Resource* dstResource , 
+			uint32_t subDataNum,
+			const D3D12_SUBRESOURCE_DATA subData[]);
+
+		/***************************************************************
+		@brief	リソースの初期化コピーを行う
+		@par	[説明]
+			バッファーリソースの初期化コピー
+		@param
+		*/
+		bool	InitializeResource(
+			ID3D12Resource* dstResource,
+			const void *srcData,
+			const size_t byteSize );
+
+		/***************************************************************
+		@brief	ExecuteCommandListが呼び出される
+		@par	[説明]
+		ExecuteCommandListが呼び出される直前に呼ばれる
+		@param
+		*/
+		void	PreExecute();
+
+
+		/***************************************************************
+			@brief	ExecuteCommandListが呼び出された
+			@par	[説明]
+				ExecuteCommandListが呼び出された後に呼ばれる
+			@param
+		*/
+		void	PostExecute(uint64_t fence);
+
 
 	private:
 
-		D3DPtr<ID3D12GraphicsCommandList>	m_pCmdList;
+		D3DPtr<ID3D12GraphicsCommandList>			m_pCmdList;
 		ID3D12Device*						m_pd3dDev;
+
+		CommandQueue *						m_pCmdQueue;		//!<	アサインするコマンドキュー
+
 
 		AdhocGpuBufferClient				m_GpuBufferAllocator;
 		AdhocDescriptorHeapClient			m_DescHeapAllocator;
+
+
+	protected:
+		ID3D12CommandAllocator*				m_pCurCmdAllocator;	//!<	現在のコマンドアロケータ
+
 
 	};
 

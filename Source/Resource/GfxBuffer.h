@@ -33,15 +33,28 @@ namespace GfxLib
 		@brief	初期化
 		@par	[説明]
 			サイズを指定して、初期化を行う
+			CPUアドレスを経由して書き込みを行える
 		@param
 		*/
 		bool Initialize( size_t byteSize );
 
+		/***************************************************************
+		@brief	初期化
+		@par	[説明]
+			サイズを指定して、初期化を行う
+			GPUからしかアクセスできない状態になる
+		@param
+		*/
+		bool InitializeImmutable(const void* pData, size_t byteSize);
+
+
+
+
 
 		uint32_t	GetBufferSize() const { return m_BuffSize; }
 
-		D3D12_GPU_VIRTUAL_ADDRESS	GetGpuVirtualAddress(void) const { return m_pGpuAddress; }
-		void*						GetCpuAddress(void) const { return m_pCpuAddress; }
+		D3D12_GPU_VIRTUAL_ADDRESS	GetGpuVirtualAddress(void)	const { return m_pGpuAddress; }
+		void*						GetCpuAddress(void)			const { return m_pCpuAddress; }
 
 	private:
 

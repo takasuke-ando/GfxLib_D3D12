@@ -15,7 +15,12 @@
 
 
 #include "GfxCommandQueue.h"
+
+#include "Device/GfxCommandAllocatorPool.h"
+#include "Device/GfxCommandList.h"
 #include "System/GfxCoreSystem.h"
+#include "System/GfxAdhocGpuBuffer.h"
+#include "System/GfxAdhocDescriptorHeap.h"
 
 
 
@@ -27,7 +32,11 @@ using namespace GfxLib;
 
 
 CommandQueue::CommandQueue()
-: m_uFenceValue(1)
+:m_CmdListType(D3D12_COMMAND_LIST_TYPE_DIRECT)
+, m_pCmdAllocatorPool(nullptr)
+, m_pAdhocGpuBuffer(nullptr)
+, m_pAdhocDescriptorHeap(nullptr)
+, m_uFenceValue(0)
 {
 
 
@@ -40,7 +49,7 @@ CommandQueue::~CommandQueue()
 }
 
 
-bool CommandQueue::Initialize()
+bool CommandQueue::Initialize(D3D12_COMMAND_LIST_TYPE type)
 {
 	Finalize();
 
@@ -52,7 +61,7 @@ bool CommandQueue::Initialize()
 
 	D3D12_COMMAND_QUEUE_DESC	desc = {};
 
-	desc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+	desc.Type = type;
 	desc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 
 	HRESULT hr;
@@ -71,20 +80,106 @@ bool CommandQueue::Initialize()
 		return false;
 	}
 
+	m_CmdListType = type;
+
+	m_pCmdAllocatorPool = new CommandAllocatorPool(pDevice, type);
+	m_pAdhocGpuBuffer = new AdhocGpuBuffer;
+	m_pAdhocDescriptorHeap = new AdhocDescriptorHeap(DescriptorHeapType::CBV_SRV_UAV);
+
+	// 必ず一つは入れておく
+	InsertFence();
+
 	return true;
 
 }
 
 
+/***************************************************************
+	@brief	コマンドキューのファイナライズ
+	@par	[説明]
+		コマンドキューを終了する
+		GPUの終了待機するため、このメソッドの呼び出しに時間がかかる可能性がある
+	@param
+*/
 void CommandQueue::Finalize()
 {
+
+	if (m_CmdQueue != nullptr) {
+		Fence fence;
+		fence.Initialize(true);
+
+		InsertFence(&fence);
+
+		// GPUの完了を待機
+		fence.Sync();
+		fence.Finalize();
+	}
+
 
 	m_CmdQueue.Release();
 	m_d3dFence.Release();
 
+	delete m_pCmdAllocatorPool;
+	m_pCmdAllocatorPool = nullptr;
+
+	delete m_pAdhocGpuBuffer;
+	m_pAdhocGpuBuffer = nullptr;
+
+	delete m_pAdhocDescriptorHeap;
+	m_pAdhocDescriptorHeap = nullptr;
+
 }
 
 
+/***************************************************************
+@brief	コマンドリストの実行
+@par	[説明]
+	コマンドリストの実行を行う
+	事前にCloseの呼び出しが必要
+
+	流れ的にはCommandListの内部で行ったほうがきれいだが
+	バッチ実行を行うためにCommandQueue側で処理…
+@param[in]	count:	cmdListsの配列数
+@param[in]	cmdLists:	コマンドリストのポインタ配列
+*/
+uint64_t	CommandQueue::ExecuteCommandLists(uint32_t count, CommandList* cmdLists[])
+{
+
+	ID3D12CommandList* ad3dLists[32];	//	...
+
+	GFX_ASSERT(count <= 32, L"Command List Count Over!");
+
+
+	for (uint32_t i = 0; i < count; ++i) {
+
+		ad3dLists[i] = cmdLists[i]->GetD3DCommandList();
+
+		GFX_ASSERT(cmdLists[i]->GetAssingedCommandQueue() == this, L"command list is not assigned to this Queue");
+
+		cmdLists[i]->PreExecute();
+
+	}
+
+	m_CmdQueue->ExecuteCommandLists(count, ad3dLists);
+
+	uint64_t fence = InsertFence();
+
+
+	// コマンドアロケータの回収
+	for (uint32_t i = 0; i < count; ++i) {
+
+
+		cmdLists[i]->PostExecute(fence);
+
+		ID3D12CommandAllocator * allocator = cmdLists[i]->DetachAllocator();
+		m_pCmdAllocatorPool->Release(fence, allocator);
+
+	}
+
+
+
+	return fence;
+}
 
 
 void		CommandQueue::InsertFence(Fence *fence)
@@ -111,7 +206,7 @@ uint64_t	CommandQueue::InsertFence()
 // フェンスを待機しているか
 bool		CommandQueue::IsFencePending(uint64_t fenceValue)
 {
-	GFX_ASSERT( fenceValue < m_uFenceValue , L"Invalid Fence Value" )
+	GFX_ASSERT( fenceValue <= m_uFenceValue , L"Invalid Fence Value" )
 	return m_d3dFence->GetCompletedValue() < fenceValue;
 
 }
@@ -122,10 +217,10 @@ bool		CommandQueue::IsFencePending(uint64_t fenceValue)
 uint64_t	CommandQueue::Signal(ID3D12Fence *fence)
 {
 
-	uint64_t fv = m_uFenceValue;
+	uint64_t fv = ++m_uFenceValue;
 	//m_CmdQueue->Signal(fence, m_uFenceValue);
 	m_CmdQueue->Signal(fence, m_uFenceValue);
-	++m_uFenceValue;
+	//++m_uFenceValue;
 
 
 	return fv;
@@ -133,4 +228,21 @@ uint64_t	CommandQueue::Signal(ID3D12Fence *fence)
 
 
 
+//! コマンドアロケータを要求する
+ID3D12CommandAllocator*	CommandQueue::RequireCommandAllocator()
+{
+	// 完了したFence値を指定
+	return m_pCmdAllocatorPool->Require(m_d3dFence->GetCompletedValue());
 
+}
+
+
+
+
+//! コマンドアロケータを開放。通常は呼び出すことはない
+void CommandQueue::ReleaseCommandAllocator(uint64_t fence, ID3D12CommandAllocator* allocator)
+{
+
+	m_pCmdAllocatorPool->Release(fence, allocator);
+
+}

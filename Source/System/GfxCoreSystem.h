@@ -15,6 +15,8 @@ namespace GfxLib
 	class AdhocDescriptorHeap;
 	class AdhocGpuBuffer;
 	class DescriptorHeap;
+	class CommandList;
+	class GraphicsCommandList;
 
 	class CoreSystem
 	{
@@ -45,13 +47,14 @@ namespace GfxLib
 
 		// 現在のフレームのコマンドアロケータを取得 
 		//	Begin/Endブラケット内部で呼び出す必要がある…と言いたいところだが、CommandListの作成時使用するため、いつでも呼び出すことができる
-		ID3D12CommandAllocator*	GetCurrentCommandAllocator() const { return m_aCmdAllocator[m_nCurrentCmdAllocatorIndex];	 }
+		//ID3D12CommandAllocator*	GetCurrentCommandAllocator() const { return m_aCmdAllocator[m_nCurrentCmdAllocatorIndex];	 }
 
 		IDXGIFactory4*			GetDXGIFactory() const { return m_GIFactory; }
 		//ID3D12CommandQueue*		GetCommandQueue() const { return m_CmdQueue; }
 
 		//コマンドキューの取得。自動的作成される、唯一のコマンドキュー
-		CommandQueue&			GetCommandQueue() { GFX_ASSERT(m_bInsideBeginEnd==true,L"This fucntion should call inside Begin/End");	 return m_CommandQueue; }
+		CommandQueue&			GetCommandQueue() {  return m_CommandQueue; }
+		//CommandQueue&			GetCommandQueue() { GFX_ASSERT(m_bInsideBeginEnd==true,L"This fucntion should call inside Begin/End");	 return m_CommandQueue; }
 
 		//デスクリプタアロケータの取得
 		DescriptorAllocator*	GetDescriptorAllocator() const { return m_pDescriptorAllocator; }
@@ -62,6 +65,18 @@ namespace GfxLib
 
 		//	遅延開放キューを取得
 		DelayDelete&		GetDelayDelete() { return	m_DelayDelete; }
+
+		/***************************************************************
+			@brief	リソース初期化用コマンドリスト
+			@par	[説明]
+				リソース初期化時のコピー用コマンドリストを取得
+				フレーム最初のBegin時にExechteされる
+
+			@param
+		*/
+		GraphicsCommandList*		GetResourceInitCommandList()	const {
+			return m_pResourceInitCmdList;		
+		}
 
 
 
@@ -102,32 +117,36 @@ namespace GfxLib
 		HRESULT _CreateSwapChain(DXGI_SWAP_CHAIN_DESC& desc ,IDXGISwapChain* &swapChain);
 
 
-		AdhocGpuBuffer*		GetAdhocGpuBufferHost() const {
-			return m_pAdhocGpuBuffer;
-		}
+		//AdhocGpuBuffer*		GetAdhocGpuBufferHost() const {
+		//	return m_pAdhocGpuBuffer;
+		//}
 
-		AdhocDescriptorHeap* GetAdhocDescriptorHeapHost() const {
-			return m_pAdhocDescriptorHeap;
-		}
+		//AdhocDescriptorHeap* GetAdhocDescriptorHeapHost() const {
+		//	return m_pAdhocDescriptorHeap;
+		//}
 
 	private:
 
+		//	Immutable
 		ID3D12Device*		m_pd3dDev;
 
 		//D3DPtr<ID3D12CommandQueue>		m_CmdQueue;
 		CommandQueue					m_CommandQueue;
 		D3DPtr<IDXGIFactory4>			m_GIFactory;
-		D3DPtr<ID3D12CommandAllocator>	m_aCmdAllocator[MAX_FRAME_QUEUE];
+		//D3DPtr<ID3D12CommandAllocator>	m_aCmdAllocator[MAX_FRAME_QUEUE];
 		
 		D3D_FEATURE_LEVEL	m_featureLevel;
 		D3D_DRIVER_TYPE		m_driverType;
 
+		// リソース管理
 		DelayDelete			m_DelayDelete;
 
 		DescriptorAllocator*	m_pDescriptorAllocator;
-		AdhocDescriptorHeap*	m_pAdhocDescriptorHeap;
-		AdhocGpuBuffer*			m_pAdhocGpuBuffer;
+		//AdhocDescriptorHeap*	m_pAdhocDescriptorHeap;
+		//AdhocGpuBuffer*			m_pAdhocGpuBuffer;
 
+
+		//	描画管理
 		bool				m_bInsideBeginEnd;
 		UINT				m_nUpdateCount;
 		UINT				m_nFrameCount;
@@ -138,6 +157,7 @@ namespace GfxLib
 
 		uint32_t			m_nCurrentCmdAllocatorIndex;
 
+		GraphicsCommandList*	m_pResourceInitCmdList;		//!<	リソース初期化用コマンドリスト。フレームの最初にFlushされる
 
 
 		//	Singleton

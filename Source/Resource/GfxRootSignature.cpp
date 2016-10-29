@@ -13,11 +13,13 @@
 #include "GfxRootSignature.h"
 #include "GfxRootSignatureDesc.h"
 #include "System/GfxCoreSystem.h"
+#include "Util/GfxCrc32.h"
 
 using namespace GfxLib;
 
 
 RootSignature::RootSignature()
+	:m_HashValue( 0 )
 {
 
 
@@ -65,11 +67,16 @@ bool	RootSignature::Initialize(const RootSignatureDesc &desc)
 	}
 
 
+	Crc32 crc;
+	crc.Update(blob->GetBufferPointer(), blob->GetBufferSize());
+
+
 	// D3D12 Root Signatureを作成
 	ID3D12Device *pDevice = CoreSystem::GetInstance()->GetD3DDevice();
 
 	hr = pDevice->CreateRootSignature(0, blob->GetBufferPointer(), blob->GetBufferSize(), IID_PPV_ARGS(m_d3dRootSignature.InitialAccept()));
-	blob->Release(); blob = nullptr;
+	blob->Release(); 
+	blob = nullptr;
 
 	if (FAILED(hr)) {
 
@@ -77,7 +84,7 @@ bool	RootSignature::Initialize(const RootSignatureDesc &desc)
 		return false;
 	}
 
-
+	m_HashValue = crc.GetValue();
 
 	return true;
 }
@@ -92,5 +99,5 @@ void	RootSignature::Finalize(bool delayed)
 	}
 
 	m_d3dRootSignature.Release();
-
+	m_HashValue = 0;
 }

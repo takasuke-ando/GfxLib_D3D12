@@ -25,7 +25,7 @@ namespace GfxLib {
 		DebugAction::Ignore,	//	None
 		DebugAction::Log,		//	Info
 		DebugAction::Log,		//	Warn
-		DebugAction::Asset,		//	Error
+		DebugAction::Assert,	//	Error
 	};
 
 }
@@ -54,7 +54,7 @@ void GfxLibDebugEvent(GfxLib::DebugLevel level, const wchar_t *file, uint32_t li
 
 	OutputDebugStringA(buff);
 
-	if (g_DebugLevelAction[(uint32_t)level] < DebugAction::Asset)
+	if (g_DebugLevelAction[(uint32_t)level] < DebugAction::Assert)
 	{
 		return;
 	}
@@ -81,12 +81,14 @@ void GfxLibDebugEvent(GfxLib::DebugLevel level, const wchar_t *file, uint32_t li
 
 	OutputDebugStringW(buff);
 
-	if (g_DebugLevelAction[(uint32_t)level] < DebugAction::Asset)
+	if (g_DebugLevelAction[(uint32_t)level] < DebugAction::Assert)
 	{
 		return;
 	}
 
+#ifndef NDEBUG
 	_wassert(buff, file, line);
+#endif
 
 }
 

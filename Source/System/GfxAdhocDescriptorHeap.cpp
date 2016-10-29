@@ -24,6 +24,7 @@
 #include "System/GfxAdhocDescriptorHeap.h"
 
 #include "Resource/GfxDescriptorHeap.h"
+#include "Device/GfxCommandQueue.h"
 
 
 using namespace GfxLib;
@@ -50,7 +51,6 @@ namespace {
 */
 AdhocDescriptorHeap::AdhocDescriptorHeap(DescriptorHeapType heapType )
 	: m_heapType(heapType)
-	, m_nCurrentIndex(0)
 	//, m_pCurrentHeap(nullptr)
 	//, m_nCurrentHeapUsedSize(0)
 	, m_allocatedCount(0)
@@ -67,107 +67,17 @@ AdhocDescriptorHeap::AdhocDescriptorHeap(DescriptorHeapType heapType )
 AdhocDescriptorHeap::~AdhocDescriptorHeap()
 {
 
+	while (m_FreeDescHeap.size() > 0) {
 
-	for ( auto &vec : m_aUsingDescHeap ) {
+		auto &info = m_FreeDescHeap.front();
 
-		for (auto &desc : vec) {
-			delete desc;
-		}
+		delete info.second;
 
-		vec.clear();
+		m_FreeDescHeap.pop_front();
 
 	}
 
-
-	for (auto &desc : m_FreeDescHeap ) {
-		delete desc;
-	}
-	m_FreeDescHeap.clear();
-
-	//delete m_pCurrentHeap;
-	//m_pCurrentHeap = nullptr;
-	
 }
-
-
-/***************************************************************
-@brief	利用可能なデスクリプタヒープを取得する
-@par	[説明]
-このフレームの間だけ、利用可能なデスクリプタヒープを取得する
-@param[in]	size:		要求サイズ
-@param[out]	startIndex:	ヒープのこのインデックスから書き込める
-
-*/
-#if 0
-DescriptorHeap*	AdhocDescriptorHeap::Require(uint32_t requestSize, uint32_t &startIndex)
-{
-
-	if (m_pCurrentHeap) {
-
-		// 現在のヒープをそのまま使える
-		const uint32_t capacity = m_pCurrentHeap->GetBufferCount();
-
-		if (requestSize + m_nCurrentHeapUsedSize  <= capacity ) {
-			
-			startIndex = m_nCurrentHeapUsedSize;
-			m_nCurrentHeapUsedSize += requestSize;
-
-			return m_pCurrentHeap;
-		}
-		else {
-
-			// 利用中リストに入れる
-			m_aUsingDescHeap[m_nCurrentIndex].push_back(m_pCurrentHeap);
-
-			m_nCurrentHeapUsedSize = 0;
-			m_pCurrentHeap = nullptr;
-
-		}
-
-	}
-
-	
-	if (requestSize > MaxBufferSize) {
-		GFX_ERROR(L"AdhocDescriptorHeap::Require size over (%d)", requestSize);
-		return nullptr;
-	}
-
-	if (m_FreeDescHeap.size() == 0) {
-		// 新たにDescHeapの作成
-		m_pCurrentHeap = new DescriptorHeap;
-
-		// とりあえずCBV/SRV/UAV用として
-		bool b = FALSE;
-		if (m_heapType == DescriptorHeapType::CBV_SRV_UAV) {
-			b = m_pCurrentHeap->InitializeCBV_SRV_UAV(MaxBufferSize); // サイズ適当
-		}
-		else if (m_heapType == DescriptorHeapType::SAMPLER) {
-			b = m_pCurrentHeap->InitializeSampler(MaxBufferSize);
-		}
-
-		if (!b) {
-			delete m_pCurrentHeap;
-			m_pCurrentHeap = nullptr;
-
-			return nullptr;
-		}
-		++m_allocatedCount;
-	}
-	else {
-
-		// 未使用リストから取り出す
-		m_pCurrentHeap = m_FreeDescHeap.back();
-		m_FreeDescHeap.pop_back();
-
-	}
-
-	startIndex = 0;
-	m_nCurrentHeapUsedSize = requestSize;
-
-
-	return m_pCurrentHeap;
-}
-#endif
 
 
 /***************************************************************
@@ -176,12 +86,26 @@ DescriptorHeap*	AdhocDescriptorHeap::Require(uint32_t requestSize, uint32_t &sta
 AdhocDescriptorHeapClientから呼び出される
 
 */
-DescriptorHeap*	AdhocDescriptorHeap::Require()
+DescriptorHeap*	AdhocDescriptorHeap::Require(uint64_t completedFence)
 {
 
 	DescriptorHeap *descHeap = nullptr;
 
-	if (m_FreeDescHeap.size() == 0) {
+	if (m_FreeDescHeap.size()) {
+
+		auto & info = m_FreeDescHeap.front();
+
+		if (completedFence >= info.first) {
+
+			descHeap = info.second;
+			m_FreeDescHeap.pop_front();
+
+		}
+
+	}
+
+
+	if (descHeap == nullptr) {
 		// 新たにDescHeapの作成
 		descHeap = new DescriptorHeap;
 
@@ -201,16 +125,7 @@ DescriptorHeap*	AdhocDescriptorHeap::Require()
 		}
 		++m_allocatedCount;
 	}
-	else {
 
-		// 未使用リストから取り出す
-		descHeap = m_FreeDescHeap.back();
-		m_FreeDescHeap.pop_back();
-
-	}
-
-
-	m_aUsingDescHeap[m_nCurrentIndex].push_back(descHeap);
 
 
 	return descHeap;
@@ -220,29 +135,26 @@ DescriptorHeap*	AdhocDescriptorHeap::Require()
 
 
 /***************************************************************
-@brief	次のフレーム
+@brief	DescHeap回収を行う
 @par	[説明]
-	毎フレーム呼び出す
-	MAX_FRAME_QUEUEフレーム前の描画が完全に完了していることが保証されていないといけない
-@param
+FenceValueを0にすると、使わなかったバッファということで待機なしでの回収になる
+@param[in]	FenceValue:	使用中かどうかを識別するためのフェンス値
 */
-void AdhocDescriptorHeap::NextFrame()
+void	AdhocDescriptorHeap::Release(uint64_t FenceValue, DescriptorHeap* heap)
 {
-	//if (m_pCurrentHeap) {
-	//	m_aUsingDescHeap[m_nCurrentIndex].push_back(m_pCurrentHeap);
-	//	m_pCurrentHeap = nullptr;
-	//}
 
-	// Rotate Index
-	m_nCurrentIndex = (m_nCurrentIndex+1) % _countof(m_aUsingDescHeap);
+	if (FenceValue != 0) {
 
-	// 再利用可能になったヒープを回収する
-	for (auto &desc : m_aUsingDescHeap[m_nCurrentIndex]) {
-
-		m_FreeDescHeap.push_back(desc);
+		m_FreeDescHeap.push_back(std::make_pair(FenceValue, heap));
 
 	}
-	m_aUsingDescHeap[m_nCurrentIndex].clear();
+	else {
+
+		// 待機せずに使いまわすため、frontに
+		m_FreeDescHeap.push_front(std::make_pair(FenceValue, heap));
+
+	}
+
 
 }
 
@@ -261,8 +173,11 @@ AdhocDescriptorHeapClient::AdhocDescriptorHeapClient()
 
 AdhocDescriptorHeapClient::~AdhocDescriptorHeapClient()
 {
-
-
+	// 正しく使われていると、ここには来ない
+	for (auto heap : m_vecUsingBuffer) {
+		m_pHost->Release(0, heap);
+	}
+	m_vecUsingBuffer.clear();
 }
 
 
@@ -285,11 +200,18 @@ void	AdhocDescriptorHeapClient::Initialize(AdhocDescriptorHeap* host)
 再利用する場合、フレームの最初に呼び出す
 @param
 */
-void AdhocDescriptorHeapClient::Reset()
+void AdhocDescriptorHeapClient::Reset(uint64_t fence)
 {
 
 	m_pCurrentHeap = nullptr;
 	m_nCurrentHeapUsedSize = 0;
+
+	for (auto &it : m_vecUsingBuffer ) {
+
+		m_pHost->Release(fence, it);
+
+	}
+	m_vecUsingBuffer.clear();
 
 }
 
@@ -299,11 +221,12 @@ void AdhocDescriptorHeapClient::Reset()
 @brief	利用可能なデスクリプタヒープを取得する
 @par	[説明]
 このフレームの間だけ、利用可能なデスクリプタヒープを取得する
-@param[in]	size:		要求サイズ
 @param[out]	startIndex:	ヒープのこのインデックスから書き込める
+@param[in]  fenceOwnQueue:	フェンスを識別するためのキュー
+@param[in]	size:		要求サイズ
 
 */
-DescriptorHeap*	AdhocDescriptorHeapClient::Require(uint32_t requestSize, uint32_t &startIndex)
+DescriptorHeap*	AdhocDescriptorHeapClient::Require( uint32_t &startIndex, CommandQueue *fenceQueue, uint32_t requestSize)
 {
 
 	if (m_pCurrentHeap) {
@@ -334,39 +257,11 @@ DescriptorHeap*	AdhocDescriptorHeapClient::Require(uint32_t requestSize, uint32_
 		return nullptr;
 	}
 
-#if 0
-	if (m_FreeDescHeap.size() == 0) {
-		// 新たにDescHeapの作成
-		m_pCurrentHeap = new DescriptorHeap;
 
-		// とりあえずCBV/SRV/UAV用として
-		bool b = FALSE;
-		if (m_heapType == DescriptorHeapType::CBV_SRV_UAV) {
-			b = m_pCurrentHeap->InitializeCBV_SRV_UAV(MaxBufferSize); // サイズ適当
-		}
-		else if (m_heapType == DescriptorHeapType::SAMPLER) {
-			b = m_pCurrentHeap->InitializeSampler(MaxBufferSize);
-		}
+	// GetCompletedFenceを無駄に呼び出さないため、キューのポインタを関数の引数にしている
 
-		if (!b) {
-			delete m_pCurrentHeap;
-			m_pCurrentHeap = nullptr;
-
-			return nullptr;
-		}
-		++m_allocatedCount;
-	}
-	else {
-
-		// 未使用リストから取り出す
-		m_pCurrentHeap = m_FreeDescHeap.back();
-		m_FreeDescHeap.pop_back();
-
-	}
-#endif
-
-	m_pCurrentHeap = m_pHost->Require();
-
+	m_pCurrentHeap = m_pHost->Require(fenceQueue->GetCompletedFence());
+	m_vecUsingBuffer.push_back(m_pCurrentHeap);
 
 	startIndex = 0;
 	m_nCurrentHeapUsedSize = requestSize;
@@ -374,4 +269,7 @@ DescriptorHeap*	AdhocDescriptorHeapClient::Require(uint32_t requestSize, uint32_
 
 	return m_pCurrentHeap;
 }
+
+
+
 

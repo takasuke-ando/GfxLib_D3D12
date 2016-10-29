@@ -23,7 +23,7 @@ namespace GfxLib
 
 	private:
 		D3DPtr< ID3D12RootSignature >	m_d3dRootSignature;
-
+		uint32_t						m_HashValue;
 	};
 
 

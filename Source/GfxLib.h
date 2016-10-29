@@ -17,17 +17,25 @@
 #include "System/GfxDescriptorAllocator.h"
 
 #include "Device/GfxCommandList.h"
+#include "Device/GfxGraphicsCommandList.h"
 #include "Device/GfxSwapChain.h"
 
 #include "Resource/GfxRootSignature.h"
 #include "Resource/GfxRootSignatureDesc.h"
 #include "Resource/GfxVertexBuffer.h"
+#include "Resource/GfxIndexBuffer.h"
 #include "Resource/GfxConstantBuffer.h"
 #include "Resource/GfxRenderTarget.h"
 #include "Resource/GfxDepthStencil.h"
 #include "Resource/GfxTexture2D.h"
 
 #include "State/GfxPipelineState.h"
+#include "State/GfxBlendState.h"
+#include "State/GfxDepthStencilState.h"
+#include "State/GfxInputLayout.h"
+#include "State/GfxPipelineState.h"
+#include "State/GfxRasterizerState.h"
+
 #include "Shader/GfxShader.h"
 
 

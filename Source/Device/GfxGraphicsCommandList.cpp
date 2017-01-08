@@ -175,6 +175,9 @@ void	GraphicsCommandList::SetDepthStencilState(const DepthStencilState* state)
 		m_bPipelineDirty = true;
 		m_PipelineState.DepthStencilState = m_pDepthStencilState->GetDesc();
 
+		//	ハッシュ値
+		m_PipelineStateId.hashDepthStencilState = state->GetHashValue();
+
 	}
 
 }
@@ -192,6 +195,9 @@ void	GraphicsCommandList::SetBlendState(const BlendState* state)
 		m_bPipelineDirty = true;
 		m_PipelineState.BlendState = m_pBlendState->GetDesc();
 
+
+		m_PipelineStateId.hashBlendState = m_pBlendState->GetHashValue();
+
 	}
 
 }
@@ -208,6 +214,9 @@ void	GraphicsCommandList::SetRasterizerState(const RasterizerState* state)
 		m_bPipelineDirty = true;
 		m_PipelineState.RasterizerState = m_pRasterizerState->GetDesc();
 
+		m_PipelineStateId.hashRasterizerState = m_pRasterizerState->GetHashValue();
+
+		
 	}
 
 
@@ -225,12 +234,14 @@ void	GraphicsCommandList::SetInputLayout(const InputLayout* layout)
 		m_bPipelineDirty = true;
 		m_PipelineState.InputLayout = m_pInputLayout->GetInputLayoutDesc();
 
+		m_PipelineStateId.hashInputLayout = m_pInputLayout->GetHashValue();
 	}
 	else {
 
 		m_bPipelineDirty = true;
 		m_PipelineState.InputLayout = D3D12_INPUT_LAYOUT_DESC{ nullptr , 0 };
 
+		m_PipelineStateId.hashInputLayout = 0;
 	}
 
 
@@ -249,17 +260,20 @@ void	GraphicsCommandList::OMSetRenderTargets(uint32_t count, const RenderTarget*
 	for (; i < count; ++i) {
 		aRTVDesc[i] = rtArray[i]->GetRTVDescriptorHandle();
 		m_PipelineState.RTVFormats[i] = rtArray[i]->GetFormat();
+		m_PipelineStateId.RTVFormats[i] = rtArray[i]->GetFormat();
 	}
 	for (; i < _countof(aRTVDesc); ++i) {
 		m_PipelineState.RTVFormats[i] = DXGI_FORMAT_UNKNOWN;
+		m_PipelineStateId.RTVFormats[i] = DXGI_FORMAT_UNKNOWN;
 	}
-	m_PipelineState.DSVFormat = depthStencil ? depthStencil->GetFormat() : DXGI_FORMAT_UNKNOWN;
 
 	m_pCmdList->OMSetRenderTargets(count, aRTVDesc, false,
 		depthStencil ? &D3D12_CPU_DESCRIPTOR_HANDLE( depthStencil->GetDSVDescriptorHandle() ):nullptr );
 
+	m_PipelineState.NumRenderTargets = count;
+	m_PipelineState.DSVFormat = depthStencil ? depthStencil->GetFormat() : DXGI_FORMAT_UNKNOWN;
+	m_PipelineStateId.NumRenderTargets = count;
+	m_PipelineStateId.DSVFormat = depthStencil ? depthStencil->GetFormat() : DXGI_FORMAT_UNKNOWN;
 	m_bPipelineDirty = true;
-	
-
 
 }

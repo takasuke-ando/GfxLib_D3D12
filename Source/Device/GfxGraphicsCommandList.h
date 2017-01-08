@@ -19,6 +19,7 @@
 
 
 #include "Device/GfxCommandList.h"
+#include "System/GfxDefines.h"
 
 
 namespace GfxLib
@@ -80,6 +81,8 @@ namespace GfxLib
 
 		//	state
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC	m_PipelineState;
+
+		GRAPHICS_PSO_CACHE_IDENTIFIER		m_PipelineStateId;
 
 		//	今のところGetを用意する予定なし
 		const DepthStencilState*	m_pDepthStencilState;

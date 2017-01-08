@@ -46,6 +46,7 @@ namespace GfxLib
 	private:
 		const void* m_pShaderByteCode;
 		size_t m_BytecodeLength;
+		uint32_t			m_HashValue;		//!<	ハッシュ値。未設定の場合、0
 
 
 	};

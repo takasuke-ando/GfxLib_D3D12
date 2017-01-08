@@ -42,6 +42,7 @@ namespace GfxLib
 		D3D12_INPUT_LAYOUT_DESC		GetInputLayoutDesc() const {
 			return D3D12_INPUT_LAYOUT_DESC{ m_Element , m_Count };
 		}
+		uint32_t	GetHashValue() const { return 	m_HashValue; }	//!<	ハッシュ値
 
 	private:
 

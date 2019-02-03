@@ -37,6 +37,9 @@
     <Filter Include="External\DirectX-Graphics-Samples">
       <UniqueIdentifier>{5f9f16a7-9bf6-4b6f-b3e5-d715cfe5b7a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Font">
+      <UniqueIdentifier>{e75db1ba-91ae-4b24-b7bd-027aef01abfb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -178,6 +181,9 @@
     <ClInclude Include="..\Source\Util\GfxCrc32.h">
       <Filter>Util</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Resource\GfxSampler.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -290,6 +296,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Util\GfxCrc32.cpp">
       <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Resource\GfxSampler.cpp">
+      <Filter>Resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

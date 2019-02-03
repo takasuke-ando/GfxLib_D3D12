@@ -38,7 +38,7 @@ namespace GfxLib
 		~AutoDescriptorHandle();
 
 
-		operator D3D12_CPU_DESCRIPTOR_HANDLE()	{return m_Handle; }
+		operator D3D12_CPU_DESCRIPTOR_HANDLE() const	{return m_Handle; }
 
 		// GPU HANDLEは付きません
 

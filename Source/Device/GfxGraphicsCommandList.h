@@ -19,6 +19,7 @@
 
 
 #include "Device/GfxCommandList.h"
+#include "System/GfxDefines.h"
 
 
 namespace GfxLib
@@ -30,6 +31,13 @@ namespace GfxLib
 	class InputLayout;
 	class RenderTarget;
 	class DepthStencil;
+	class RootSignature;
+	class Shader;
+	typedef Shader		PixelShader;
+	typedef Shader		VertexShader;
+	typedef Shader		GeometryShader;
+	typedef Shader		DomainShader;
+	typedef Shader		HullShader;
 
 	class GraphicsCommandList : 
 		public CommandList
@@ -52,6 +60,7 @@ namespace GfxLib
 		//	-----	State Setting -----
 		//	この辺はゆくゆくinline化
 
+		void	SetRootSignature(const RootSignature* sig);
 
 		void	SetDepthStencilState(const DepthStencilState* state);
 
@@ -62,6 +71,17 @@ namespace GfxLib
 		void	SetInputLayout(const InputLayout* layout);
 
 		void	SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE topology);
+
+
+		/***************************************************************
+			@brief	シェーダ設定
+			@par	[説明]
+			@param
+		*/
+		void	VSSetShader(const VertexShader *vs);
+
+		void	PSSetShader(const PixelShader *ps);
+
 
 		/***************************************************************
 			@brief	レンダーターゲットの設定
@@ -74,6 +94,17 @@ namespace GfxLib
 		void	OMSetRenderTargets(uint32_t count, const RenderTarget* const * rtArray, const DepthStencil * depthStencil);
 
 
+	protected:
+
+		/***************************************************************
+		@brief	コマンドリストオブジェクトの再利用時
+		@par	[説明]
+		コマンドリストオブジェクトの再利用時に呼び出される
+		内部状態をリセットする
+		@param
+		*/
+		virtual void	OnReset();
+
 	private:
 		D3DPtr<ID3D12GraphicsCommandList>	m_pCmdList;
 
@@ -81,11 +112,23 @@ namespace GfxLib
 		//	state
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC	m_PipelineState;
 
+		GRAPHICS_PSO_CACHE_IDENTIFIER		m_PipelineStateId;
+
 		//	今のところGetを用意する予定なし
+
+		const RootSignature*		m_pRootSignature;
+
 		const DepthStencilState*	m_pDepthStencilState;
 		const BlendState*			m_pBlendState;
 		const RasterizerState*		m_pRasterizerState;
 		const InputLayout*			m_pInputLayout;
+
+		const VertexShader*			m_pVS;
+		const PixelShader*			m_pPS;
+
+		const GeometryShader*		m_pGS;
+		const DomainShader*			m_pDS;
+		const HullShader*			m_pHS;
 
 
 		bool			m_bPipelineDirty;

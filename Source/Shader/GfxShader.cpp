@@ -8,6 +8,8 @@
 #include "GfxShader.h"
 
 
+#include "Util/GfxCrc32.h"
+
 
 using namespace GfxLib;
 
@@ -16,6 +18,7 @@ using namespace GfxLib;
 Shader::Shader()
 	:m_pShaderByteCode(nullptr)
 	,m_BytecodeLength(0)
+	,m_HashValue(0)
 {
 
 
@@ -36,7 +39,7 @@ void	Shader::Finalize(bool delayDelete)
 		::free(const_cast<void*>(m_pShaderByteCode));
 		m_pShaderByteCode = nullptr;
 		m_BytecodeLength = 0;
-
+		m_HashValue = 0;
 	}
 }
 
@@ -76,6 +79,13 @@ bool	Shader::CreateFromFile(const wchar_t * path)
 	m_pShaderByteCode = ptr;
 	m_BytecodeLength = FileSize;
 	
+
+	//	ハッシュ値の計算
+	Crc32 crc;
+	crc.Update(m_pShaderByteCode, m_BytecodeLength);
+
+	m_HashValue = crc.GetValue();
+
 
 	return true;
 

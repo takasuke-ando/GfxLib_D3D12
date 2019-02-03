@@ -33,8 +33,11 @@ ID3D12GraphicsCommandListをカプセル化する
 #include "State/GfxRasterizerState.h"
 #include "State/GfxInputLayout.h"
 
+#include "Resource/GfxRootSignature.h"
 #include "Resource/GfxRenderTarget.h"
 #include "Resource/GfxDepthStencil.h"
+
+#include "Shader/GfxShader.h"
 
 
 
@@ -43,10 +46,16 @@ using namespace GfxLib;
 
 
 GraphicsCommandList::GraphicsCommandList()
-	:m_pDepthStencilState( nullptr )
+	:m_pRootSignature( nullptr )
+	,m_pDepthStencilState( nullptr )
 	,m_pBlendState( nullptr )
 	, m_pRasterizerState( nullptr )
 	,m_pInputLayout( nullptr )
+	,m_pPS( nullptr )
+	,m_pVS( nullptr )
+	,m_pGS( nullptr )
+	,m_pDS( nullptr )
+	,m_pHS( nullptr )
 	, m_bPipelineDirty( true )
 {
 	memset(&m_PipelineState, 0, sizeof(m_PipelineState));
@@ -85,6 +94,243 @@ bool	GraphicsCommandList::Initialize(CommandQueue *cmdQueue)
 
 
 	bool b = SuperClass::Initialize(cmdQueue, m_pCmdList);
+
+
+	OnReset();
+
+
+	return b;
+
+}
+
+
+void	GraphicsCommandList::Finalize()
+{
+
+
+
+	SuperClass::Finalize();
+}
+
+
+
+
+/***************************************************************
+	@brief	RootSignatureの設定
+	@par	[説明]
+	@param
+*/
+void	GraphicsCommandList::SetRootSignature(const RootSignature* sig)
+{
+	if (m_pRootSignature == sig) {
+		return;
+	}
+
+	m_pRootSignature = sig;
+
+	if (m_pRootSignature) {
+
+		m_PipelineState.pRootSignature = sig->GetD3DRootSignature();
+		m_PipelineStateId.hashRootSignature = sig->GetHashValue();
+
+	}else {
+		//	どうする？
+	}
+
+	m_bPipelineDirty = true;
+
+	m_pCmdList->SetGraphicsRootSignature(sig->GetD3DRootSignature());
+
+}
+
+
+
+
+
+void	GraphicsCommandList::SetDepthStencilState(const DepthStencilState* state)
+{
+	if (state == m_pDepthStencilState) return;
+
+	m_pDepthStencilState = state;
+
+	if (m_pDepthStencilState) {
+
+		m_bPipelineDirty = true;
+		m_PipelineState.DepthStencilState = m_pDepthStencilState->GetDesc();
+
+		//	ハッシュ値
+		m_PipelineStateId.hashDepthStencilState = state->GetHashValue();
+
+	}
+
+}
+
+
+
+void	GraphicsCommandList::SetBlendState(const BlendState* state)
+{
+	if (state == m_pBlendState) return;
+
+	m_pBlendState = state;
+
+	if (m_pBlendState) {
+		
+		m_bPipelineDirty = true;
+		m_PipelineState.BlendState = m_pBlendState->GetDesc();
+
+
+		m_PipelineStateId.hashBlendState = m_pBlendState->GetHashValue();
+
+	}
+
+}
+
+
+
+void	GraphicsCommandList::SetRasterizerState(const RasterizerState* state)
+{
+	if (state == m_pRasterizerState) return;
+
+	m_pRasterizerState = state;
+	if (m_pRasterizerState) {
+
+		m_bPipelineDirty = true;
+		m_PipelineState.RasterizerState = m_pRasterizerState->GetDesc();
+
+		m_PipelineStateId.hashRasterizerState = m_pRasterizerState->GetHashValue();
+
+		
+	}
+
+
+}
+
+
+
+void	GraphicsCommandList::SetInputLayout(const InputLayout* layout)
+{
+	if (layout == m_pInputLayout) return;
+
+	m_pInputLayout = layout;
+	if (m_pInputLayout) {
+
+		m_bPipelineDirty = true;
+		m_PipelineState.InputLayout = m_pInputLayout->GetInputLayoutDesc();
+
+		m_PipelineStateId.hashInputLayout = m_pInputLayout->GetHashValue();
+	}
+	else {
+
+		m_bPipelineDirty = true;
+		m_PipelineState.InputLayout = D3D12_INPUT_LAYOUT_DESC{ nullptr , 0 };
+
+		m_PipelineStateId.hashInputLayout = 0;
+	}
+
+
+}
+
+
+
+
+void	GraphicsCommandList::VSSetShader(const VertexShader *vs)
+{
+	if (m_pVS == vs) {
+		return;
+	}
+
+
+	if (m_pVS = vs) {
+		m_PipelineState.VS = vs->GetD3D12ShaderBytecode();
+		m_PipelineStateId.hashVS = vs->GetHashValue();
+	}
+	else {
+		m_PipelineState.VS = D3D12_SHADER_BYTECODE{ nullptr , 0 };
+		m_PipelineStateId.hashVS = 0;
+	}
+
+	m_bPipelineDirty = false;
+
+}
+
+
+
+void	GraphicsCommandList::PSSetShader(const PixelShader *ps)
+{
+	if (m_pPS == ps) {
+		return;
+	}
+
+
+	if (m_pPS = ps) {
+		m_PipelineState.PS = ps->GetD3D12ShaderBytecode();
+		m_PipelineStateId.hashPS = ps->GetHashValue();
+	}
+	else {
+		m_PipelineState.PS = D3D12_SHADER_BYTECODE{ nullptr , 0 };
+		m_PipelineStateId.hashPS = 0;
+	}
+
+	m_bPipelineDirty = false;
+
+}
+
+
+
+void	GraphicsCommandList::OMSetRenderTargets(uint32_t count, const RenderTarget* const * rtArray, const DepthStencil * depthStencil)
+{
+
+	// 最大D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT
+
+	D3D12_CPU_DESCRIPTOR_HANDLE	aRTVDesc[D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT];
+
+	uint32_t i = 0;
+	for (; i < count; ++i) {
+		aRTVDesc[i] = rtArray[i]->GetRTVDescriptorHandle();
+		m_PipelineState.RTVFormats[i] = rtArray[i]->GetFormat();
+		m_PipelineStateId.RTVFormats[i] = rtArray[i]->GetFormat();
+	}
+	for (; i < _countof(aRTVDesc); ++i) {
+		m_PipelineState.RTVFormats[i] = DXGI_FORMAT_UNKNOWN;
+		m_PipelineStateId.RTVFormats[i] = DXGI_FORMAT_UNKNOWN;
+	}
+
+	m_pCmdList->OMSetRenderTargets(count, aRTVDesc, false,
+		depthStencil ? &D3D12_CPU_DESCRIPTOR_HANDLE( depthStencil->GetDSVDescriptorHandle() ):nullptr );
+
+	m_PipelineState.NumRenderTargets = count;
+	m_PipelineState.DSVFormat = depthStencil ? depthStencil->GetFormat() : DXGI_FORMAT_UNKNOWN;
+	m_PipelineStateId.NumRenderTargets = count;
+	m_PipelineStateId.DSVFormat = depthStencil ? depthStencil->GetFormat() : DXGI_FORMAT_UNKNOWN;
+	m_bPipelineDirty = true;
+
+}
+
+
+
+
+
+/***************************************************************
+@brief	コマンドリストオブジェクトの再利用時
+@par	[説明]
+	コマンドリストオブジェクトの再利用時に呼び出される
+	内部状態をリセットする
+@param
+*/
+void	GraphicsCommandList::OnReset()
+{
+
+	m_pRootSignature = (nullptr);
+	m_pDepthStencilState = (nullptr);
+	m_pBlendState = (nullptr);
+	m_pRasterizerState = (nullptr);
+	m_pInputLayout = (nullptr);
+	m_pPS = (nullptr);
+	m_pVS = (nullptr);
+	m_pGS = (nullptr);
+	m_pDS = (nullptr);
+	m_pHS = (nullptr);
+	m_bPipelineDirty = (true);
 
 
 	{
@@ -147,119 +393,5 @@ bool	GraphicsCommandList::Initialize(CommandQueue *cmdQueue)
 
 
 	}
-
-	return b;
-
-}
-
-
-void	GraphicsCommandList::Finalize()
-{
-
-
-
-	SuperClass::Finalize();
-}
-
-
-
-
-void	GraphicsCommandList::SetDepthStencilState(const DepthStencilState* state)
-{
-	if (state == m_pDepthStencilState) return;
-
-	m_pDepthStencilState = state;
-
-	if (m_pDepthStencilState) {
-
-		m_bPipelineDirty = true;
-		m_PipelineState.DepthStencilState = m_pDepthStencilState->GetDesc();
-
-	}
-
-}
-
-
-
-void	GraphicsCommandList::SetBlendState(const BlendState* state)
-{
-	if (state == m_pBlendState) return;
-
-	m_pBlendState = state;
-
-	if (m_pBlendState) {
-		
-		m_bPipelineDirty = true;
-		m_PipelineState.BlendState = m_pBlendState->GetDesc();
-
-	}
-
-}
-
-
-
-void	GraphicsCommandList::SetRasterizerState(const RasterizerState* state)
-{
-	if (state == m_pRasterizerState) return;
-
-	m_pRasterizerState = state;
-	if (m_pRasterizerState) {
-
-		m_bPipelineDirty = true;
-		m_PipelineState.RasterizerState = m_pRasterizerState->GetDesc();
-
-	}
-
-
-}
-
-
-
-void	GraphicsCommandList::SetInputLayout(const InputLayout* layout)
-{
-	if (layout == m_pInputLayout) return;
-
-	m_pInputLayout = layout;
-	if (m_pInputLayout) {
-
-		m_bPipelineDirty = true;
-		m_PipelineState.InputLayout = m_pInputLayout->GetInputLayoutDesc();
-
-	}
-	else {
-
-		m_bPipelineDirty = true;
-		m_PipelineState.InputLayout = D3D12_INPUT_LAYOUT_DESC{ nullptr , 0 };
-
-	}
-
-
-}
-
-
-
-void	GraphicsCommandList::OMSetRenderTargets(uint32_t count, const RenderTarget* const * rtArray, const DepthStencil * depthStencil)
-{
-
-	// 最大D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT
-
-	D3D12_CPU_DESCRIPTOR_HANDLE	aRTVDesc[D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT];
-
-	uint32_t i = 0;
-	for (; i < count; ++i) {
-		aRTVDesc[i] = rtArray[i]->GetRTVDescriptorHandle();
-		m_PipelineState.RTVFormats[i] = rtArray[i]->GetFormat();
-	}
-	for (; i < _countof(aRTVDesc); ++i) {
-		m_PipelineState.RTVFormats[i] = DXGI_FORMAT_UNKNOWN;
-	}
-	m_PipelineState.DSVFormat = depthStencil ? depthStencil->GetFormat() : DXGI_FORMAT_UNKNOWN;
-
-	m_pCmdList->OMSetRenderTargets(count, aRTVDesc, false,
-		depthStencil ? &D3D12_CPU_DESCRIPTOR_HANDLE( depthStencil->GetDSVDescriptorHandle() ):nullptr );
-
-	m_bPipelineDirty = true;
-	
-
 
 }

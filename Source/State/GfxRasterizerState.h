@@ -30,6 +30,7 @@ namespace GfxLib
 
 
 		const D3D12_RASTERIZER_DESC&		GetDesc() const { return m_Desc; }
+		uint32_t	GetHashValue() const { return 	m_HashValue; }	//!<	ハッシュ値
 
 	private:
 		D3D12_RASTERIZER_DESC	m_Desc;

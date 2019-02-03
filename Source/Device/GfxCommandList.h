@@ -132,6 +132,17 @@ namespace GfxLib
 		void	PostExecute(uint64_t fence);
 
 
+	protected:
+
+		/***************************************************************
+			@brief	コマンドリストオブジェクトの再利用時
+			@par	[説明]
+				コマンドリストオブジェクトの再利用時に呼び出される
+				内部状態をリセットする
+			@param
+		*/
+		virtual void	OnReset() {}
+
 	private:
 
 		D3DPtr<ID3D12GraphicsCommandList>			m_pCmdList;

@@ -21,6 +21,10 @@ namespace GfxLib
 
 		ID3D12RootSignature *GetD3DRootSignature() const {return m_d3dRootSignature;}
 
+
+		uint32_t		GetHashValue() const { return m_HashValue; }
+
+
 	private:
 		D3DPtr< ID3D12RootSignature >	m_d3dRootSignature;
 		uint32_t						m_HashValue;

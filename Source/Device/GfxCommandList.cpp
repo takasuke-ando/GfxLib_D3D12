@@ -119,7 +119,12 @@ void	CommandList::Reset(bool frameBorder)
 
 	//m_pCmdList->Reset(coreSystem->GetCurrentCommandAllocator(), nullptr /*PSO*/);
 	if (m_pCurCmdAllocator == nullptr) {
+
+		//	このインスタンスが作られて、初回だけはこちらに来ない
+
 		m_pCmdList->Reset(m_pCurCmdAllocator = m_pCmdQueue->RequireCommandAllocator(), nullptr /*PSO*/);
+
+		OnReset();
 	}
 
 	// 本来フレームの最初だけ↓を呼べばいい

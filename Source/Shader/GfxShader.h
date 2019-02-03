@@ -42,6 +42,7 @@ namespace GfxLib
 			return D3D12_SHADER_BYTECODE{ m_pShaderByteCode,m_BytecodeLength };
 		}
 
+		uint32_t		GetHashValue() const { return	m_HashValue; }	//!<	ハッシュ値。未設定の場合、0
 
 	private:
 		const void* m_pShaderByteCode;
@@ -54,7 +55,9 @@ namespace GfxLib
 
 	typedef Shader		PixelShader;
 	typedef Shader		VertexShader;
-
+	typedef Shader		GeometryShader;
+	typedef Shader		DomainShader;
+	typedef Shader		HullShader;
 
 }
 

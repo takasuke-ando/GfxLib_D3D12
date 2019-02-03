@@ -33,8 +33,11 @@ ID3D12GraphicsCommandListをカプセル化する
 #include "State/GfxRasterizerState.h"
 #include "State/GfxInputLayout.h"
 
+#include "Resource/GfxRootSignature.h"
 #include "Resource/GfxRenderTarget.h"
 #include "Resource/GfxDepthStencil.h"
+
+#include "Shader/GfxShader.h"
 
 
 
@@ -43,10 +46,16 @@ using namespace GfxLib;
 
 
 GraphicsCommandList::GraphicsCommandList()
-	:m_pDepthStencilState( nullptr )
+	:m_pRootSignature( nullptr )
+	,m_pDepthStencilState( nullptr )
 	,m_pBlendState( nullptr )
 	, m_pRasterizerState( nullptr )
 	,m_pInputLayout( nullptr )
+	,m_pPS( nullptr )
+	,m_pVS( nullptr )
+	,m_pGS( nullptr )
+	,m_pDS( nullptr )
+	,m_pHS( nullptr )
 	, m_bPipelineDirty( true )
 {
 	memset(&m_PipelineState, 0, sizeof(m_PipelineState));
@@ -87,66 +96,8 @@ bool	GraphicsCommandList::Initialize(CommandQueue *cmdQueue)
 	bool b = SuperClass::Initialize(cmdQueue, m_pCmdList);
 
 
-	{
-		//	clear pipeline state
+	OnReset();
 
-		memset(&m_PipelineState, 0, sizeof(m_PipelineState));
-
-		//	Create Default State
-		auto &desc = m_PipelineState;
-
-		//	ラスタライザステートの設定
-		D3D12_RASTERIZER_DESC descRS = {};
-
-		descRS.FillMode = D3D12_FILL_MODE_SOLID;
-		descRS.CullMode = D3D12_CULL_MODE_NONE;
-		descRS.FrontCounterClockwise = FALSE;
-		descRS.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
-		descRS.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
-		descRS.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
-		descRS.DepthClipEnable = TRUE;
-		descRS.MultisampleEnable = FALSE;
-		descRS.AntialiasedLineEnable = FALSE;
-		descRS.ForcedSampleCount = 0;
-		descRS.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
-
-		// レンダーターゲットのブレンド設定
-		D3D12_RENDER_TARGET_BLEND_DESC descRTBS = {
-			FALSE,	FALSE,
-			D3D12_BLEND_ONE,	D3D12_BLEND_ZERO,	D3D12_BLEND_OP_ADD,
-			D3D12_BLEND_ONE,	D3D12_BLEND_ZERO,	D3D12_BLEND_OP_ADD,
-			D3D12_LOGIC_OP_NOOP,
-			D3D12_COLOR_WRITE_ENABLE_ALL,
-		};
-
-		// ブレンドステートの設定
-		D3D12_BLEND_DESC descBS;
-		descBS.AlphaToCoverageEnable = FALSE;
-		descBS.IndependentBlendEnable = FALSE;
-		for (UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; ++i) {
-			descBS.RenderTarget[i] = descRTBS;
-		};
-
-
-		//desc.InputLayout = { inputElement,_countof(inputElement) };
-		//desc.pRootSignature = rootSig.GetD3DRootSignature();
-		//desc.VS = vertexshader.GetD3D12ShaderBytecode();	//	TODO
-		//desc.PS = pixelshader.GetD3D12ShaderBytecode();
-		desc.RasterizerState = descRS;
-		desc.BlendState = descBS;
-		desc.DepthStencilState.DepthEnable = FALSE;
-		desc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-		desc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_NEVER;
-		desc.DepthStencilState.StencilEnable = FALSE;
-		desc.SampleMask = UINT_MAX;
-		desc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-		desc.NumRenderTargets = 1;
-		desc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-		desc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
-		desc.SampleDesc.Count = 1;
-
-
-	}
 
 	return b;
 
@@ -160,6 +111,38 @@ void	GraphicsCommandList::Finalize()
 
 	SuperClass::Finalize();
 }
+
+
+
+
+/***************************************************************
+	@brief	RootSignatureの設定
+	@par	[説明]
+	@param
+*/
+void	GraphicsCommandList::SetRootSignature(const RootSignature* sig)
+{
+	if (m_pRootSignature == sig) {
+		return;
+	}
+
+	m_pRootSignature = sig;
+
+	if (m_pRootSignature) {
+
+		m_PipelineState.pRootSignature = sig->GetD3DRootSignature();
+		m_PipelineStateId.hashRootSignature = sig->GetHashValue();
+
+	}else {
+		//	どうする？
+	}
+
+	m_bPipelineDirty = true;
+
+	m_pCmdList->SetGraphicsRootSignature(sig->GetD3DRootSignature());
+
+}
+
 
 
 
@@ -249,6 +232,51 @@ void	GraphicsCommandList::SetInputLayout(const InputLayout* layout)
 
 
 
+
+void	GraphicsCommandList::VSSetShader(const VertexShader *vs)
+{
+	if (m_pVS == vs) {
+		return;
+	}
+
+
+	if (m_pVS = vs) {
+		m_PipelineState.VS = vs->GetD3D12ShaderBytecode();
+		m_PipelineStateId.hashVS = vs->GetHashValue();
+	}
+	else {
+		m_PipelineState.VS = D3D12_SHADER_BYTECODE{ nullptr , 0 };
+		m_PipelineStateId.hashVS = 0;
+	}
+
+	m_bPipelineDirty = false;
+
+}
+
+
+
+void	GraphicsCommandList::PSSetShader(const PixelShader *ps)
+{
+	if (m_pPS == ps) {
+		return;
+	}
+
+
+	if (m_pPS = ps) {
+		m_PipelineState.PS = ps->GetD3D12ShaderBytecode();
+		m_PipelineStateId.hashPS = ps->GetHashValue();
+	}
+	else {
+		m_PipelineState.PS = D3D12_SHADER_BYTECODE{ nullptr , 0 };
+		m_PipelineStateId.hashPS = 0;
+	}
+
+	m_bPipelineDirty = false;
+
+}
+
+
+
 void	GraphicsCommandList::OMSetRenderTargets(uint32_t count, const RenderTarget* const * rtArray, const DepthStencil * depthStencil)
 {
 
@@ -275,5 +303,95 @@ void	GraphicsCommandList::OMSetRenderTargets(uint32_t count, const RenderTarget*
 	m_PipelineStateId.NumRenderTargets = count;
 	m_PipelineStateId.DSVFormat = depthStencil ? depthStencil->GetFormat() : DXGI_FORMAT_UNKNOWN;
 	m_bPipelineDirty = true;
+
+}
+
+
+
+
+
+/***************************************************************
+@brief	コマンドリストオブジェクトの再利用時
+@par	[説明]
+	コマンドリストオブジェクトの再利用時に呼び出される
+	内部状態をリセットする
+@param
+*/
+void	GraphicsCommandList::OnReset()
+{
+
+	m_pRootSignature = (nullptr);
+	m_pDepthStencilState = (nullptr);
+	m_pBlendState = (nullptr);
+	m_pRasterizerState = (nullptr);
+	m_pInputLayout = (nullptr);
+	m_pPS = (nullptr);
+	m_pVS = (nullptr);
+	m_pGS = (nullptr);
+	m_pDS = (nullptr);
+	m_pHS = (nullptr);
+	m_bPipelineDirty = (true);
+
+
+	{
+		//	clear pipeline state
+
+		memset(&m_PipelineState, 0, sizeof(m_PipelineState));
+
+		//	Create Default State
+		auto &desc = m_PipelineState;
+
+		//	ラスタライザステートの設定
+		D3D12_RASTERIZER_DESC descRS = {};
+
+		descRS.FillMode = D3D12_FILL_MODE_SOLID;
+		descRS.CullMode = D3D12_CULL_MODE_NONE;
+		descRS.FrontCounterClockwise = FALSE;
+		descRS.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
+		descRS.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
+		descRS.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
+		descRS.DepthClipEnable = TRUE;
+		descRS.MultisampleEnable = FALSE;
+		descRS.AntialiasedLineEnable = FALSE;
+		descRS.ForcedSampleCount = 0;
+		descRS.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
+
+		// レンダーターゲットのブレンド設定
+		D3D12_RENDER_TARGET_BLEND_DESC descRTBS = {
+			FALSE,	FALSE,
+			D3D12_BLEND_ONE,	D3D12_BLEND_ZERO,	D3D12_BLEND_OP_ADD,
+			D3D12_BLEND_ONE,	D3D12_BLEND_ZERO,	D3D12_BLEND_OP_ADD,
+			D3D12_LOGIC_OP_NOOP,
+			D3D12_COLOR_WRITE_ENABLE_ALL,
+		};
+
+		// ブレンドステートの設定
+		D3D12_BLEND_DESC descBS;
+		descBS.AlphaToCoverageEnable = FALSE;
+		descBS.IndependentBlendEnable = FALSE;
+		for (UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; ++i) {
+			descBS.RenderTarget[i] = descRTBS;
+		};
+
+
+		//desc.InputLayout = { inputElement,_countof(inputElement) };
+		//desc.pRootSignature = rootSig.GetD3DRootSignature();
+		//desc.VS = vertexshader.GetD3D12ShaderBytecode();	//	TODO
+		//desc.PS = pixelshader.GetD3D12ShaderBytecode();
+		desc.RasterizerState = descRS;
+		desc.BlendState = descBS;
+		desc.DepthStencilState.DepthEnable = FALSE;
+		desc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+		desc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_NEVER;
+		desc.DepthStencilState.StencilEnable = FALSE;
+		desc.SampleMask = UINT_MAX;
+		desc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		desc.NumRenderTargets = 1;
+		desc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		desc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+		desc.SampleDesc.Count = 1;
+
+
+	}
 
 }

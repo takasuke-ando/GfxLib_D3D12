@@ -371,7 +371,7 @@ PipelineState*		CoreSystem::AcquireGraphicsPso(const GRAPHICS_PSO_CACHE_IDENTIFI
 
 	double time = (psoCreationEnd.QuadPart - psoCreationBegin.QuadPart) / (double(freq.QuadPart));
 
-	GFX_INFO("PSO Creation Time=%8.6f",time);
+	GFX_INFO("PSO Creation Time=%8.6f\n",time);
 
 #endif
 

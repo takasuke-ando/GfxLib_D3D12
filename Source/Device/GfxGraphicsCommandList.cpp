@@ -148,7 +148,7 @@ void	GraphicsCommandList::SetRootSignature(const RootSignature* sig)
 
 
 
-void	GraphicsCommandList::SetDepthStencilState(const DepthStencilState* state)
+void	GraphicsCommandList::OMSetDepthStencilState(const DepthStencilState* state)
 {
 	if (state == m_pDepthStencilState) return;
 
@@ -168,7 +168,7 @@ void	GraphicsCommandList::SetDepthStencilState(const DepthStencilState* state)
 
 
 
-void	GraphicsCommandList::SetBlendState(const BlendState* state)
+void	GraphicsCommandList::OMSetBlendState(const BlendState* state)
 {
 	if (state == m_pBlendState) return;
 
@@ -188,7 +188,7 @@ void	GraphicsCommandList::SetBlendState(const BlendState* state)
 
 
 
-void	GraphicsCommandList::SetRasterizerState(const RasterizerState* state)
+void	GraphicsCommandList::RSSetState(const RasterizerState* state)
 {
 	if (state == m_pRasterizerState) return;
 
@@ -208,7 +208,7 @@ void	GraphicsCommandList::SetRasterizerState(const RasterizerState* state)
 
 
 
-void	GraphicsCommandList::SetInputLayout(const InputLayout* layout)
+void	GraphicsCommandList::IASetInputLayout(const InputLayout* layout)
 {
 	if (layout == m_pInputLayout) return;
 

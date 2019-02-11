@@ -62,13 +62,13 @@ namespace GfxLib
 
 		void	SetRootSignature(const RootSignature* sig);
 
-		void	SetDepthStencilState(const DepthStencilState* state);
+		void	OMSetDepthStencilState(const DepthStencilState* state);
 
-		void	SetBlendState(const BlendState* state);
+		void	OMSetBlendState(const BlendState* state);
 
-		void	SetRasterizerState(const RasterizerState* state);
+		void	RSSetState(const RasterizerState* state);
 
-		void	SetInputLayout(const InputLayout* layout);
+		void	IASetInputLayout(const InputLayout* layout);
 
 		void	SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE topology);
 

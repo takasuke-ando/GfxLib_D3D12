@@ -1,111 +1,122 @@
-
+﻿
 
 
 D3D12
 
 
-�����\�[�X������
+◆リソース初期化
 
-	�ꎞ�I�ȃ��\�[�X�������
+	一時的なリソースを作って
 
 	D3D12_HEAP_TYPE_UPLOAD => D3D12_HEAP_TYPE_DEFAULT
-	�ւ̃R�s�[���s���̂��ǂ�
+	へのコピーを行うのが良い
 
 		
 	DirectX-Graphics-Samples\Samples\Desktop\D3D1211On12\src\D3D1211On12.cpp
-	�ȂǎQ�l�ɂȂ�
+	など参考になる
 
-	�`��L���[�Ƃ͐؂蕪����
-	D3D12_COMMAND_LIST_TYPE_COPY ���g����
-	���\�[�X�R�s�[����̂��ǂ������Ǝv���
-
-
-��TODO
+	描画キューとは切り分けて
+	D3D12_COMMAND_LIST_TYPE_COPY を使って
+	リソースコピーするのが良いやり方と思われ
 
 
-�EcoreSystem->GetCurrentCommandAllocator(),
-	�t���[�������ƁA�t���[���񓯊��ł����
-	���R�s�[�L���[�̂���
-	����߁ACommandQueue�����ɃA���P�[�^�����悤�ɂ���
-	�@�ė��p�̓R�}���h�L���[�P�ʂōs��
-	CoreSystem::GetCurrentCommandAllocator�͔p�~
+◆TODO
 
 
-�E�p�C�v���C���X�e�[�g�̃L���b�V���O
+・coreSystem->GetCurrentCommandAllocator(),
+	フレーム同期と、フレーム非同期版を作る
+	→コピーキューのため
+	→やめ、CommandQueue内部にアロケータを持つようにする
+	　再利用はコマンドキュー単位で行う
+	CoreSystem::GetCurrentCommandAllocatorは廃止
 
 
-���m�E�n�E
+・パイプラインステートのキャッシング
 
 
-�ERootSignature�ɂ���
-
- 	��̃f�X�N���v�^�e�[�u�����ɁASampler�ƁACBV,SRV,UAV �������邱�Ƃ͂ł��Ȃ�
-	CBV+UAV �͉\�����A Sampler + CBV �Ȃǂ͕s��
+◆ノウハウ
 
 
- ���̃T�C�g��
+・RootSignatureについて
+
+ 	一つのデスクリプタテーブル内に、Samplerと、CBV,SRV,UAV を混ぜることはできない
+	CBV+UAV は可能だが、 Sampler + CBV などは不可
+
+
+ このサイトの
  https://sites.google.com/site/monshonosuana/directxno-hanashi-1/directx-145
- ���̐}�͊Ԉ���Ă���i�f�X�N���v�^�e�[�u����2�̃q�[�v�ɂ܂������Ďw�肳��Ă���j
+ この図は間違っている（デスクリプタテーブルが2つのヒープにまたがって指定されている）
  https://f030609e-a-62cb3a1a-s-sites.googlegroups.com/site/monshonosuana/directxno-hanashi-1/directx-145/fig144_03.jpg?attachauth=ANoY7cogjHeu8dfE47yR9_x_QXMFEP5Avpx78a0Dru7v0Mg1aoxhSFEMhxMLwyjkpsW-ItdRx4PPIR-4uU-Kj97a6QVVQuZKNmJI4d9k8-1dXRMlEurUgD1VoQgNYR2lV_ngc1ehg9u80crgZO_7zwAvieizZtRSCvTZN_UDpwKDuNz6A-l5flXbUr3TlRE6cMfuHVLlorM07Pm-JgZfBkBnClzT5t4u8rUu8rlE-z36KHChYZBBgLY2uTBO6ceLAmBpSd47JLfu&attredirects=0
  
  
 
-�E�[�x�X�e���V��
+・深度ステンシル
 
- ���\�[�X����������D3D12_CLEAR_VALUE�̐ݒ�������ق����悢
- �x������������
+ リソース初期化時にD3D12_CLEAR_VALUEの設定をしたほうがよい
+ 警告が発生する
 
  D3D12 WARNING: ID3D12CommandList::ClearDepthStencilView: The application did not pass any clear value to resource creation. 
  The clear operation is typically slower as a result; but will still clear to the desired value. [ EXECUTION WARNING #821: CLEARDEPTHSTENCILVIEW_MISMATCHINGCLEARVALUE]
 
- HI-Z�I�ȏ����̂��߂��Ǝv����
+ HI-Z的な処理のためだと思われる
 
 
 
-�ERootSignature�̉^�p
+・RootSignatureの運用
 
-�@���f���AVFX�A�|�X�g�v���Z�X�A�V���v���`��Ȃ�
-�@�T�u�V�X�e�����ɗp�ӂ���̂��悳���������A
-�@PSO�Ɍ�������Ȃ��̂ŏ_��͊��ƍ���
+　モデル、VFX、ポストプロセス、シンプル描画など
+　サブシステム毎に用意するのがよさそうだが、
+　PSOに結合されないので柔軟性は割と高い
 
 
-�EDESCRIPTOR_HANDLE�̉^�p
+・DESCRIPTOR_HANDLEの運用
 
-CBV_SRV_UAV  ��UCPU��ɍ���ċN���A�A�h�z�b�N�ȃn���h���q�[�v�ɃR�s�[
-SAMPLER		 ����
-RTV			CPU��ɍ���Ă���
-DSV			CPU��ɍ���Ă���
+CBV_SRV_UAV  一旦CPU上に作って起き、アドホックなハンドルヒープにコピー
+SAMPLER		 同上
+RTV			CPU上に作っておく
+DSV			CPU上に作っておく
 
-CPU��̃n���h����
-�n���h���q�[�v�A���P�[�^����擾����
+CPU上のハンドルは
+ハンドルヒープアロケータから取得する
 see
 DirectX-Graphics-Samples\MiniEngine\Core\DescriptorHeap.h
 
 
 
-�ED3D12_ROOT_PARAMETER_TYPE_SRV , CBV , UAV
+・D3D12_ROOT_PARAMETER_TYPE_SRV , CBV , UAV
 
-�@���܂����g�������킩��Ȃ�
+　いまいち使い方がわからない
 
-�@SetGraphicsRootShaderResourceView�̑�2������GPU_VIRTUAL_ADDRESS ����...
-�@����܂�g��Ȃ��ق����ǂ���
+　SetGraphicsRootShaderResourceViewの第2引数がGPU_VIRTUAL_ADDRESS だし...
+　あんまり使わないほうが良いか
+　＞Raw/Structured のみみたい
+　https://dench.flatlib.jp/d3d/d3d12/descriptor
 
 
-�EBuffer�쐬
+・Buffer作成
 
 	D3D12_RESOURCE_DESC resDesc = {};
 	resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
 
-	//Alignment=D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT �Ƃ���ƁA���̃G���[������
+	//Alignment=D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT とすると、↓のエラーが発生
 	//D3D12 ERROR: ID3D12Device::CreateCommittedResource: D3D12_RESOURCE_DESC::Alignment is invalid. The value is 256. 
 	//Buffers must have this field set to 65536 (aka. D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT) or 0. [ STATE_CREATION ERROR #721: CREATERESOURCE_INVALIDALIGNMENT]
-	resDesc.Alignment = 0; // ������Ȃ�OK
+	resDesc.Alignment = 0; // こちらならOK
 
-	//�t�Ɍ�����64k�A���C�����g�����I�ɂ����
+	//逆に言うと64kアライメント強制的にされる
 
 
-�E������2�ȏ��CommandList�œ���CommandAllocator���g���̂͋�����Ȃ�
+・同時に2つ以上のCommandListで同じCommandAllocatorを使うのは許されない
 
 	D3D12 ERROR: ID3D12GraphicsCommandList::{Create,Reset}CommandList: The command allocator is currently in-use by another command list or is being reset in another thread. [ EXECUTION ERROR #540: COMMAND_ALLOCATOR_CONTENTION]
 	D3D12 ERROR: ID3D12GraphicsCommandList::*: This API cannot be called on a closed command list. [ EXECUTION ERROR #547: COMMAND_LIST_CLOSED]
+
+
+・ID3D12CommandList::SetDescriptorHeapsについて
+
+	同じタイプのDescriptorHeapを2回以上指定する事はできない
+	つまりStaticなCBVテーブル、DynamicなCBVテーブル、、、を分けて作るメリットがあまりない
+	CPU側テーブルを作っておいてコピーの手間を省けるのはあるが
+
+
 

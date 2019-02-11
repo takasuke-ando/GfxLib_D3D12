@@ -32,6 +32,7 @@ ID3D12GraphicsCommandListをカプセル化する
 #include "State/GfxBlendState.h"
 #include "State/GfxRasterizerState.h"
 #include "State/GfxInputLayout.h"
+#include "State/GfxPipelineState.h"
 
 #include "Resource/GfxRootSignature.h"
 #include "Resource/GfxRenderTarget.h"
@@ -249,7 +250,7 @@ void	GraphicsCommandList::VSSetShader(const VertexShader *vs)
 		m_PipelineStateId.hashVS = 0;
 	}
 
-	m_bPipelineDirty = false;
+	m_bPipelineDirty = true;
 
 }
 
@@ -271,7 +272,7 @@ void	GraphicsCommandList::PSSetShader(const PixelShader *ps)
 		m_PipelineStateId.hashPS = 0;
 	}
 
-	m_bPipelineDirty = false;
+	m_bPipelineDirty = true;
 
 }
 
@@ -306,6 +307,31 @@ void	GraphicsCommandList::OMSetRenderTargets(uint32_t count, const RenderTarget*
 
 }
 
+
+
+
+
+/***************************************************************
+@brief	PSOのフラッシュ
+@par	[説明]
+	PSOのフラッシュを行う
+@param
+*/
+void	GraphicsCommandList::FlushPipeline()
+{
+	if (!m_bPipelineDirty) {
+		return;
+	}
+
+	CoreSystem *coreSystem = CoreSystem::GetInstance();
+
+	PipelineState *state = coreSystem->AcquireGraphicsPso(m_PipelineStateId, m_PipelineState);
+
+
+	GetD3DCommandList()->SetPipelineState(state->GetD3DPipelineState());
+
+	m_bPipelineDirty = false;
+}
 
 
 

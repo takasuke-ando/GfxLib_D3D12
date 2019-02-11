@@ -20,6 +20,7 @@
 
 
 #include <deque>
+#include <mutex>
 
 
 namespace GfxLib
@@ -65,6 +66,7 @@ namespace GfxLib
 		FenceAndDescHeapVec		m_FreeDescHeap;							//!<	未使用のデスクリプタヒープのプール
 		uint32_t		m_allocatedCount;
 
+		std::mutex		m_Mutex;
 
 	};
 

@@ -167,6 +167,7 @@
     <ClInclude Include="..\Source\State\GfxDepthStencilState.h" />
     <ClInclude Include="..\Source\State\GfxInputLayout.h" />
     <ClInclude Include="..\Source\State\GfxPipelineState.h" />
+    <ClInclude Include="..\Source\State\GfxPipelineStatePool.h" />
     <ClInclude Include="..\Source\State\GfxRasterizerState.h" />
     <ClInclude Include="..\Source\System\GfxAdhocDescriptorHeap.h" />
     <ClInclude Include="..\Source\System\GfxAdhocGpuBuffer.h" />
@@ -211,6 +212,7 @@
     <ClCompile Include="..\Source\State\GfxDepthStencilState.cpp" />
     <ClCompile Include="..\Source\State\GfxInputLayout.cpp" />
     <ClCompile Include="..\Source\State\GfxPipelineState.cpp" />
+    <ClCompile Include="..\Source\State\GfxPipelineStatePool.cpp" />
     <ClCompile Include="..\Source\State\GfxRasterizerState.cpp" />
     <ClCompile Include="..\Source\System\GfxAdhocDescriptorHeap.cpp" />
     <ClCompile Include="..\Source\System\GfxAdhocGpuBuffer.cpp" />

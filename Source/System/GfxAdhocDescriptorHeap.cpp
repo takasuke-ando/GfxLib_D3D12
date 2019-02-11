@@ -88,6 +88,7 @@ AdhocDescriptorHeapClientから呼び出される
 */
 DescriptorHeap*	AdhocDescriptorHeap::Require(uint64_t completedFence)
 {
+	std::lock_guard<std::mutex> LockGuard(m_Mutex);
 
 	DescriptorHeap *descHeap = nullptr;
 
@@ -142,6 +143,8 @@ FenceValueを0にすると、使わなかったバッファということで待
 */
 void	AdhocDescriptorHeap::Release(uint64_t FenceValue, DescriptorHeap* heap)
 {
+
+	std::lock_guard<std::mutex> LockGuard(m_Mutex);
 
 	if (FenceValue != 0) {
 

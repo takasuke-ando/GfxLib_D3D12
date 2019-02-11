@@ -184,6 +184,9 @@
     <ClInclude Include="..\Source\Resource\GfxSampler.h">
       <Filter>Resource</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\State\GfxPipelineStatePool.h">
+      <Filter>State</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -299,6 +302,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Resource\GfxSampler.cpp">
       <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\State\GfxPipelineStatePool.cpp">
+      <Filter>State</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

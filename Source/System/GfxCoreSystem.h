@@ -7,6 +7,8 @@
 #include "Device/GfxCommandQueue.h"
 #include "System/GfxDefines.h"
 
+#include <mutex>
+
 namespace GfxLib
 {
 
@@ -17,6 +19,8 @@ namespace GfxLib
 	class DescriptorHeap;
 	class CommandList;
 	class GraphicsCommandList;
+	class PipelineStatePool;
+	class PipelineState;
 
 	class CoreSystem
 	{
@@ -79,6 +83,12 @@ namespace GfxLib
 		}
 
 
+		/***************************************************************
+		@brief
+		@par	[説明]
+		@param
+		*/
+		PipelineState*		AcquireGraphicsPso(const GRAPHICS_PSO_CACHE_IDENTIFIER psoId, const D3D12_GRAPHICS_PIPELINE_STATE_DESC &desc);
 
 		/***************************************************************
 		@brief	利用可能なデスクリプタヒープを取得する
@@ -145,6 +155,8 @@ namespace GfxLib
 		//AdhocDescriptorHeap*	m_pAdhocDescriptorHeap;
 		//AdhocGpuBuffer*			m_pAdhocGpuBuffer;
 
+		PipelineStatePool*	m_pGraphicsPsoPool;
+		std::mutex			m_GraphicsPsoMutex;
 
 		//	描画管理
 		bool				m_bInsideBeginEnd;

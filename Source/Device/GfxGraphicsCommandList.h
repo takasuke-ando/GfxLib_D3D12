@@ -93,14 +93,23 @@ namespace GfxLib
 		*/
 		void	OMSetRenderTargets(uint32_t count, const RenderTarget* const * rtArray, const DepthStencil * depthStencil);
 
+		
+		/***************************************************************
+		@brief	PSOのフラッシュ
+		@par	[説明]
+			PSOのフラッシュを行う
+			描画直前に呼び出す必要がある
+		@param
+		*/
+		void	FlushPipeline();
 
 	protected:
 
 		/***************************************************************
 		@brief	コマンドリストオブジェクトの再利用時
 		@par	[説明]
-		コマンドリストオブジェクトの再利用時に呼び出される
-		内部状態をリセットする
+			コマンドリストオブジェクトの再利用時に呼び出される
+			内部状態をリセットする
 		@param
 		*/
 		virtual void	OnReset();

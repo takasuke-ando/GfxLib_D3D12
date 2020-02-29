@@ -30,6 +30,7 @@
 
 #include "State/GfxPipelineState.h"
 #include "System/GfxCoreSystem.h"
+#include "System/GfxCoreSystem.h"
 
 
 using namespace GfxLib;

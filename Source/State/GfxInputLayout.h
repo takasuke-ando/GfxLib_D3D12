@@ -52,6 +52,7 @@ namespace GfxLib
 		LPSTR				m_SemanticNameBuff;
 
 		uint32_t			m_HashValue;		//!<	ハッシュ値
+		uint32_t			m_UniqId;
 
 	};
 

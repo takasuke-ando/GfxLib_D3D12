@@ -6,6 +6,7 @@
 #include "GfxInputLayout.h"
 
 #include "Util/GfxCrc32.h"
+#include "System/GfxCoreSystem.h"
 
 
 using namespace GfxLib;
@@ -16,6 +17,7 @@ InputLayout::InputLayout()
 	:m_Count(0)
 	, m_Element(nullptr)
 	,m_HashValue(0)
+	,m_UniqId(-1)
 {
 
 
@@ -102,7 +104,7 @@ bool	InputLayout::Initialize(uint32_t count, const D3D12_INPUT_ELEMENT_DESC *ele
 
 	m_Count = count;	
 	m_HashValue = crc.GetValue();
-
+	m_UniqId = CoreSystem::GetInstance()->MakeUniqId_InputLayout(m_HashValue);
 
 	return true;
 
@@ -126,4 +128,5 @@ void	InputLayout::Finalize()
 	m_Count = 0;
 	m_Element = nullptr;
 	m_HashValue = 0;
+	m_UniqId = -1;
 }

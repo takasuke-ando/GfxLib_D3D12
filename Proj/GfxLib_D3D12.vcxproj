@@ -181,6 +181,7 @@
     <ClInclude Include="..\Source\Util\GfxD3DPtr.h" />
     <ClInclude Include="..\Source\Util\GfxFormatUtil.h" />
     <ClInclude Include="..\Source\Util\GfxMath.h" />
+    <ClInclude Include="..\Source\Util\GfxUniqIdMaker.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -223,6 +224,7 @@
     <ClCompile Include="..\Source\Util\GfxAutoDescriptorHandle.cpp" />
     <ClCompile Include="..\Source\Util\GfxCrc32.cpp" />
     <ClCompile Include="..\Source\Util\GfxMath.cpp" />
+    <ClCompile Include="..\Source\Util\GfxUniqIdMaker.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

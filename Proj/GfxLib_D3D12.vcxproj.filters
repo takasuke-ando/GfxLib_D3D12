@@ -187,6 +187,9 @@
     <ClInclude Include="..\Source\State\GfxPipelineStatePool.h">
       <Filter>State</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Util\GfxUniqIdMaker.h">
+      <Filter>Util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -305,6 +308,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\State\GfxPipelineStatePool.cpp">
       <Filter>State</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Util\GfxUniqIdMaker.cpp">
+      <Filter>Util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

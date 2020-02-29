@@ -210,7 +210,7 @@ bool	CoreSystem::Initialize()
 	for ( auto& fence : m_aFence ) {
 		fence.Initialize(true);
 	}
-
+	m_WaitGpuFinishFence.Initialize(true);
 
 	m_pDescriptorAllocator = new DescriptorAllocator;
 	//m_pAdhocDescriptorHeap = new AdhocDescriptorHeap(DescriptorHeapType::CBV_SRV_UAV);
@@ -317,6 +317,39 @@ void		CoreSystem::End()
 
 
 
+uint32_t	CoreSystem::MakeUniqId(const D3D12_BLEND_DESC &desc)
+{
+
+	return m_uniqBlendState.MakeId_memcmp(desc);
+
+}
+
+
+uint32_t	CoreSystem::MakeUniqId(const D3D12_DEPTH_STENCIL_DESC &desc)
+{
+
+	return m_uniqDepthStencilState.MakeId_memcmp(desc);
+}
+
+
+
+uint32_t	CoreSystem::MakeUniqId(const D3D12_RASTERIZER_DESC &desc)
+{
+
+	return m_uniqRastelizerState.MakeId_memcmp(desc);
+}
+
+
+
+uint32_t	CoreSystem::MakeUniqId_InputLayout(const uint32_t inputLayoutHash)
+{
+
+	return m_uniqInputLayout.MakeId(inputLayoutHash);
+}
+
+
+
+
 
 /***************************************************************
 @brief	PSOの作成
@@ -398,6 +431,23 @@ PipelineState*		CoreSystem::AcquireGraphicsPso(const GRAPHICS_PSO_CACHE_IDENTIFI
 
 }
 
+
+
+
+/***************************************************************
+@brief	GPU待機
+@par	[説明]
+GPUに投入したキューがすべて完了するまで待機する
+*/
+void	CoreSystem::WaitGpuFinish()
+{
+
+	m_CommandQueue.InsertFence(&m_WaitGpuFinishFence);
+
+	// GPUの完了を待機
+	m_WaitGpuFinishFence.Sync();
+
+}
 
 
 #if 0

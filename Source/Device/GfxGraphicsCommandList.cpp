@@ -140,7 +140,12 @@ void	GraphicsCommandList::SetRootSignature(const RootSignature* sig)
 
 	m_bPipelineDirty = true;
 
-	m_pCmdList->SetGraphicsRootSignature(sig->GetD3DRootSignature());
+	if (sig) {
+		m_pCmdList->SetGraphicsRootSignature(sig->GetD3DRootSignature());
+	} else {
+		m_pCmdList->SetGraphicsRootSignature(nullptr);
+
+	}
 
 }
 

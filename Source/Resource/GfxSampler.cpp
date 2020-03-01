@@ -18,7 +18,7 @@ namespace GfxLib
 	Sampler::Sampler( )
 	{
 
-
+		m_SampHandle = nullptr;
 
 	}
 	Sampler::~Sampler()
@@ -39,7 +39,8 @@ namespace GfxLib
 		m_pd3dDev = pdev;
 		*/
 
-		GfxLib::CoreSystem::GetInstance()->GetD3DDevice()->CreateSampler(&desc, m_SampHandle);
+		m_SampHandle = new AutoDescriptorHandle< DescriptorHeapType::SAMPLER >();
+		GfxLib::CoreSystem::GetInstance()->GetD3DDevice()->CreateSampler(&desc, *m_SampHandle);
 
 		return TRUE;
 
@@ -47,6 +48,8 @@ namespace GfxLib
 
 	void	Sampler::Finalize()
 	{
+		delete m_SampHandle;
+		m_SampHandle = nullptr;
 	}
 
 

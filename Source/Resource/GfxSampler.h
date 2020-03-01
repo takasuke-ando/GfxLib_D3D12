@@ -30,13 +30,13 @@ namespace GfxLib
 
 		static D3D12_SAMPLER_DESC	GetDefaultDesc();
 
-		D3D12_CPU_DESCRIPTOR_HANDLE	GetDescHandle() const { return m_SampHandle; }	//!<	CPUハンドル
+		D3D12_CPU_DESCRIPTOR_HANDLE	GetDescHandle() const { return *m_SampHandle; }	//!<	CPUハンドル
 
 
 	private:
 		
 		
-		AutoDescriptorHandle< DescriptorHeapType::SAMPLER >	m_SampHandle;	//!<	CPUハンドル
+		AutoDescriptorHandle< DescriptorHeapType::SAMPLER >	*m_SampHandle;	//!<	CPUハンドル
 	};
 
 }

@@ -146,6 +146,9 @@
     <ClInclude Include="..\Source\External\DirectX-Graphics-Samples\DDSTextureLoader.h" />
     <ClInclude Include="..\Source\External\DirectX-Graphics-Samples\pch.h" />
     <ClInclude Include="..\Source\External\DirectX-Graphics-Samples\Utility.h" />
+    <ClInclude Include="..\Source\Font\GfxFontData.h" />
+    <ClInclude Include="..\Source\Font\GfxFontRenderer.h" />
+    <ClInclude Include="..\Source\Font\GfxFontSystem.h" />
     <ClInclude Include="..\Source\GfxLib.h" />
     <ClInclude Include="..\Source\GfxLibStdAfx.h" />
     <ClInclude Include="..\Source\Resource\GfxBuffer.h" />
@@ -193,6 +196,9 @@
     <ClCompile Include="..\Source\Device\GfxSwapChain.cpp" />
     <ClCompile Include="..\Source\External\DirectX-Graphics-Samples\DDSTextureLoader.cpp" />
     <ClCompile Include="..\Source\External\DirectX-Graphics-Samples\Utility.cpp" />
+    <ClCompile Include="..\Source\Font\GfxFontData.cpp" />
+    <ClCompile Include="..\Source\Font\GfxFontRenderer.cpp" />
+    <ClCompile Include="..\Source\Font\GfxFontSystem.cpp" />
     <ClCompile Include="..\Source\GfxLib.cpp" />
     <ClCompile Include="..\Source\Resource\GfxBuffer.cpp" />
     <ClCompile Include="..\Source\Resource\GfxConstantBuffer.cpp" />

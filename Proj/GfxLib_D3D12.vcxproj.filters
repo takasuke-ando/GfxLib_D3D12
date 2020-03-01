@@ -190,6 +190,15 @@
     <ClInclude Include="..\Source\Util\GfxUniqIdMaker.h">
       <Filter>Util</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Font\GfxFontData.h">
+      <Filter>Font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Font\GfxFontSystem.h">
+      <Filter>Font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Font\GfxFontRenderer.h">
+      <Filter>Font</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -311,6 +320,15 @@
     </ClCompile>
     <ClCompile Include="..\Source\Util\GfxUniqIdMaker.cpp">
       <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Font\GfxFontData.cpp">
+      <Filter>Font</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Font\GfxFontSystem.cpp">
+      <Filter>Font</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Font\GfxFontRenderer.cpp">
+      <Filter>Font</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

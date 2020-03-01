@@ -56,3 +56,18 @@ void	DepthStencilState::Finalize()
 	m_UniqId = -1;
 
 }
+
+
+D3D12_DEPTH_STENCIL_DESC  DepthStencilState::GetDefaultDesc()
+{
+
+
+	D3D12_DEPTH_STENCIL_DESC	DepthStencilState = {};
+
+	DepthStencilState.DepthEnable = TRUE;
+	DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+	DepthStencilState.StencilEnable = FALSE;
+
+	return DepthStencilState;
+}

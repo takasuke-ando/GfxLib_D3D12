@@ -35,11 +35,10 @@ CommandQueue::CommandQueue()
 :m_CmdListType(D3D12_COMMAND_LIST_TYPE_DIRECT)
 , m_pCmdAllocatorPool(nullptr)
 , m_pAdhocGpuBuffer(nullptr)
-, m_pAdhocDescriptorHeap(nullptr)
 , m_uFenceValue(0)
 {
 
-
+	memset(m_pAdhocDescriptorHeap, 0 , sizeof(m_pAdhocDescriptorHeap));
 }
 
 
@@ -84,7 +83,8 @@ bool CommandQueue::Initialize(D3D12_COMMAND_LIST_TYPE type)
 
 	m_pCmdAllocatorPool = new CommandAllocatorPool(pDevice, type);
 	m_pAdhocGpuBuffer = new AdhocGpuBuffer;
-	m_pAdhocDescriptorHeap = new AdhocDescriptorHeap(DescriptorHeapType::CBV_SRV_UAV);
+	m_pAdhocDescriptorHeap[(uint32_t)DescriptorHeapType::CBV_SRV_UAV] = new AdhocDescriptorHeap(DescriptorHeapType::CBV_SRV_UAV);
+	m_pAdhocDescriptorHeap[(uint32_t)DescriptorHeapType::SAMPLER]=  new AdhocDescriptorHeap(DescriptorHeapType::SAMPLER);
 
 	// 必ず一つは入れておく
 	InsertFence();
@@ -125,8 +125,10 @@ void CommandQueue::Finalize()
 	delete m_pAdhocGpuBuffer;
 	m_pAdhocGpuBuffer = nullptr;
 
-	delete m_pAdhocDescriptorHeap;
-	m_pAdhocDescriptorHeap = nullptr;
+	for (auto &ptr : m_pAdhocDescriptorHeap) {
+		delete ptr;
+		ptr = nullptr;
+	}
 
 }
 

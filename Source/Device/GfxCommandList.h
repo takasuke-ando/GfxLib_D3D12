@@ -77,6 +77,7 @@ namespace GfxLib
 		*/
 		DescriptorBuffer AllocateDescriptorBuffer(uint32_t size);
 
+		DescriptorBuffer AllocateDescriptorBuffer_Sampler( uint32_t size);
 
 
 		/***************************************************************
@@ -153,6 +154,7 @@ namespace GfxLib
 
 		AdhocGpuBufferClient				m_GpuBufferAllocator;
 		AdhocDescriptorHeapClient			m_DescHeapAllocator;
+		AdhocDescriptorHeapClient			m_DescHeapAllocator_Sampler;
 
 
 	protected:

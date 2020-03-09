@@ -74,7 +74,8 @@ bool	CommandList::Initialize( CommandQueue* cmdQueue, ID3D12GraphicsCommandList 
 	m_pCmdQueue = cmdQueue;
 
 	m_GpuBufferAllocator.Initialize(cmdQueue->GetAdhocGpuBufferHost());
-	m_DescHeapAllocator.Initialize(cmdQueue->GetAdhocDescriptorHeapHost());
+	m_DescHeapAllocator.Initialize(cmdQueue->GetAdhocDescriptorHeapHost(DescriptorHeapType::CBV_SRV_UAV));
+	m_DescHeapAllocator_Sampler.Initialize(cmdQueue->GetAdhocDescriptorHeapHost(DescriptorHeapType::SAMPLER));
 
 	// おまじない
 	//m_pCmdList->Close();
@@ -91,6 +92,7 @@ void	CommandList::Finalize()
 	//	OnExecuteが呼ばれなかった場合、こちらで回収を行う
 	m_GpuBufferAllocator.Reset(0);	
 	m_DescHeapAllocator.Reset(0);
+	m_DescHeapAllocator_Sampler.Reset(0);
 
 	if (m_pCurCmdAllocator) {
 		// CommandQueueに返却しないといけない
@@ -132,6 +134,7 @@ void	CommandList::Reset(bool frameBorder)
 	if (frameBorder) {
 		m_GpuBufferAllocator.Reset(0);	//	OnExecuteが呼ばれなかった場合、こちらで回収を行う
 		m_DescHeapAllocator.Reset(0);
+		m_DescHeapAllocator_Sampler.Reset(0);
 	}
 
 }
@@ -256,6 +259,20 @@ DescriptorBuffer CommandList::AllocateDescriptorBuffer(uint32_t size)
 	}
 
 	return DescriptorBuffer(heap, startIndex, size,this );
+
+}
+
+
+DescriptorBuffer CommandList::AllocateDescriptorBuffer_Sampler(uint32_t size)
+{
+
+	uint32_t startIndex = 0;
+	DescriptorHeap *heap = m_DescHeapAllocator_Sampler.Require(startIndex, m_pCmdQueue, size);
+	if (!heap) {
+		return DescriptorBuffer();
+	}
+
+	return DescriptorBuffer(heap, startIndex, size, this);
 
 }
 

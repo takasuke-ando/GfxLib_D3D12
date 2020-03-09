@@ -128,7 +128,7 @@ bool	DepthStencil::Initialize(Format format,
 	if (EnableShaderResource) {
 
 
-		m_SRVDescHeap.InitializeCBV_SRV_UAV(1);
+		m_SRVDescHeap.InitializeCBV_SRV_UAV(1,false);
 
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 

@@ -113,10 +113,10 @@ DescriptorHeap*	AdhocDescriptorHeap::Require(uint64_t completedFence)
 		// とりあえずCBV/SRV/UAV用として
 		bool b = FALSE;
 		if (m_heapType == DescriptorHeapType::CBV_SRV_UAV) {
-			b = descHeap->InitializeCBV_SRV_UAV(MaxBufferSize); // サイズ適当
+			b = descHeap->InitializeCBV_SRV_UAV(MaxBufferSize,true); // サイズ適当
 		}
 		else if (m_heapType == DescriptorHeapType::SAMPLER) {
-			b = descHeap->InitializeSampler(MaxBufferSize);
+			b = descHeap->InitializeSampler(MaxBufferSize,true);
 		}
 
 		if (!b) {

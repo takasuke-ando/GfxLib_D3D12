@@ -227,9 +227,10 @@ void AdhocDescriptorHeapClient::Reset(uint64_t fence)
 @param[out]	startIndex:	ヒープのこのインデックスから書き込める
 @param[in]  fenceOwnQueue:	フェンスを識別するためのキュー
 @param[in]	size:		要求サイズ
+@param[in]  offsetCurrent:	現在のポインタを移動する。通常true。falseとすると、reserveのみ行う
 
 */
-DescriptorHeap*	AdhocDescriptorHeapClient::Require( uint32_t &startIndex, CommandQueue *fenceQueue, uint32_t requestSize)
+DescriptorHeap*	AdhocDescriptorHeapClient::Require( uint32_t &startIndex, CommandQueue *fenceQueue, uint32_t requestSize, bool offsetCurrent)
 {
 
 	if (m_pCurrentHeap) {
@@ -240,7 +241,9 @@ DescriptorHeap*	AdhocDescriptorHeapClient::Require( uint32_t &startIndex, Comman
 		if (requestSize + m_nCurrentHeapUsedSize <= capacity) {
 
 			startIndex = m_nCurrentHeapUsedSize;
-			m_nCurrentHeapUsedSize += requestSize;
+			if (offsetCurrent) {
+				m_nCurrentHeapUsedSize += requestSize;
+			}
 
 			return m_pCurrentHeap;
 		}
@@ -267,7 +270,7 @@ DescriptorHeap*	AdhocDescriptorHeapClient::Require( uint32_t &startIndex, Comman
 	m_vecUsingBuffer.push_back(m_pCurrentHeap);
 
 	startIndex = 0;
-	m_nCurrentHeapUsedSize = requestSize;
+	m_nCurrentHeapUsedSize = offsetCurrent?requestSize:0;
 
 
 	return m_pCurrentHeap;

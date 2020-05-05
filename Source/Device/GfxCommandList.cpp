@@ -31,6 +31,8 @@ using namespace GfxLib;
 CommandList::CommandList()
 	:m_pd3dDev(nullptr)
 	,m_pCmdQueue(nullptr)
+	,m_pLastCbvSrvUavHeap(nullptr)
+	,m_pLastSamplerHeap(nullptr)
 	,m_pCurCmdAllocator(nullptr)
 {
 }
@@ -119,6 +121,9 @@ void	CommandList::Reset(bool frameBorder)
 
 	CoreSystem * coreSystem = CoreSystem::GetInstance();
 
+	m_pLastCbvSrvUavHeap = nullptr;
+	m_pLastSamplerHeap = nullptr;
+
 	//m_pCmdList->Reset(coreSystem->GetCurrentCommandAllocator(), nullptr /*PSO*/);
 	if (m_pCurCmdAllocator == nullptr) {
 
@@ -184,6 +189,63 @@ GpuBufferRange	CommandList::AllocateGpuBuffer( uint32_t size, uint32_t alignment
 
 }
 
+
+
+
+/***************************************************************
+@brief	デスクリプタバッファの予約
+@par	[説明]
+	CBV_SRV_UAV,  および、Sampler用デスクリプタの予約を行う
+	0を指定する事も可能（その場合変更しない）
+@param[in]	cbv_srv_uav_size
+@param[in]	sampler_size
+*/
+
+bool	CommandList::ReserveDescriptorBuffers(uint32_t cbv_srv_uav_size, uint32_t sampler_size)
+{
+
+	DescriptorHeap *cbvSrvUavHeap = m_pLastCbvSrvUavHeap;
+	DescriptorHeap *samplerHeap = m_pLastSamplerHeap;
+
+	if (cbv_srv_uav_size>0) {
+
+		uint32_t startIndex = 0;
+		cbvSrvUavHeap = m_DescHeapAllocator.Require(startIndex, m_pCmdQueue, cbv_srv_uav_size, false);
+
+	}
+
+	if (sampler_size > 0) {
+		uint32_t startIndex = 0;
+		samplerHeap = m_DescHeapAllocator_Sampler.Require(startIndex, m_pCmdQueue, sampler_size, false);
+
+	}
+
+	if (cbvSrvUavHeap != m_pLastCbvSrvUavHeap ||
+		samplerHeap != m_pLastSamplerHeap) {
+
+		ID3D12DescriptorHeap *heap[2] = {};
+
+		uint32_t heapNum = 0;
+
+		if (cbvSrvUavHeap != nullptr) {
+			heap[heapNum] = cbvSrvUavHeap->GetD3DDescriptorHeap();
+			++heapNum;
+		}
+		if (samplerHeap != nullptr) {
+			heap[heapNum] = samplerHeap->GetD3DDescriptorHeap();
+			++heapNum;
+		}
+
+		// ヒープを登録
+		m_pCmdList->SetDescriptorHeaps(heapNum, heap);
+
+		m_pLastCbvSrvUavHeap = cbvSrvUavHeap;
+		m_pLastSamplerHeap = samplerHeap;
+	}
+
+
+	return true;
+}
 
 
 
@@ -258,6 +320,10 @@ DescriptorBuffer CommandList::AllocateDescriptorBuffer(uint32_t size)
 		return DescriptorBuffer();
 	}
 
+	// 呼び出し忘れor予約値が不足
+	GFX_ASSERT(m_pLastCbvSrvUavHeap == heap, L"ReserveDescriptorBuffers size over");
+
+
 	return DescriptorBuffer(heap, startIndex, size,this );
 
 }
@@ -271,6 +337,10 @@ DescriptorBuffer CommandList::AllocateDescriptorBuffer_Sampler(uint32_t size)
 	if (!heap) {
 		return DescriptorBuffer();
 	}
+
+
+	// 呼び出し忘れor予約値が不足
+	GFX_ASSERT(m_pLastSamplerHeap == heap, L"ReserveDescriptorBuffers size over");
 
 	return DescriptorBuffer(heap, startIndex, size, this);
 

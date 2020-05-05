@@ -316,6 +316,58 @@ void	GraphicsCommandList::OMSetRenderTargets(uint32_t count, const RenderTarget*
 
 
 
+
+/***************************************************************
+@brief	レンダーターゲットのクリア
+@par	[説明]
+D3DのAPIと同じ
+*/
+void GraphicsCommandList::ClearRenderTargetView(
+	RenderTarget& rt,
+	const float ColorRGBA[4],
+	uint32_t NumRects,
+	const D3D12_RECT *pRects)
+{
+
+	m_pCmdList->ClearRenderTargetView(rt.GetRTVDescriptorHandle(), ColorRGBA, NumRects,pRects );
+
+
+}
+
+
+/***************************************************************
+@brief	デプスステンシルのクリア
+@par	[説明]
+D3DのAPIと同じ
+*/
+void GraphicsCommandList::ClearDepthStencilView(
+	DepthStencil& ds,
+	D3D12_CLEAR_FLAGS ClearFlags,
+	float Depth,
+	uint8_t Stencil,
+	uint32_t NumRects,
+	const D3D12_RECT *pRects)
+{
+
+	m_pCmdList->ClearDepthStencilView(ds.GetDSVDescriptorHandle(), ClearFlags, Depth, Stencil, NumRects, pRects);
+
+}
+
+
+
+
+
+void GraphicsCommandList::SetGraphicsRootDescriptorTable(
+	uint32_t RootParameterIndex,
+	const DescriptorBuffer &descBuffer)
+{
+
+	m_pCmdList->SetGraphicsRootDescriptorTable(RootParameterIndex, descBuffer.GetGPUDescriptorHandle());
+
+}
+
+
+
 /***************************************************************
 @brief	PSOのフラッシュ
 @par	[説明]

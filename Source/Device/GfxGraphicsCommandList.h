@@ -33,6 +33,7 @@ namespace GfxLib
 	class DepthStencil;
 	class RootSignature;
 	class Shader;
+	class DescriptorBuffer;
 	typedef Shader		PixelShader;
 	typedef Shader		VertexShader;
 	typedef Shader		GeometryShader;
@@ -92,6 +93,43 @@ namespace GfxLib
 			@param[in]	depthStencil:	デプスステンシル。null可
 		*/
 		void	OMSetRenderTargets(uint32_t count, const RenderTarget* const * rtArray, const DepthStencil * depthStencil);
+
+
+
+		/***************************************************************
+		@brief	レンダーターゲットのクリア
+		@par	[説明]
+			D3DのAPIと同じ
+		*/
+		void ClearRenderTargetView(
+			RenderTarget&,
+			const float ColorRGBA[4],
+			uint32_t NumRects,
+			const D3D12_RECT *pRects);
+
+
+		/***************************************************************
+		@brief	デプスステンシルのクリア
+		@par	[説明]
+			D3DのAPIと同じ
+		*/
+		void ClearDepthStencilView(
+			DepthStencil&,
+			D3D12_CLEAR_FLAGS ClearFlags,
+			float Depth,
+			uint8_t Stencil,
+			uint32_t NumRects,
+			const D3D12_RECT *pRects);
+
+
+		/***************************************************************
+		@brief	RootParameterを設定する
+		@par	[説明]
+			D3DのAPIと同じ
+		*/
+		void SetGraphicsRootDescriptorTable(
+			uint32_t RootParameterIndex,
+			const DescriptorBuffer &BaseDescriptor);
 
 		
 		/***************************************************************

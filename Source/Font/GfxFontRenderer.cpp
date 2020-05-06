@@ -316,10 +316,10 @@ void	FontRenderer::_Flush()
 		//m_pContext->EndWriteVertexBuffer( &m_pFontSystem->GetFontVertexBuffer() );
 		//_pContext->Draw( m_FontBuffWrote , 0 );
 
-		m_pContext->FlushPipeline();
+		//m_pContext->FlushPipeline();
 
 		uint32_t startVertex = m_NextDrawIndex;
-		m_pContext->GetD3DCommandList()->DrawInstanced(m_FontBuffWrote, 1, startVertex, 0);
+		m_pContext->DrawInstanced(m_FontBuffWrote, 1, startVertex, 0);
 
 		m_NextDrawIndex += m_FontBuffWrote;
 		m_FontBuffWrote = 0;
@@ -359,7 +359,7 @@ void	FontRenderer::_AllocateBuffer()
 		vbv.SizeInBytes = (UINT)buffRange.GetSize();
 		vbv.StrideInBytes = sizeof(FontVertex);
 
-		m_pContext->GetD3DCommandList()->IASetVertexBuffers(0, 1, &vbv);
+		m_pContext->IASetVertexBuffers(0, 1, &vbv);
 
 		m_NextDrawIndex = 0;
 

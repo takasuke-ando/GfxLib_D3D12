@@ -357,15 +357,6 @@ void GraphicsCommandList::ClearDepthStencilView(
 
 
 
-void GraphicsCommandList::SetGraphicsRootDescriptorTable(
-	uint32_t RootParameterIndex,
-	const DescriptorBuffer &descBuffer)
-{
-
-	m_pCmdList->SetGraphicsRootDescriptorTable(RootParameterIndex, descBuffer.GetGPUDescriptorHandle());
-
-}
-
 
 
 /***************************************************************
@@ -390,6 +381,41 @@ void	GraphicsCommandList::FlushPipeline()
 	m_bPipelineDirty = false;
 }
 
+
+
+void GraphicsCommandList::DrawInstanced(
+	uint32_t VertexCountPerInstance,
+	uint32_t InstanceCount,
+	uint32_t StartVertexLocation,
+	uint32_t StartInstanceLocation)
+{
+	FlushPipeline();
+
+	GetD3DCommandList()->DrawInstanced(
+		VertexCountPerInstance,
+		InstanceCount,
+		StartVertexLocation,
+		StartInstanceLocation);
+}
+
+
+
+void GraphicsCommandList::DrawIndexedInstanced(
+	uint32_t IndexCountPerInstance,
+	uint32_t InstanceCount,
+	uint32_t StartIndexLocation,
+	int32_t  BaseVertexLocation,
+	uint32_t StartInstanceLocation)
+{
+	FlushPipeline();
+
+	GetD3DCommandList()->DrawIndexedInstanced(
+		IndexCountPerInstance,
+		InstanceCount,
+		StartIndexLocation,
+		BaseVertexLocation,
+		StartInstanceLocation);
+}
 
 
 

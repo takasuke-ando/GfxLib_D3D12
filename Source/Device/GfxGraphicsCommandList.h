@@ -131,6 +131,21 @@ namespace GfxLib
 			uint32_t RootParameterIndex,
 			const DescriptorBuffer &BaseDescriptor);
 
+
+
+
+		void IASetIndexBuffer(
+			const D3D12_INDEX_BUFFER_VIEW *pView);
+
+		void IASetVertexBuffers(
+			UINT StartSlot,
+			UINT NumViews,
+			const D3D12_VERTEX_BUFFER_VIEW *pViews);
+
+
+		void IASetPrimitiveTopology(
+			D3D12_PRIMITIVE_TOPOLOGY PrimitiveTopology);
+
 		
 		/***************************************************************
 		@brief	PSOのフラッシュ
@@ -140,6 +155,27 @@ namespace GfxLib
 		@param
 		*/
 		void	FlushPipeline();
+
+		/***************************************************************
+		@brief	D3Dのラッパ
+		@par	[説明]
+			
+		@param
+		*/
+		void DrawInstanced(
+			uint32_t VertexCountPerInstance,
+			uint32_t InstanceCount,
+			uint32_t StartVertexLocation,
+			uint32_t StartInstanceLocation);
+
+		void DrawIndexedInstanced(
+			uint32_t IndexCountPerInstance,
+			uint32_t InstanceCount,
+			uint32_t StartIndexLocation,
+			int32_t BaseVertexLocation,
+			uint32_t StartInstanceLocation);
+
+
 
 	protected:
 

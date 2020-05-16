@@ -20,6 +20,7 @@ namespace GfxLib
 	class CommandQueue;
 	class Resource;
 
+
 	class CommandList
 	{
 	public:
@@ -66,6 +67,23 @@ namespace GfxLib
 		GpuBufferRange	AllocateGpuBuffer( uint32_t size, uint32_t alignment);
 
 
+
+		/***************************************************************
+		@brief	デスクリプタバッファの予約
+		@par	[説明]
+			CBV_SRV_UAV,  および、Sampler用デスクリプタの予約を行う
+			0を指定する事も可能（その場合変更しない）
+			SetDescriptorHeapsを呼び出すのはこの中からのみ
+
+		@param[in]	cbv_srv_uav_size
+		@param[in]	sampler_size
+		*/
+
+		bool	ReserveDescriptorBuffers(uint32_t cbv_srv_uav_size, uint32_t sampler_size);
+
+
+
+
 		/***************************************************************
 			@brief	デスクリプタバッファの確保
 			@par	[説明]
@@ -73,10 +91,14 @@ namespace GfxLib
 				一時的なデスクリプタバッファの確保を行う
 				利用者側は、
 				DescriptorBufferクラスを経由して、デスクリプタの書き込み、コピーを行う
+
+				AllocateDescriptorBuffer : CBV_SRV_UAV用
+
 			@param[in]	size
 		*/
 		DescriptorBuffer AllocateDescriptorBuffer(uint32_t size);
 
+		DescriptorBuffer AllocateDescriptorBuffer_Sampler( uint32_t size);
 
 
 		/***************************************************************
@@ -113,6 +135,8 @@ namespace GfxLib
 			ID3D12Resource* dstResource,
 			const void *srcData,
 			const size_t byteSize );
+
+
 
 		/***************************************************************
 		@brief	ExecuteCommandListが呼び出される
@@ -152,8 +176,12 @@ namespace GfxLib
 
 
 		AdhocGpuBufferClient				m_GpuBufferAllocator;
-		AdhocDescriptorHeapClient			m_DescHeapAllocator;
+		AdhocDescriptorHeapClient			m_DescHeapAllocator;			//!<	CBV_SRV_UAV
+		AdhocDescriptorHeapClient			m_DescHeapAllocator_Sampler;	//!<	Sampler
 
+
+		DescriptorHeap *					m_pLastCbvSrvUavHeap;
+		DescriptorHeap *					m_pLastSamplerHeap;
 
 	protected:
 		ID3D12CommandAllocator*				m_pCurCmdAllocator;	//!<	現在のコマンドアロケータ

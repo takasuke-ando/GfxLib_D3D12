@@ -32,6 +32,7 @@ ID3D12GraphicsCommandListをカプセル化する
 #include "State/GfxBlendState.h"
 #include "State/GfxRasterizerState.h"
 #include "State/GfxInputLayout.h"
+#include "State/GfxPipelineState.h"
 
 #include "Resource/GfxRootSignature.h"
 #include "Resource/GfxRenderTarget.h"
@@ -139,7 +140,12 @@ void	GraphicsCommandList::SetRootSignature(const RootSignature* sig)
 
 	m_bPipelineDirty = true;
 
-	m_pCmdList->SetGraphicsRootSignature(sig->GetD3DRootSignature());
+	if (sig) {
+		m_pCmdList->SetGraphicsRootSignature(sig->GetD3DRootSignature());
+	} else {
+		m_pCmdList->SetGraphicsRootSignature(nullptr);
+
+	}
 
 }
 
@@ -147,7 +153,7 @@ void	GraphicsCommandList::SetRootSignature(const RootSignature* sig)
 
 
 
-void	GraphicsCommandList::SetDepthStencilState(const DepthStencilState* state)
+void	GraphicsCommandList::OMSetDepthStencilState(const DepthStencilState* state)
 {
 	if (state == m_pDepthStencilState) return;
 
@@ -167,7 +173,7 @@ void	GraphicsCommandList::SetDepthStencilState(const DepthStencilState* state)
 
 
 
-void	GraphicsCommandList::SetBlendState(const BlendState* state)
+void	GraphicsCommandList::OMSetBlendState(const BlendState* state)
 {
 	if (state == m_pBlendState) return;
 
@@ -187,7 +193,7 @@ void	GraphicsCommandList::SetBlendState(const BlendState* state)
 
 
 
-void	GraphicsCommandList::SetRasterizerState(const RasterizerState* state)
+void	GraphicsCommandList::RSSetState(const RasterizerState* state)
 {
 	if (state == m_pRasterizerState) return;
 
@@ -207,7 +213,7 @@ void	GraphicsCommandList::SetRasterizerState(const RasterizerState* state)
 
 
 
-void	GraphicsCommandList::SetInputLayout(const InputLayout* layout)
+void	GraphicsCommandList::IASetInputLayout(const InputLayout* layout)
 {
 	if (layout == m_pInputLayout) return;
 
@@ -249,7 +255,7 @@ void	GraphicsCommandList::VSSetShader(const VertexShader *vs)
 		m_PipelineStateId.hashVS = 0;
 	}
 
-	m_bPipelineDirty = false;
+	m_bPipelineDirty = true;
 
 }
 
@@ -271,7 +277,7 @@ void	GraphicsCommandList::PSSetShader(const PixelShader *ps)
 		m_PipelineStateId.hashPS = 0;
 	}
 
-	m_bPipelineDirty = false;
+	m_bPipelineDirty = true;
 
 }
 
@@ -307,6 +313,109 @@ void	GraphicsCommandList::OMSetRenderTargets(uint32_t count, const RenderTarget*
 }
 
 
+
+
+
+
+/***************************************************************
+@brief	レンダーターゲットのクリア
+@par	[説明]
+D3DのAPIと同じ
+*/
+void GraphicsCommandList::ClearRenderTargetView(
+	RenderTarget& rt,
+	const float ColorRGBA[4],
+	uint32_t NumRects,
+	const D3D12_RECT *pRects)
+{
+
+	m_pCmdList->ClearRenderTargetView(rt.GetRTVDescriptorHandle(), ColorRGBA, NumRects,pRects );
+
+
+}
+
+
+/***************************************************************
+@brief	デプスステンシルのクリア
+@par	[説明]
+D3DのAPIと同じ
+*/
+void GraphicsCommandList::ClearDepthStencilView(
+	DepthStencil& ds,
+	D3D12_CLEAR_FLAGS ClearFlags,
+	float Depth,
+	uint8_t Stencil,
+	uint32_t NumRects,
+	const D3D12_RECT *pRects)
+{
+
+	m_pCmdList->ClearDepthStencilView(ds.GetDSVDescriptorHandle(), ClearFlags, Depth, Stencil, NumRects, pRects);
+
+}
+
+
+
+
+
+
+
+/***************************************************************
+@brief	PSOのフラッシュ
+@par	[説明]
+	PSOのフラッシュを行う
+@param
+*/
+void	GraphicsCommandList::FlushPipeline()
+{
+	if (!m_bPipelineDirty) {
+		return;
+	}
+
+	CoreSystem *coreSystem = CoreSystem::GetInstance();
+
+	PipelineState *state = coreSystem->AcquireGraphicsPso(m_PipelineStateId, m_PipelineState);
+
+
+	GetD3DCommandList()->SetPipelineState(state->GetD3DPipelineState());
+
+	m_bPipelineDirty = false;
+}
+
+
+
+void GraphicsCommandList::DrawInstanced(
+	uint32_t VertexCountPerInstance,
+	uint32_t InstanceCount,
+	uint32_t StartVertexLocation,
+	uint32_t StartInstanceLocation)
+{
+	FlushPipeline();
+
+	GetD3DCommandList()->DrawInstanced(
+		VertexCountPerInstance,
+		InstanceCount,
+		StartVertexLocation,
+		StartInstanceLocation);
+}
+
+
+
+void GraphicsCommandList::DrawIndexedInstanced(
+	uint32_t IndexCountPerInstance,
+	uint32_t InstanceCount,
+	uint32_t StartIndexLocation,
+	int32_t  BaseVertexLocation,
+	uint32_t StartInstanceLocation)
+{
+	FlushPipeline();
+
+	GetD3DCommandList()->DrawIndexedInstanced(
+		IndexCountPerInstance,
+		InstanceCount,
+		StartIndexLocation,
+		BaseVertexLocation,
+		StartInstanceLocation);
+}
 
 
 

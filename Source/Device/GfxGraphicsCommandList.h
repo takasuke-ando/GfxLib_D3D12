@@ -33,6 +33,7 @@ namespace GfxLib
 	class DepthStencil;
 	class RootSignature;
 	class Shader;
+	class DescriptorBuffer;
 	typedef Shader		PixelShader;
 	typedef Shader		VertexShader;
 	typedef Shader		GeometryShader;
@@ -62,13 +63,13 @@ namespace GfxLib
 
 		void	SetRootSignature(const RootSignature* sig);
 
-		void	SetDepthStencilState(const DepthStencilState* state);
+		void	OMSetDepthStencilState(const DepthStencilState* state);
 
-		void	SetBlendState(const BlendState* state);
+		void	OMSetBlendState(const BlendState* state);
 
-		void	SetRasterizerState(const RasterizerState* state);
+		void	RSSetState(const RasterizerState* state);
 
-		void	SetInputLayout(const InputLayout* layout);
+		void	IASetInputLayout(const InputLayout* layout);
 
 		void	SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE topology);
 
@@ -94,13 +95,95 @@ namespace GfxLib
 		void	OMSetRenderTargets(uint32_t count, const RenderTarget* const * rtArray, const DepthStencil * depthStencil);
 
 
+
+		/***************************************************************
+		@brief	レンダーターゲットのクリア
+		@par	[説明]
+			D3DのAPIと同じ
+		*/
+		void ClearRenderTargetView(
+			RenderTarget&,
+			const float ColorRGBA[4],
+			uint32_t NumRects,
+			const D3D12_RECT *pRects);
+
+
+		/***************************************************************
+		@brief	デプスステンシルのクリア
+		@par	[説明]
+			D3DのAPIと同じ
+		*/
+		void ClearDepthStencilView(
+			DepthStencil&,
+			D3D12_CLEAR_FLAGS ClearFlags,
+			float Depth,
+			uint8_t Stencil,
+			uint32_t NumRects,
+			const D3D12_RECT *pRects);
+
+
+		/***************************************************************
+		@brief	RootParameterを設定する
+		@par	[説明]
+			D3DのAPIと同じ
+		*/
+		void SetGraphicsRootDescriptorTable(
+			uint32_t RootParameterIndex,
+			const DescriptorBuffer &BaseDescriptor);
+
+
+
+
+		void IASetIndexBuffer(
+			const D3D12_INDEX_BUFFER_VIEW *pView);
+
+		void IASetVertexBuffers(
+			UINT StartSlot,
+			UINT NumViews,
+			const D3D12_VERTEX_BUFFER_VIEW *pViews);
+
+
+		void IASetPrimitiveTopology(
+			D3D12_PRIMITIVE_TOPOLOGY PrimitiveTopology);
+
+		
+		/***************************************************************
+		@brief	PSOのフラッシュ
+		@par	[説明]
+			PSOのフラッシュを行う
+			描画直前に呼び出す必要がある
+		@param
+		*/
+		void	FlushPipeline();
+
+		/***************************************************************
+		@brief	D3Dのラッパ
+		@par	[説明]
+			
+		@param
+		*/
+		void DrawInstanced(
+			uint32_t VertexCountPerInstance,
+			uint32_t InstanceCount,
+			uint32_t StartVertexLocation,
+			uint32_t StartInstanceLocation);
+
+		void DrawIndexedInstanced(
+			uint32_t IndexCountPerInstance,
+			uint32_t InstanceCount,
+			uint32_t StartIndexLocation,
+			int32_t BaseVertexLocation,
+			uint32_t StartInstanceLocation);
+
+
+
 	protected:
 
 		/***************************************************************
 		@brief	コマンドリストオブジェクトの再利用時
 		@par	[説明]
-		コマンドリストオブジェクトの再利用時に呼び出される
-		内部状態をリセットする
+			コマンドリストオブジェクトの再利用時に呼び出される
+			内部状態をリセットする
 		@param
 		*/
 		virtual void	OnReset();

@@ -39,10 +39,12 @@ namespace GfxLib
 		const D3D12_BLEND_DESC&		GetDesc() const { return m_Desc; }
 		uint32_t	GetHashValue() const { return 	m_HashValue; }	//!<	ハッシュ値
 
+		static D3D12_BLEND_DESC	GetDefaultDesc();
+
 	private:
 		D3D12_BLEND_DESC	m_Desc;
 		uint32_t			m_HashValue;		//!<	ハッシュ値
-
+		uint32_t			m_UniqId;
 	};
 
 

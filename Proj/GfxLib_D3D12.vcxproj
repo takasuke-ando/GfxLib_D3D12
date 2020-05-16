@@ -146,6 +146,9 @@
     <ClInclude Include="..\Source\External\DirectX-Graphics-Samples\DDSTextureLoader.h" />
     <ClInclude Include="..\Source\External\DirectX-Graphics-Samples\pch.h" />
     <ClInclude Include="..\Source\External\DirectX-Graphics-Samples\Utility.h" />
+    <ClInclude Include="..\Source\Font\GfxFontData.h" />
+    <ClInclude Include="..\Source\Font\GfxFontRenderer.h" />
+    <ClInclude Include="..\Source\Font\GfxFontSystem.h" />
     <ClInclude Include="..\Source\GfxLib.h" />
     <ClInclude Include="..\Source\GfxLibStdAfx.h" />
     <ClInclude Include="..\Source\Resource\GfxBuffer.h" />
@@ -159,6 +162,7 @@
     <ClInclude Include="..\Source\Resource\GfxResource.h" />
     <ClInclude Include="..\Source\Resource\GfxRootSignature.h" />
     <ClInclude Include="..\Source\Resource\GfxRootSignatureDesc.h" />
+    <ClInclude Include="..\Source\Resource\GfxSampler.h" />
     <ClInclude Include="..\Source\Resource\GfxTexture2D.h" />
     <ClInclude Include="..\Source\Resource\GfxVertexBuffer.h" />
     <ClInclude Include="..\Source\Shader\GfxShader.h" />
@@ -166,6 +170,7 @@
     <ClInclude Include="..\Source\State\GfxDepthStencilState.h" />
     <ClInclude Include="..\Source\State\GfxInputLayout.h" />
     <ClInclude Include="..\Source\State\GfxPipelineState.h" />
+    <ClInclude Include="..\Source\State\GfxPipelineStatePool.h" />
     <ClInclude Include="..\Source\State\GfxRasterizerState.h" />
     <ClInclude Include="..\Source\System\GfxAdhocDescriptorHeap.h" />
     <ClInclude Include="..\Source\System\GfxAdhocGpuBuffer.h" />
@@ -179,6 +184,7 @@
     <ClInclude Include="..\Source\Util\GfxD3DPtr.h" />
     <ClInclude Include="..\Source\Util\GfxFormatUtil.h" />
     <ClInclude Include="..\Source\Util\GfxMath.h" />
+    <ClInclude Include="..\Source\Util\GfxUniqIdMaker.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -190,6 +196,9 @@
     <ClCompile Include="..\Source\Device\GfxSwapChain.cpp" />
     <ClCompile Include="..\Source\External\DirectX-Graphics-Samples\DDSTextureLoader.cpp" />
     <ClCompile Include="..\Source\External\DirectX-Graphics-Samples\Utility.cpp" />
+    <ClCompile Include="..\Source\Font\GfxFontData.cpp" />
+    <ClCompile Include="..\Source\Font\GfxFontRenderer.cpp" />
+    <ClCompile Include="..\Source\Font\GfxFontSystem.cpp" />
     <ClCompile Include="..\Source\GfxLib.cpp" />
     <ClCompile Include="..\Source\Resource\GfxBuffer.cpp" />
     <ClCompile Include="..\Source\Resource\GfxConstantBuffer.cpp" />
@@ -202,6 +211,7 @@
     <ClCompile Include="..\Source\Resource\GfxResource.cpp" />
     <ClCompile Include="..\Source\Resource\GfxRootSignature.cpp" />
     <ClCompile Include="..\Source\Resource\GfxRootSignatureDesc.cpp" />
+    <ClCompile Include="..\Source\Resource\GfxSampler.cpp" />
     <ClCompile Include="..\Source\Resource\GfxTexture2D.cpp" />
     <ClCompile Include="..\Source\Resource\GfxVertexBuffer.cpp" />
     <ClCompile Include="..\Source\Shader\GfxShader.cpp" />
@@ -209,6 +219,7 @@
     <ClCompile Include="..\Source\State\GfxDepthStencilState.cpp" />
     <ClCompile Include="..\Source\State\GfxInputLayout.cpp" />
     <ClCompile Include="..\Source\State\GfxPipelineState.cpp" />
+    <ClCompile Include="..\Source\State\GfxPipelineStatePool.cpp" />
     <ClCompile Include="..\Source\State\GfxRasterizerState.cpp" />
     <ClCompile Include="..\Source\System\GfxAdhocDescriptorHeap.cpp" />
     <ClCompile Include="..\Source\System\GfxAdhocGpuBuffer.cpp" />
@@ -219,6 +230,7 @@
     <ClCompile Include="..\Source\Util\GfxAutoDescriptorHandle.cpp" />
     <ClCompile Include="..\Source\Util\GfxCrc32.cpp" />
     <ClCompile Include="..\Source\Util\GfxMath.cpp" />
+    <ClCompile Include="..\Source\Util\GfxUniqIdMaker.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

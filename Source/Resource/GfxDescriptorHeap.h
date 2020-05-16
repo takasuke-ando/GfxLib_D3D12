@@ -23,10 +23,10 @@ namespace GfxLib
 		bool	InitializeDSV( uint32_t bufferCount);
 
 		//	CBV SRV UAV
-		bool	InitializeCBV_SRV_UAV(uint32_t bufferCount);
+		bool	InitializeCBV_SRV_UAV(uint32_t bufferCount,bool shaderVisible);
 
 		//	Sampler
-		bool	InitializeSampler(uint32_t bufferCount);
+		bool	InitializeSampler(uint32_t bufferCount, bool shaderVisible);
 
 		void	Finalize(bool delayedDelete = GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FINALIZE);
 

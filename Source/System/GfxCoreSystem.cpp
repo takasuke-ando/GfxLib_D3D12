@@ -15,6 +15,8 @@
 #include "Device/GfxCommandList.h"
 #include "Device/GfxGraphicsCommandList.h"
 #include "Util/GfxCrc32.h"
+#include "State/GfxPipelineStatePool.h"
+#include "State/GfxPipelineState.h"
 
 
 using namespace GfxLib;
@@ -29,6 +31,7 @@ CoreSystem::CoreSystem()
 	, m_featureLevel(D3D_FEATURE_LEVEL_11_0)
 	, m_driverType(D3D_DRIVER_TYPE_HARDWARE)
 	, m_pDescriptorAllocator(nullptr)
+	, m_pGraphicsPsoPool(nullptr)
 	//, m_pAdhocDescriptorHeap(nullptr)
 	//, m_pAdhocGpuBuffer(nullptr)
 	, m_bInsideBeginEnd(false)
@@ -105,7 +108,10 @@ void CoreSystem::Finalize()
 	if (m_pd3dDev) {
 		m_DelayDelete.DeleteAll();
 	}
-
+	
+	
+	delete m_pGraphicsPsoPool;
+	m_pGraphicsPsoPool = nullptr;
 
 	// デスクリプタアロケータ開放。CPUハンドルなので、遅延開放は絶対にない
 	delete m_pDescriptorAllocator;
@@ -204,12 +210,13 @@ bool	CoreSystem::Initialize()
 	for ( auto& fence : m_aFence ) {
 		fence.Initialize(true);
 	}
-
+	m_WaitGpuFinishFence.Initialize(true);
 
 	m_pDescriptorAllocator = new DescriptorAllocator;
 	//m_pAdhocDescriptorHeap = new AdhocDescriptorHeap(DescriptorHeapType::CBV_SRV_UAV);
 	//m_pAdhocGpuBuffer = new AdhocGpuBuffer;
 
+	m_pGraphicsPsoPool = new PipelineStatePool;
 
 	m_pResourceInitCmdList = new GraphicsCommandList;
 	m_pResourceInitCmdList->Initialize(&m_CommandQueue);
@@ -308,6 +315,139 @@ void		CoreSystem::End()
 
 }
 
+
+
+uint32_t	CoreSystem::MakeUniqId(const D3D12_BLEND_DESC &desc)
+{
+
+	return m_uniqBlendState.MakeId_memcmp(desc);
+
+}
+
+
+uint32_t	CoreSystem::MakeUniqId(const D3D12_DEPTH_STENCIL_DESC &desc)
+{
+
+	return m_uniqDepthStencilState.MakeId_memcmp(desc);
+}
+
+
+
+uint32_t	CoreSystem::MakeUniqId(const D3D12_RASTERIZER_DESC &desc)
+{
+
+	return m_uniqRastelizerState.MakeId_memcmp(desc);
+}
+
+
+
+uint32_t	CoreSystem::MakeUniqId_InputLayout(const uint32_t inputLayoutHash)
+{
+
+	return m_uniqInputLayout.MakeId(inputLayoutHash);
+}
+
+
+
+
+
+/***************************************************************
+@brief	PSOの作成
+@par	[説明]
+	PSOの作成
+	キャッシュにあれば、それを使う
+@param
+*/
+PipelineState*		CoreSystem::AcquireGraphicsPso(const GRAPHICS_PSO_CACHE_IDENTIFIER psoId, const D3D12_GRAPHICS_PIPELINE_STATE_DESC &desc)
+{
+
+
+	Crc32 crc;
+
+	crc.Update(&psoId, sizeof(psoId));
+	
+	uint32_t hash = crc.GetValue();
+
+
+	{
+		std::lock_guard<std::mutex> ScopeLock(m_GraphicsPsoMutex);
+
+		PipelineState *state = m_pGraphicsPsoPool->Find(hash);
+
+		if (state) {
+			return state;
+		}
+	}
+
+	// ここは時間がかかるのでLockしないようにする
+	// 2銃登録の可能性を考慮する
+	PipelineState* newstate = new PipelineState;
+
+#ifdef _DEBUG
+	LARGE_INTEGER psoCreationBegin;
+	QueryPerformanceCounter(&psoCreationBegin);
+#endif
+
+	if (!newstate->Initialize(desc)) {
+
+		GFX_ASSERT(0, "PSO Creation Error!");
+		delete newstate;
+
+		return nullptr;
+	}
+
+#ifdef _DEBUG
+	LARGE_INTEGER psoCreationEnd;
+	QueryPerformanceCounter(&psoCreationEnd);
+	LARGE_INTEGER freq;
+	QueryPerformanceFrequency(&freq);
+
+	double time = (psoCreationEnd.QuadPart - psoCreationBegin.QuadPart) / (double(freq.QuadPart));
+
+	GFX_INFO("PSO Creation Time=%8.6f\n",time);
+
+#endif
+
+
+	{
+		std::lock_guard<std::mutex> ScopeLock(m_GraphicsPsoMutex);
+
+		//	再度調査
+		PipelineState *state = m_pGraphicsPsoPool->Find(hash);
+
+		if (state) {
+			// 2重に作られている！
+			delete newstate;
+			return state;
+		}
+
+		//	登録して、それを返す
+		m_pGraphicsPsoPool->Add(hash, newstate);
+
+		return newstate;
+
+	}
+
+
+}
+
+
+
+
+/***************************************************************
+@brief	GPU待機
+@par	[説明]
+GPUに投入したキューがすべて完了するまで待機する
+*/
+void	CoreSystem::WaitGpuFinish()
+{
+
+	m_CommandQueue.InsertFence(&m_WaitGpuFinishFence);
+
+	// GPUの完了を待機
+	m_WaitGpuFinishFence.Sync();
+
+}
 
 
 #if 0

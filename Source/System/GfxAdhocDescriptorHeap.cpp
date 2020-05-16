@@ -88,6 +88,7 @@ AdhocDescriptorHeapClientから呼び出される
 */
 DescriptorHeap*	AdhocDescriptorHeap::Require(uint64_t completedFence)
 {
+	std::lock_guard<std::mutex> LockGuard(m_Mutex);
 
 	DescriptorHeap *descHeap = nullptr;
 
@@ -112,10 +113,10 @@ DescriptorHeap*	AdhocDescriptorHeap::Require(uint64_t completedFence)
 		// とりあえずCBV/SRV/UAV用として
 		bool b = FALSE;
 		if (m_heapType == DescriptorHeapType::CBV_SRV_UAV) {
-			b = descHeap->InitializeCBV_SRV_UAV(MaxBufferSize); // サイズ適当
+			b = descHeap->InitializeCBV_SRV_UAV(MaxBufferSize,true); // サイズ適当
 		}
 		else if (m_heapType == DescriptorHeapType::SAMPLER) {
-			b = descHeap->InitializeSampler(MaxBufferSize);
+			b = descHeap->InitializeSampler(MaxBufferSize,true);
 		}
 
 		if (!b) {
@@ -142,6 +143,8 @@ FenceValueを0にすると、使わなかったバッファということで待
 */
 void	AdhocDescriptorHeap::Release(uint64_t FenceValue, DescriptorHeap* heap)
 {
+
+	std::lock_guard<std::mutex> LockGuard(m_Mutex);
 
 	if (FenceValue != 0) {
 
@@ -224,9 +227,10 @@ void AdhocDescriptorHeapClient::Reset(uint64_t fence)
 @param[out]	startIndex:	ヒープのこのインデックスから書き込める
 @param[in]  fenceOwnQueue:	フェンスを識別するためのキュー
 @param[in]	size:		要求サイズ
+@param[in]  offsetCurrent:	現在のポインタを移動する。通常true。falseとすると、reserveのみ行う
 
 */
-DescriptorHeap*	AdhocDescriptorHeapClient::Require( uint32_t &startIndex, CommandQueue *fenceQueue, uint32_t requestSize)
+DescriptorHeap*	AdhocDescriptorHeapClient::Require( uint32_t &startIndex, CommandQueue *fenceQueue, uint32_t requestSize, bool offsetCurrent)
 {
 
 	if (m_pCurrentHeap) {
@@ -237,7 +241,9 @@ DescriptorHeap*	AdhocDescriptorHeapClient::Require( uint32_t &startIndex, Comman
 		if (requestSize + m_nCurrentHeapUsedSize <= capacity) {
 
 			startIndex = m_nCurrentHeapUsedSize;
-			m_nCurrentHeapUsedSize += requestSize;
+			if (offsetCurrent) {
+				m_nCurrentHeapUsedSize += requestSize;
+			}
 
 			return m_pCurrentHeap;
 		}
@@ -264,7 +270,7 @@ DescriptorHeap*	AdhocDescriptorHeapClient::Require( uint32_t &startIndex, Comman
 	m_vecUsingBuffer.push_back(m_pCurrentHeap);
 
 	startIndex = 0;
-	m_nCurrentHeapUsedSize = requestSize;
+	m_nCurrentHeapUsedSize = offsetCurrent?requestSize:0;
 
 
 	return m_pCurrentHeap;

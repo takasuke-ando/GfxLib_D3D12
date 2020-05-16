@@ -114,7 +114,7 @@ bool	DescriptorHeap::InitializeDSV(uint32_t bufferCount)
 
 
 
-bool DescriptorHeap::InitializeCBV_SRV_UAV(uint32_t bufferCount)
+bool DescriptorHeap::InitializeCBV_SRV_UAV(uint32_t bufferCount, bool shaderVisible)
 {
 
 	Finalize();
@@ -123,9 +123,9 @@ bool DescriptorHeap::InitializeCBV_SRV_UAV(uint32_t bufferCount)
 
 	D3D12_DESCRIPTOR_HEAP_DESC desc = {};
 
-	desc.NumDescriptors = bufferCount;
+	desc.NumDescriptors = bufferCount; // max 1000000
 	desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;	//	コピー専用なら、これをつける必要はない
+	desc.Flags = shaderVisible?D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE:D3D12_DESCRIPTOR_HEAP_FLAG_NONE;	//	コピー専用なら、これをつける必要はない
 
 
 	HRESULT hr;
@@ -151,7 +151,7 @@ bool DescriptorHeap::InitializeCBV_SRV_UAV(uint32_t bufferCount)
 
 
 //	Sampler
-bool	DescriptorHeap::InitializeSampler(uint32_t bufferCount)
+bool	DescriptorHeap::InitializeSampler(uint32_t bufferCount, bool shaderVisible)
 {
 
 
@@ -161,9 +161,9 @@ bool	DescriptorHeap::InitializeSampler(uint32_t bufferCount)
 
 	D3D12_DESCRIPTOR_HEAP_DESC desc = {};
 
-	desc.NumDescriptors = bufferCount;
+	desc.NumDescriptors = bufferCount; // 最大2048
 	desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER;
-	desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	desc.Flags = shaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 
 
 	HRESULT hr;

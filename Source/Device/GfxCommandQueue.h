@@ -2,7 +2,7 @@
 #define __INCLUDE_GFXCOMMANDQUEUE_H__
 
 
-
+#include "System/GfxDefines.h"
 
 namespace GfxLib
 {
@@ -91,8 +91,8 @@ namespace GfxLib
 			return m_pAdhocGpuBuffer;
 		}
 
-		AdhocDescriptorHeap* GetAdhocDescriptorHeapHost() const {
-			return m_pAdhocDescriptorHeap;
+		AdhocDescriptorHeap* GetAdhocDescriptorHeapHost(DescriptorHeapType type) const {
+			return m_pAdhocDescriptorHeap[(uint32_t)type];
 		}
 
 	private:
@@ -100,7 +100,7 @@ namespace GfxLib
 		D3D12_COMMAND_LIST_TYPE			m_CmdListType;
 		CommandAllocatorPool*			m_pCmdAllocatorPool;
 		AdhocGpuBuffer*			m_pAdhocGpuBuffer;
-		AdhocDescriptorHeap*	m_pAdhocDescriptorHeap;
+		AdhocDescriptorHeap*	m_pAdhocDescriptorHeap[DescriptorHeapType::NUM_TYPES];
 
 
 		//	フェンス

@@ -38,6 +38,10 @@
 
 #include "Shader/GfxShader.h"
 
+#include "Font/GfxFontData.h"
+#include "Font/GfxFontRenderer.h"
+#include "Font/GfxFontSystem.h"
+
 
 
 #endif // !___INCLUDE_GFXLIB_D3D12_H__

@@ -20,6 +20,7 @@
 
 
 #include <deque>
+#include <mutex>
 
 
 namespace GfxLib
@@ -65,6 +66,7 @@ namespace GfxLib
 		FenceAndDescHeapVec		m_FreeDescHeap;							//!<	未使用のデスクリプタヒープのプール
 		uint32_t		m_allocatedCount;
 
+		std::mutex		m_Mutex;
 
 	};
 
@@ -102,9 +104,10 @@ namespace GfxLib
 		@param[out]	startIndex:	ヒープのこのインデックスから書き込める
 		@param[in]  fenceOwnQueue:	フェンスを識別するためのキュー
 		@param[in]	size:		要求サイズ
+		@param[in]  offsetCurrent:	現在のポインタを移動する。通常true。falseとすると、reserveのみ行う
 
 		*/
-		DescriptorHeap*	Require(uint32_t &startIndex, CommandQueue *fenceQueue,uint32_t size);
+		DescriptorHeap*	Require(uint32_t &startIndex, CommandQueue *fenceQueue,uint32_t size,bool offsetCurrent = true);
 
 
 	private:

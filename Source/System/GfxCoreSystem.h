@@ -6,6 +6,9 @@
 #include "GfxDelayDelete.h"
 #include "Device/GfxCommandQueue.h"
 #include "System/GfxDefines.h"
+#include "Util/GfxUniqIdMaker.h"
+
+#include <mutex>
 
 namespace GfxLib
 {
@@ -17,6 +20,8 @@ namespace GfxLib
 	class DescriptorHeap;
 	class CommandList;
 	class GraphicsCommandList;
+	class PipelineStatePool;
+	class PipelineState;
 
 	class CoreSystem
 	{
@@ -79,6 +84,23 @@ namespace GfxLib
 		}
 
 
+		// *** リソース ***
+
+		// ユニークID作成
+
+		uint32_t	MakeUniqId(const D3D12_BLEND_DESC &desc);
+		uint32_t	MakeUniqId(const D3D12_DEPTH_STENCIL_DESC &desc);
+		uint32_t	MakeUniqId(const D3D12_RASTERIZER_DESC &desc );
+		uint32_t	MakeUniqId_InputLayout(const uint32_t inputLayoutHash);	//	D3D12_INPUT_LAYOUT_DESCにしようか…
+
+
+
+		/***************************************************************
+		@brief
+		@par	[説明]
+		@param
+		*/
+		PipelineState*		AcquireGraphicsPso(const GRAPHICS_PSO_CACHE_IDENTIFIER psoId, const D3D12_GRAPHICS_PIPELINE_STATE_DESC &desc);
 
 		/***************************************************************
 		@brief	利用可能なデスクリプタヒープを取得する
@@ -90,6 +112,14 @@ namespace GfxLib
 		*/
 		//DescriptorHeap*	RequireAdhocDescriptorHeap(uint32_t size, uint32_t &startIndex);
 
+
+
+		/***************************************************************
+		@brief	GPU待機
+		@par	[説明]
+			GPUに投入したキューがすべて完了するまで待機する
+		*/
+		void	WaitGpuFinish();
 
 
 		/***************************************************************
@@ -145,6 +175,8 @@ namespace GfxLib
 		//AdhocDescriptorHeap*	m_pAdhocDescriptorHeap;
 		//AdhocGpuBuffer*			m_pAdhocGpuBuffer;
 
+		PipelineStatePool*	m_pGraphicsPsoPool;
+		std::mutex			m_GraphicsPsoMutex;
 
 		//	描画管理
 		bool				m_bInsideBeginEnd;
@@ -154,10 +186,20 @@ namespace GfxLib
 		float				m_fFps;
 
 		Fence				m_aFence[MAX_FRAME_QUEUE];
+		Fence				m_WaitGpuFinishFence;
 
 		uint32_t			m_nCurrentCmdAllocatorIndex;
 
 		GraphicsCommandList*	m_pResourceInitCmdList;		//!<	リソース初期化用コマンドリスト。フレームの最初にFlushされる
+		
+
+
+		// State / Resource
+		UniqIdMaker<D3D12_BLEND_DESC>			m_uniqBlendState;
+		UniqIdMaker<D3D12_DEPTH_STENCIL_DESC>	m_uniqDepthStencilState;
+		UniqIdMaker<D3D12_RASTERIZER_DESC>		m_uniqRastelizerState;
+		UniqIdMaker<uint32_t>					m_uniqInputLayout;
+
 
 
 		//	Singleton

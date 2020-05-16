@@ -108,6 +108,14 @@ void	Fence::_Insert(CommandQueue * cmdQueue )
 {
 	GFX_ASSERT(m_fence!=nullptr , L"GfxLib::Fence Is not initialized!");
 
+
+	/*
+
+	// SetEventOnCompletionの呼び出しタイミングは
+	// MSのサンプルを見ていると後になっている。
+	// SignalとSetEventOnCompletionの間にGPUが進むことを考えると
+	// 先のほうが良いと思うのだが…
+
 	if (!IsPollingMode()) {
 
 		GFX_ASSERT(m_bWaiting == false, L"GfxLib::Fence Is not initialized!");
@@ -118,9 +126,20 @@ void	Fence::_Insert(CommandQueue * cmdQueue )
 		m_fence->SetEventOnCompletion(fenceValue, m_event);
 
 	}
-
+	*/
 
 	m_waitingFenceValue = cmdQueue->Signal(m_fence);
+
+	if (!IsPollingMode()) {
+
+		GFX_ASSERT(m_bWaiting == false, L"GfxLib::Fence Is not initialized!");
+
+		uint64_t fenceValue = m_waitingFenceValue;
+
+		// Signalより前に登録
+		m_fence->SetEventOnCompletion(fenceValue, m_event);
+
+	}
 	
 
 	if (!IsPollingMode()) {

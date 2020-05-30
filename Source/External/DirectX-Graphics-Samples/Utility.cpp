@@ -12,8 +12,8 @@
 //
 
 #include "stdafx.h"
-#include "Utility.h"
 #include <string>
+#include "Utility.h"
 
 #if 0
 

@@ -40,6 +40,9 @@
     <Filter Include="Font">
       <UniqueIdentifier>{e75db1ba-91ae-4b24-b7bd-027aef01abfb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="RayTracing">
+      <UniqueIdentifier>{c5af6f8f-4cbc-4784-83bd-217a95177285}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -199,6 +202,15 @@
     <ClInclude Include="..\Source\Font\GfxFontRenderer.h">
       <Filter>Font</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\RayTracing\GfxRtPipelineStateDesc.h">
+      <Filter>RayTracing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Util\GfxStringContainer.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\RayTracing\GfxPipelineStateSubobject.h">
+      <Filter>RayTracing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -329,6 +341,12 @@
     </ClCompile>
     <ClCompile Include="..\Source\Font\GfxFontRenderer.cpp">
       <Filter>Font</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\RayTracing\GfxRtPipelineStateDesc.cpp">
+      <Filter>RayTracing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\RayTracing\GfxPipelineStateSubobject.cpp">
+      <Filter>RayTracing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

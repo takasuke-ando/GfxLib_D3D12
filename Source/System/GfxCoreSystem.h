@@ -158,7 +158,7 @@ namespace GfxLib
 	private:
 
 		//	Immutable
-		ID3D12Device*		m_pd3dDev;
+		ID3D12Device5*		m_pd3dDev;
 
 		//D3DPtr<ID3D12CommandQueue>		m_CmdQueue;
 		CommandQueue					m_CommandQueue;

@@ -146,7 +146,7 @@ bool	CoreSystem::Initialize()
 
 	// Deviceの作成
 
-	hr = D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_pd3dDev));
+	hr = D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&m_pd3dDev));
 
 
 	if (FAILED(hr)) {

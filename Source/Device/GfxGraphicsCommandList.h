@@ -189,7 +189,7 @@ namespace GfxLib
 		virtual void	OnReset();
 
 	private:
-		D3DPtr<ID3D12GraphicsCommandList>	m_pCmdList;
+		D3DPtr<ID3D12GraphicsCommandList4>	m_pCmdList;
 
 
 		//	state

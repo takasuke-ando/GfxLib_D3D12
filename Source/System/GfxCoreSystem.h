@@ -42,6 +42,7 @@ namespace GfxLib
 		void	Update();
 
 		ID3D12Device*			GetD3DDevice()			const { return m_pd3dDev; }
+		ID3D12Device5*			GetD3DDevice5()			const { return m_pd3dDev; }
 		
 		float		GetFps()	const { return m_fFps; }
 
@@ -158,7 +159,7 @@ namespace GfxLib
 	private:
 
 		//	Immutable
-		ID3D12Device5*		m_pd3dDev;
+		ID3D12Device5*		m_pd3dDev;	//	1とか2とか分けるべき？
 
 		//D3DPtr<ID3D12CommandQueue>		m_CmdQueue;
 		CommandQueue					m_CommandQueue;

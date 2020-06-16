@@ -94,6 +94,8 @@ bool	GraphicsCommandList::Initialize(CommandQueue *cmdQueue)
 	}
 
 
+	hr = m_pCmdList->QueryInterface(IID_PPV_ARGS(m_pCmdList4.InitialAccept()));
+
 	bool b = SuperClass::Initialize(cmdQueue, m_pCmdList);
 
 

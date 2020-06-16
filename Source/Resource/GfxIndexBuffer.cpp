@@ -36,11 +36,25 @@ IndexBuffer::~IndexBuffer()
 初期化データを指定して、初期化を行う
 @param
 */
-bool IndexBuffer::Initialize(const void* pVtxData, size_t byteSize, Format fmt)
+bool IndexBuffer::Initialize(const void* pVtxData,Format fmt, size_t indexCount)
 {
 	Finalize();
 
-	const size_t sizeInBytes = byteSize;
+
+	size_t idxSize;
+	switch (fmt)
+	{
+	case Format::R16_UINT:  idxSize = 2;    break;
+	case Format::R32_UINT:  idxSize = 4;    break;
+	default:
+
+		GFX_ERROR(L"Unknown index format=%d", fmt);
+
+		return false;
+	}
+
+
+	const size_t sizeInBytes = indexCount * idxSize;
 
 	bool b = InitializeImmutable(pVtxData, sizeInBytes);
 

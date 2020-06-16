@@ -46,7 +46,7 @@ namespace GfxLib
 		初期化データを指定して、初期化を行う
 		@param
 		*/
-		bool Initialize(const void* pVBData, size_t byteSize , Format fmt);
+		bool Initialize(const void* pVBData, Format fmt, size_t indexCount );
 
 		const D3D12_INDEX_BUFFER_VIEW&		GetIndexBufferView() const { return m_idxBuffView; }
 

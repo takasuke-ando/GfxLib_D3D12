@@ -151,7 +151,9 @@
     <ClInclude Include="..\Source\Font\GfxFontSystem.h" />
     <ClInclude Include="..\Source\GfxLib.h" />
     <ClInclude Include="..\Source\GfxLibStdAfx.h" />
+    <ClInclude Include="..\Source\RayTracing\GfxAccelerationStructure.h" />
     <ClInclude Include="..\Source\RayTracing\GfxPipelineStateSubobject.h" />
+    <ClInclude Include="..\Source\RayTracing\GfxRtGeometry.h" />
     <ClInclude Include="..\Source\RayTracing\GfxRtPipelineStateDesc.h" />
     <ClInclude Include="..\Source\Resource\GfxBuffer.h" />
     <ClInclude Include="..\Source\Resource\GfxConstantBuffer.h" />
@@ -203,7 +205,9 @@
     <ClCompile Include="..\Source\Font\GfxFontRenderer.cpp" />
     <ClCompile Include="..\Source\Font\GfxFontSystem.cpp" />
     <ClCompile Include="..\Source\GfxLib.cpp" />
+    <ClCompile Include="..\Source\RayTracing\GfxAccelerationStructure.cpp" />
     <ClCompile Include="..\Source\RayTracing\GfxPipelineStateSubobject.cpp" />
+    <ClCompile Include="..\Source\RayTracing\GfxRtGeometry.cpp" />
     <ClCompile Include="..\Source\RayTracing\GfxRtPipelineStateDesc.cpp" />
     <ClCompile Include="..\Source\Resource\GfxBuffer.cpp" />
     <ClCompile Include="..\Source\Resource\GfxConstantBuffer.cpp" />

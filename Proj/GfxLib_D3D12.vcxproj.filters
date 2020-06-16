@@ -211,6 +211,12 @@
     <ClInclude Include="..\Source\RayTracing\GfxPipelineStateSubobject.h">
       <Filter>RayTracing</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\RayTracing\GfxAccelerationStructure.h">
+      <Filter>RayTracing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\RayTracing\GfxRtGeometry.h">
+      <Filter>RayTracing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -346,6 +352,12 @@
       <Filter>RayTracing</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\RayTracing\GfxPipelineStateSubobject.cpp">
+      <Filter>RayTracing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\RayTracing\GfxAccelerationStructure.cpp">
+      <Filter>RayTracing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\RayTracing\GfxRtGeometry.cpp">
       <Filter>RayTracing</Filter>
     </ClCompile>
   </ItemGroup>

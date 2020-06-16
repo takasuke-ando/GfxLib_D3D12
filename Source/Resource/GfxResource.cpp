@@ -65,7 +65,7 @@ DXGI_FORMAT		Resource::GetFormat() const
 
 
 
-bool		Resource::_Initialize_Buffer(size_t sizeInBytes, D3D12_HEAP_TYPE heapType, D3D12_RESOURCE_STATES initState)
+bool		Resource::_Initialize_Buffer(size_t sizeInBytes, D3D12_HEAP_TYPE heapType, D3D12_RESOURCE_STATES initState, D3D12_RESOURCE_FLAGS flags)
 {
 
 
@@ -93,7 +93,7 @@ bool		Resource::_Initialize_Buffer(size_t sizeInBytes, D3D12_HEAP_TYPE heapType,
 	resDesc.SampleDesc.Count = 1;
 	resDesc.SampleDesc.Quality = 0;
 	resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	resDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+	resDesc.Flags = flags;
 
 
 	HRESULT hr = pDev->CreateCommittedResource(

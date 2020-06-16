@@ -50,7 +50,7 @@ namespace GfxLib
 
 	protected:
 
-		bool		_Initialize_Buffer( size_t sizeInBytes , D3D12_HEAP_TYPE heapType , D3D12_RESOURCE_STATES initState );
+		bool		_Initialize_Buffer( size_t sizeInBytes , D3D12_HEAP_TYPE heapType , D3D12_RESOURCE_STATES initState , D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
 
 		bool		_Initialize_RenderTarget(Format format, uint32_t width, uint32_t height, uint32_t mipLevls, bool EnableShaderResource);
 

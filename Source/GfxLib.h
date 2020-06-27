@@ -43,5 +43,11 @@
 #include "Font/GfxFontSystem.h"
 
 
+#include "RayTracing/GfxAccelerationStructure.h"
+#include "RayTracing/GfxPipelineStateSubobject.h"
+#include "RayTracing/GfxRtGeometry.h"
+#include "RayTracing/GfxRtPipelineStateDesc.h"
+#include "RayTracing/GfxShaderTable.h"
+
 
 #endif // !___INCLUDE_GFXLIB_D3D12_H__

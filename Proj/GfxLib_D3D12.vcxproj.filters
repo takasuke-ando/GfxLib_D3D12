@@ -217,6 +217,9 @@
     <ClInclude Include="..\Source\RayTracing\GfxRtGeometry.h">
       <Filter>RayTracing</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\RayTracing\GfxShaderTable.h">
+      <Filter>RayTracing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -358,6 +361,9 @@
       <Filter>RayTracing</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\RayTracing\GfxRtGeometry.cpp">
+      <Filter>RayTracing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\RayTracing\GfxShaderTable.cpp">
       <Filter>RayTracing</Filter>
     </ClCompile>
   </ItemGroup>

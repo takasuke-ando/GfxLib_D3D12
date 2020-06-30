@@ -20,10 +20,19 @@ using namespace GfxLib;
 
 RootSignatureDesc::RootSignatureDesc()
 {
+	m_Flags = D3D12_ROOT_SIGNATURE_FLAG_NONE;
 }
 
 
 RootSignatureDesc::~RootSignatureDesc()
+{
+
+	Clear();
+
+}
+
+
+void RootSignatureDesc::Clear()
 {
 
 	for (auto &param : m_vecRootParameter)
@@ -35,9 +44,8 @@ RootSignatureDesc::~RootSignatureDesc()
 
 	}
 	m_vecRootParameter.clear();
-
+	m_Flags = D3D12_ROOT_SIGNATURE_FLAG_NONE;
 }
-
 
 
 void		RootSignatureDesc::AddParam_DescriptorTable(const DESCRIPTOR_RANGE *ranges, uint32_t numRanges, ShaderVisibility visb)

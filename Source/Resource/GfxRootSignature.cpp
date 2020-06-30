@@ -51,7 +51,7 @@ bool	RootSignature::Initialize(const RootSignatureDesc &desc)
 	rootSigDesc.pParameters = rootParamArray;
 	rootSigDesc.NumStaticSamplers = 0;
 	rootSigDesc.pStaticSamplers = nullptr;
-	rootSigDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+	rootSigDesc.Flags = desc.GetFlags();
 
 
 	// BLOBにシリアライズ

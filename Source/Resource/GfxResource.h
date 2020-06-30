@@ -65,7 +65,7 @@ namespace GfxLib
 			Texture2Dとして初期化
 		*/
 		bool		_Initialize_Texture2D_Test(Format format, uint32_t width, uint32_t height, uint32_t mipLevls);
-		bool		_Initialize_Texture2D(Format format, uint32_t width, uint32_t height, uint32_t mipLevls );
+		bool		_Initialize_Texture2D(Format format, uint32_t width, uint32_t height, uint32_t mipLevls , D3D12_RESOURCE_STATES initState, D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
 
 
 

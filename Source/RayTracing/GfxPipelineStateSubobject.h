@@ -98,9 +98,9 @@ namespace GfxLib
 		void SetHitGroupType(D3D12_HIT_GROUP_TYPE type) { m_desc.Type = type; }
 
 		void SetHitGroupExport(const wchar_t* str) { m_strHitGroupExport = str; }
-		void SetAnyHitShaderExport(const wchar_t* str) { m_strAnyHitShaderExport = str; }
-		void SetClosestHitShaderExport(const wchar_t* str) { m_strClosestHitShaderExport = str; }
-		void SetIntersectionShaderExport(const wchar_t* str) { m_strIntersectionShaderExport = str; }
+		void SetAnyHitShaderImport(const wchar_t* str) { m_strAnyHitShaderExport = str; }
+		void SetClosestHitShaderImport(const wchar_t* str) { m_strClosestHitShaderExport = str; }
+		void SetIntersectionShaderImport(const wchar_t* str) { m_strIntersectionShaderExport = str; }
 
 
 	private:

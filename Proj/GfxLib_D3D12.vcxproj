@@ -156,6 +156,7 @@
     <ClInclude Include="..\Source\RayTracing\GfxRtGeometry.h" />
     <ClInclude Include="..\Source\RayTracing\GfxRtPipelineStateDesc.h" />
     <ClInclude Include="..\Source\RayTracing\GfxShaderTable.h" />
+    <ClInclude Include="..\Source\RayTracing\GfxStateObject.h" />
     <ClInclude Include="..\Source\Resource\GfxBuffer.h" />
     <ClInclude Include="..\Source\Resource\GfxConstantBuffer.h" />
     <ClInclude Include="..\Source\Resource\GfxDepthStencil.h" />
@@ -211,6 +212,7 @@
     <ClCompile Include="..\Source\RayTracing\GfxRtGeometry.cpp" />
     <ClCompile Include="..\Source\RayTracing\GfxRtPipelineStateDesc.cpp" />
     <ClCompile Include="..\Source\RayTracing\GfxShaderTable.cpp" />
+    <ClCompile Include="..\Source\RayTracing\GfxStateObject.cpp" />
     <ClCompile Include="..\Source\Resource\GfxBuffer.cpp" />
     <ClCompile Include="..\Source\Resource\GfxConstantBuffer.cpp" />
     <ClCompile Include="..\Source\Resource\GfxDepthStencil.cpp" />

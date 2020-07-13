@@ -289,6 +289,29 @@ bool	Texture2D::InitializeUAV(
 
 	}
 
+
+	{
+
+
+		const D3D12_RESOURCE_DESC resDesc = GetD3DResource()->GetDesc();
+
+		m_UavHandle = GfxLib::AllocateDescriptorHandle(GfxLib::DescriptorHeapType::CBV_SRV_UAV);
+
+		D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {
+			(DXGI_FORMAT)format,
+			D3D12_UAV_DIMENSION_TEXTURE2D,
+		};
+
+		auto& tex2D = uavDesc.Texture2D;
+		tex2D.MipSlice = 0;
+		tex2D.PlaneSlice = 0;
+
+
+		d3dDev->CreateUnorderedAccessView(GetD3DResource(),nullptr, &uavDesc, m_UavHandle);
+
+
+	}
+
 #endif
 
 	return true;

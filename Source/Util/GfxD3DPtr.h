@@ -68,6 +68,13 @@ namespace GfxLib
 			return &m_ptr;
 		}
 
+
+		template<class Other>
+		HRESULT QueryInterface(Other** ptr) {
+			return m_ptr->QueryInterface(IID_PPV_ARGS(ptr));
+		}
+
+
 	private:
 		D3DType*	m_ptr;
 

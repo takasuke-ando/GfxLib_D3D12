@@ -55,7 +55,8 @@ namespace GfxLib
 		bool	Initialize(CommandQueue *cmdQueue);
 		void	Finalize();
 
-		ID3D12GraphicsCommandList*	GetD3DCommandList() const { return m_pCmdList; }
+		ID3D12GraphicsCommandList*	GetD3DCommandList()		const { return m_pCmdList; }
+		ID3D12GraphicsCommandList4*	GetD3DCommandList4()	const { return m_pCmdList4; }
 
 
 		//	-----	State Setting -----
@@ -190,6 +191,7 @@ namespace GfxLib
 
 	private:
 		D3DPtr<ID3D12GraphicsCommandList>	m_pCmdList;
+		D3DPtr<ID3D12GraphicsCommandList4>	m_pCmdList4;
 
 
 		//	state

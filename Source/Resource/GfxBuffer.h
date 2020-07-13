@@ -38,6 +38,16 @@ namespace GfxLib
 		*/
 		bool Initialize( size_t byteSize );
 
+
+		/***************************************************************
+		@brief	初期化
+		@par	[説明]
+			任意のステート、フラグを指定してリソースを初期化
+			CPUアクセスはできない
+		@param
+		*/
+		bool Initialize( size_t byteSize , D3D12_RESOURCE_FLAGS flags, D3D12_RESOURCE_STATES states );
+
 		/***************************************************************
 		@brief	初期化
 		@par	[説明]

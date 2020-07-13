@@ -49,9 +49,12 @@ namespace GfxLib
 			@param[in]	
 		*/
 		void	ResourceTransitionBarrier(ID3D12Resource* resource, ResourceStates stateBefore, ResourceStates stateAfter);
-		void	ResourceTransitionBarrier(Resource* resource,ResourceStates stateBefore , ResourceStates stateAfter );
+		void	ResourceTransitionBarrier(Resource* resource, ResourceStates stateBefore, ResourceStates stateAfter);
+		void	ResourceUavBarrier(ID3D12Resource* resource);
+		void	ResourceUavBarrier(Resource* resource);
 
-		ID3D12GraphicsCommandList*	GetD3DCommandList() const {		return m_pCmdList;		}
+		ID3D12GraphicsCommandList*	GetD3DCommandList()		const {	return m_pCmdList;		}
+		ID3D12GraphicsCommandList4* GetD3DCommandList4()	const { return m_pCmdList4;		}
 
 
 
@@ -170,6 +173,7 @@ namespace GfxLib
 	private:
 
 		D3DPtr<ID3D12GraphicsCommandList>			m_pCmdList;
+		D3DPtr<ID3D12GraphicsCommandList4>			m_pCmdList4;
 		ID3D12Device*						m_pd3dDev;
 
 		CommandQueue *						m_pCmdQueue;		//!<	アサインするコマンドキュー

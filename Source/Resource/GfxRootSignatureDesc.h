@@ -18,6 +18,8 @@ namespace GfxLib
 		~RootSignatureDesc();
 
 
+		void Clear();
+
 		/***************************************************************
 		@brief		ルートパラメータとして、デスクリプタテーブルを追加する
 		@par	[説明]
@@ -71,6 +73,9 @@ namespace GfxLib
 		const D3D12_ROOT_PARAMETER*	GetRootParameterArray() const {	return &(*m_vecRootParameter.begin());	}
 		uint32_t					GetRootParameterCount() const { return (uint32_t)m_vecRootParameter.size(); }
 
+		void		SetFlags(D3D12_ROOT_SIGNATURE_FLAGS flags) { m_Flags = flags;  }
+		D3D12_ROOT_SIGNATURE_FLAGS GetFlags() const { return m_Flags; }
+
 
 	private:
 
@@ -79,6 +84,8 @@ namespace GfxLib
 
 
 		std::vector< D3D12_ROOT_PARAMETER >	m_vecRootParameter;
+
+		D3D12_ROOT_SIGNATURE_FLAGS		m_Flags;
 
 	};
 

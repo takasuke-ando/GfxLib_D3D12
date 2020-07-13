@@ -13,8 +13,8 @@
 	渡したいときに一時的なインスタンスとして使われるクラス
 	内部で保持しているResourceの寿命管理などは行わない
 	
-	そのためこのクラス自体を何かのクラスのメンバに保持するということは
-	基本的にはない
+	そのためこのクラス自体を何かのクラスのメンバに保持するということは基本的にはないが
+	このクラスと同様にAdhocな使い方をするクラスメンバとして持つことはありえる
 */
 
 
@@ -47,6 +47,8 @@ namespace GfxLib
 			m_pStartAddr = rhs.m_pStartAddr;
 			m_pStartGpuAddr = rhs.m_pStartGpuAddr;
 			m_Size = rhs.m_Size;
+
+			return *this;
 		}
 
 

@@ -42,6 +42,7 @@ namespace GfxLib
 		void	Update();
 
 		ID3D12Device*			GetD3DDevice()			const { return m_pd3dDev; }
+		ID3D12Device5*			GetD3DDevice5()			const { return m_pd3dDev; }
 		
 		float		GetFps()	const { return m_fFps; }
 
@@ -82,6 +83,15 @@ namespace GfxLib
 		GraphicsCommandList*		GetResourceInitCommandList()	const {
 			return m_pResourceInitCmdList;		
 		}
+
+		/***************************************************************
+			@brief	リソース初期化用コマンドリストの実行
+			@par	[説明]
+				リソース初期化コマンドリストにたまったコマンドを発行する
+				別のスレッドから同コマンドリストの操作をしていないか、注意すること
+			@param
+		*/
+		void		FlushResourceInitCommandList();
 
 
 		// *** リソース ***
@@ -158,7 +168,7 @@ namespace GfxLib
 	private:
 
 		//	Immutable
-		ID3D12Device*		m_pd3dDev;
+		ID3D12Device5*		m_pd3dDev;	//	1とか2とか分けるべき？
 
 		//D3DPtr<ID3D12CommandQueue>		m_CmdQueue;
 		CommandQueue					m_CommandQueue;

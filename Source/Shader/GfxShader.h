@@ -58,6 +58,7 @@ namespace GfxLib
 	typedef Shader		GeometryShader;
 	typedef Shader		DomainShader;
 	typedef Shader		HullShader;
+	typedef Shader		ShaderLibrary;	//	DXIL
 
 }
 

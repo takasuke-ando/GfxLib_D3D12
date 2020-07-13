@@ -65,7 +65,7 @@ DXGI_FORMAT		Resource::GetFormat() const
 
 
 
-bool		Resource::_Initialize_Buffer(size_t sizeInBytes, D3D12_HEAP_TYPE heapType, D3D12_RESOURCE_STATES initState)
+bool		Resource::_Initialize_Buffer(size_t sizeInBytes, D3D12_HEAP_TYPE heapType, D3D12_RESOURCE_STATES initState, D3D12_RESOURCE_FLAGS flags)
 {
 
 
@@ -93,7 +93,7 @@ bool		Resource::_Initialize_Buffer(size_t sizeInBytes, D3D12_HEAP_TYPE heapType,
 	resDesc.SampleDesc.Count = 1;
 	resDesc.SampleDesc.Quality = 0;
 	resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	resDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+	resDesc.Flags = flags;
 
 
 	HRESULT hr = pDev->CreateCommittedResource(
@@ -312,7 +312,7 @@ bool		Resource::_Initialize_Texture2D_Test(Format format, uint32_t width, uint32
 		リソースステートはCOPY_DESTになる
 	@param
 */
-bool		Resource::_Initialize_Texture2D(Format format, uint32_t width, uint32_t height, uint32_t mipLevls)
+bool		Resource::_Initialize_Texture2D(Format format, uint32_t width, uint32_t height, uint32_t mipLevls, D3D12_RESOURCE_STATES initState, D3D12_RESOURCE_FLAGS flags)
 {
 
 	ID3D12Device *pDev = CoreSystem::GetInstance()->GetD3DDevice();
@@ -320,8 +320,6 @@ bool		Resource::_Initialize_Texture2D(Format format, uint32_t width, uint32_t he
 	D3D12_HEAP_PROPERTIES heapProp = {};
 
 
-	//	ひとまずCPUアクセス可能なHeapにするが
-	//	本来はD3D12_HEAP_TYPE_DEFAULTにして、UPLOADヒープからコピーするだけにしたい
 
 	heapProp.Type = D3D12_HEAP_TYPE_DEFAULT;		
 	heapProp.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;	
@@ -342,7 +340,7 @@ bool		Resource::_Initialize_Texture2D(Format format, uint32_t width, uint32_t he
 	resDesc.SampleDesc.Count = 1;
 	resDesc.SampleDesc.Quality = 0;
 	resDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
-	resDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+	resDesc.Flags = flags;// D3D12_RESOURCE_FLAG_NONE;
 
 
 
@@ -350,7 +348,7 @@ bool		Resource::_Initialize_Texture2D(Format format, uint32_t width, uint32_t he
 		&heapProp,
 		D3D12_HEAP_FLAG_NONE,
 		&resDesc,
-		D3D12_RESOURCE_STATE_COPY_DEST,
+		initState,//D3D12_RESOURCE_STATE_COPY_DEST,
 		nullptr,
 		IID_PPV_ARGS(m_d3dRes.InitialAccept())
 		);

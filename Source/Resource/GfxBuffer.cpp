@@ -72,6 +72,34 @@ bool Buffer::Initialize( size_t byteSize)
 
 
 
+
+bool Buffer::Initialize(size_t byteSize, D3D12_RESOURCE_FLAGS flags, D3D12_RESOURCE_STATES states)
+{
+	Finalize();
+
+
+
+	const size_t sizeInBytes = byteSize;
+
+
+	bool b = _Initialize_Buffer(sizeInBytes, D3D12_HEAP_TYPE_DEFAULT, states , flags );
+
+	if (!b) {
+		return false;
+	}
+
+	void* pAddr = nullptr;
+
+	m_pCpuAddress = pAddr;
+	m_pGpuAddress = m_d3dRes->GetGPUVirtualAddress();
+	m_BuffSize = (uint32_t)byteSize;
+
+	return true;
+
+
+}
+
+
 /***************************************************************
 @brief	初期化
 @par	[説明]

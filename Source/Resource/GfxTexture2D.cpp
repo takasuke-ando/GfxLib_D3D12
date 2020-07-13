@@ -26,7 +26,7 @@ Texture2D::Texture2D()
 {
 
 	m_SrvHandle.ptr = 0;
-
+	m_UavHandle.ptr = 0;
 
 }
 
@@ -123,7 +123,7 @@ bool	Texture2D::Initialize(
 
 
 
-	if (!SuperClass::_Initialize_Texture2D(format, width, height, mipLevels)) {
+	if (!SuperClass::_Initialize_Texture2D(format, width, height, mipLevels, D3D12_RESOURCE_STATE_COPY_DEST,D3D12_RESOURCE_FLAG_NONE)) {
 
 		GFX_ERROR(L"Texture2D Creation Error");
 
@@ -238,6 +238,84 @@ CoreSystem::GetInstance()->GetDelayDelete().Regist((ID3D12Resource*)d3dResForUpl
 }
 
 
+bool	Texture2D::InitializeUAV(
+	Format format,
+	uint32_t width,
+	uint32_t height,
+	uint32_t mipLevels)
+{
+
+#if 1
+	Finalize();
+
+
+
+
+	if (!SuperClass::_Initialize_Texture2D(format, width, height, mipLevels, D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS)) {
+
+		GFX_ERROR(L"Texture2D Creation Error");
+
+		return false;
+	}
+
+
+	ID3D12Device* d3dDev = GfxLib::CoreSystem::GetInstance()->GetD3DDevice();
+
+
+
+	//	Handle取得
+	{
+
+
+		const D3D12_RESOURCE_DESC resDesc = GetD3DResource()->GetDesc();
+
+		m_SrvHandle = GfxLib::AllocateDescriptorHandle(GfxLib::DescriptorHeapType::CBV_SRV_UAV);
+
+		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {
+			(DXGI_FORMAT)format,
+			D3D12_SRV_DIMENSION_TEXTURE2D,
+			D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING,
+		};
+
+		auto& tex2D = srvDesc.Texture2D;
+		tex2D.MipLevels = resDesc.MipLevels;
+		tex2D.MostDetailedMip = resDesc.MipLevels - 1;
+		tex2D.PlaneSlice = 0;
+		tex2D.ResourceMinLODClamp = 0;
+
+
+		d3dDev->CreateShaderResourceView(GetD3DResource(), &srvDesc, m_SrvHandle);
+
+
+	}
+
+
+	{
+
+
+		const D3D12_RESOURCE_DESC resDesc = GetD3DResource()->GetDesc();
+
+		m_UavHandle = GfxLib::AllocateDescriptorHandle(GfxLib::DescriptorHeapType::CBV_SRV_UAV);
+
+		D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc = {
+			(DXGI_FORMAT)format,
+			D3D12_UAV_DIMENSION_TEXTURE2D,
+		};
+
+		auto& tex2D = uavDesc.Texture2D;
+		tex2D.MipSlice = 0;
+		tex2D.PlaneSlice = 0;
+
+
+		d3dDev->CreateUnorderedAccessView(GetD3DResource(),nullptr, &uavDesc, m_UavHandle);
+
+
+	}
+
+#endif
+
+	return true;
+}
 
 
 /***************************************************************
@@ -308,6 +386,12 @@ void	Texture2D::Finalize(bool delayed /* = GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FINA
 
 	}
 
+	if (m_UavHandle.ptr != 0) {
+
+		GfxLib::FreeDescriptorHandle(DescriptorHeapType::CBV_SRV_UAV, m_UavHandle);
+		m_UavHandle.ptr = 0;
+
+	}
 
 	SuperClass::Finalize(delayed);
 }

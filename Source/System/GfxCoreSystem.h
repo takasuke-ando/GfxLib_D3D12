@@ -84,6 +84,15 @@ namespace GfxLib
 			return m_pResourceInitCmdList;		
 		}
 
+		/***************************************************************
+			@brief	リソース初期化用コマンドリストの実行
+			@par	[説明]
+				リソース初期化コマンドリストにたまったコマンドを発行する
+				別のスレッドから同コマンドリストの操作をしていないか、注意すること
+			@param
+		*/
+		void		FlushResourceInitCommandList();
+
 
 		// *** リソース ***
 

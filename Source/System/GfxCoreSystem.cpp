@@ -155,6 +155,9 @@ bool	CoreSystem::Initialize()
 	}
 
 
+	//HRESULT hr = m_d3dDevice->CheckFeatureSupport(D3D12_FEATURE_FEATURE_LEVELS, &featLevels, sizeof(featLevels));
+
+
 	// DXGIFactoryを作成
 
 
@@ -292,13 +295,8 @@ bool		CoreSystem::Begin()
 
 	m_bInsideBeginEnd = true;
 
-	// 予約されていたリソースコピーをキューイング
-	CommandList *c = m_pResourceInitCmdList;
-	//m_pResourceInitCmdList->GetD3DCommandList()->Close();
-	m_CommandQueue.ExecuteCommandLists(1, &c);
+	FlushResourceInitCommandList();
 
-	// 次の予約に向けて準備
-	m_pResourceInitCmdList->Reset(true);
 
 
 	return true;
@@ -315,6 +313,20 @@ void		CoreSystem::End()
 
 }
 
+
+
+void		CoreSystem::FlushResourceInitCommandList()
+{
+
+	// 予約されていたリソースコピーをキューイング
+	CommandList* c = m_pResourceInitCmdList;
+	//m_pResourceInitCmdList->GetD3DCommandList()->Close();
+	m_CommandQueue.ExecuteCommandLists(1, &c);
+
+	// 次の予約に向けて準備
+	m_pResourceInitCmdList->Reset(true);
+
+}
 
 
 uint32_t	CoreSystem::MakeUniqId(const D3D12_BLEND_DESC &desc)

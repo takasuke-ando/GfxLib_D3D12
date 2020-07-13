@@ -11,6 +11,7 @@ namespace GfxLib
 
 	class RtGeometry;
 	class GraphicsCommandList;
+	class CommandList;
 	class Buffer;
 
 
@@ -41,6 +42,9 @@ namespace GfxLib
 		*/
 		//bool	InitializeBottomLevel(const RtGeometry* geometrys,size_t numGeom);
 		void	Finalize(bool delayed = GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FINALIZE );
+
+
+		size_t  GetScratchDataSizeInBytes() const { return m_prebuildInfo.ScratchDataSizeInBytes; }
 
 
 	protected:
@@ -85,7 +89,7 @@ namespace GfxLib
 		bool	Initialize(const RtGeometry* geometrys, size_t numGeom);
 		void	Finalize(bool delayed = GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FINALIZE);
 
-		void	Build(GraphicsCommandList& cmdList, Buffer* scratchBuffer);
+		void	Build(CommandList& cmdList, Buffer* scratchBuffer);
 
 		const DirectX::XMMATRIX& GetTransform() const { return m_Transform; }
 
@@ -131,7 +135,7 @@ namespace GfxLib
 		void	Finalize(bool delayed = GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FINALIZE);
 
 
-		void	Build(GraphicsCommandList &cmdList, Buffer* scratchBuffer);
+		void	Build(CommandList &cmdList, Buffer* scratchBuffer);
 
 
 	private:

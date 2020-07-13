@@ -117,8 +117,8 @@ bool BottomLevelAccelerationStructure::Initialize(const RtGeometry* geometrys, s
 	GFX_ASSERT(((uint64_t)GetD3DResource()->GetGPUVirtualAddress()) % D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BYTE_ALIGNMENT == 0, L"Invalid BLAS Alignment");
 
 	// スクラッチバッファは別途作成
-	GFX_INFO(L"BLAS init Scratch DataSize :%d", m_prebuildInfo.ScratchDataSizeInBytes);
-	GFX_INFO(L"BLAS init Update Scratch DataSize :%d", m_prebuildInfo.UpdateScratchDataSizeInBytes);
+	GFX_INFO(L"BLAS init Scratch DataSize :%d\r\n", m_prebuildInfo.ScratchDataSizeInBytes);
+	GFX_INFO(L"BLAS init Update Scratch DataSize :%d\r\n", m_prebuildInfo.UpdateScratchDataSizeInBytes);
 
 
 	m_asInputs = bottomLevelInputs;
@@ -147,7 +147,7 @@ void	BottomLevelAccelerationStructure::Finalize(bool delayed)
 
 
 
-void	BottomLevelAccelerationStructure::Build(GraphicsCommandList& cmdList, Buffer* scratchBuffer)
+void	BottomLevelAccelerationStructure::Build(CommandList& cmdList, Buffer* scratchBuffer)
 {
 
 	D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC bottomLevelBuildDesc = {};
@@ -233,8 +233,8 @@ bool	TopLevelAccelerationStructure::Initialize(const BottomLevelAccelerationStru
 	GFX_ASSERT(((uint64_t)GetD3DResource()->GetGPUVirtualAddress()) % D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BYTE_ALIGNMENT == 0, L"Invalid TLAS Alignment");
 
 	// スクラッチバッファは別途作成
-	GFX_INFO(L"TLAS init Scratch DataSize :%d", m_prebuildInfo.ScratchDataSizeInBytes);
-	GFX_INFO(L"TLAS init Update Scratch DataSize :%d", m_prebuildInfo.UpdateScratchDataSizeInBytes);
+	GFX_INFO(L"TLAS init Scratch DataSize :%d\r\n", m_prebuildInfo.ScratchDataSizeInBytes);
+	GFX_INFO(L"TLAS init Update Scratch DataSize :%d\r\n", m_prebuildInfo.UpdateScratchDataSizeInBytes);
 
 
 	m_asInputs = topLevelInputs;
@@ -257,7 +257,7 @@ void	TopLevelAccelerationStructure::Finalize(bool delayed )
 
 
 
-void	TopLevelAccelerationStructure::Build(GraphicsCommandList& cmdList, Buffer* scratchBuffer )
+void	TopLevelAccelerationStructure::Build(CommandList& cmdList, Buffer* scratchBuffer )
 {
 	D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC topLevelBuildDesc = {};
 	D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS &topLevelInputs = topLevelBuildDesc.Inputs; // 
@@ -319,6 +319,8 @@ void	TopLevelAccelerationStructure::Build(GraphicsCommandList& cmdList, Buffer* 
 
 		}
 
+
+		topLevelBuildDesc.Inputs.InstanceDescs = gpubuffer.GetGpuAddr();
 
 	}
 

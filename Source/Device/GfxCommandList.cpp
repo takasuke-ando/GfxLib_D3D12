@@ -73,6 +73,7 @@ bool	CommandList::Initialize( CommandQueue* cmdQueue, ID3D12GraphicsCommandList 
 
 
 	m_pd3dDev = coreSystem->GetD3DDevice();
+	HRESULT hr = m_pCmdList.QueryInterface((m_pCmdList4.InitialAccept()));
 	m_pCmdQueue = cmdQueue;
 
 	m_GpuBufferAllocator.Initialize(cmdQueue->GetAdhocGpuBufferHost());
@@ -104,6 +105,7 @@ void	CommandList::Finalize()
 	}
 
 	m_pCmdList.Release();
+	m_pCmdList4.Release();
 	m_pCmdQueue = nullptr;
 
 }
@@ -170,6 +172,24 @@ void	CommandList::ResourceTransitionBarrier(Resource* resource, ResourceStates s
 
 }
 
+
+void	CommandList::ResourceUavBarrier(ID3D12Resource* resource)
+{
+	D3D12_RESOURCE_BARRIER barrier = {};
+
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_UAV;
+	barrier.UAV.pResource = resource;
+
+	m_pCmdList->ResourceBarrier(1, &barrier);
+}
+
+
+void	CommandList::ResourceUavBarrier(Resource* resource)
+{
+
+	ResourceUavBarrier(resource->GetD3DResource());
+
+}
 
 
 /***************************************************************

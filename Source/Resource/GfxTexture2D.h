@@ -67,6 +67,7 @@ namespace GfxLib
 
 
 		D3D12_CPU_DESCRIPTOR_HANDLE	GetSrvDescHandle() const { return m_SrvHandle; }	//!<	CPUハンドル
+		D3D12_CPU_DESCRIPTOR_HANDLE	GetUavDescHandle() const { return m_UavHandle; }	//!<	CPUハンドル
 
 	private:
 

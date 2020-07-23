@@ -105,13 +105,16 @@ void CoreSystem::Finalize()
 		fence.Finalize();
 	}
 
-	if (m_pd3dDev) {
-		m_DelayDelete.DeleteAll();
-	}
-	
+
 	
 	delete m_pGraphicsPsoPool;
 	m_pGraphicsPsoPool = nullptr;
+
+
+	if (m_pd3dDev) {
+		m_DelayDelete.DeleteAll();
+	}
+
 
 	// デスクリプタアロケータ開放。CPUハンドルなので、遅延開放は絶対にない
 	delete m_pDescriptorAllocator;

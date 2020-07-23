@@ -259,7 +259,7 @@ namespace GfxLib
 		DescriptorRangeType	RangeType;
 		uint32_t NumDescriptors;		//	デスクリプタ数
 		uint32_t BaseShaderRegister;	//	
-		//UINT RegisterSpace;			//	シェーダでは→register(t3,space5)のような書き方でデスクリプタ配列を定義できるみたい
+		uint32_t RegisterSpace;			//	シェーダでは→register(t3,space5)のような書き方で配列定義時にレジスタがかぶらないようにできる
 		//UINT OffsetInDescriptorsFromTableStart;	// ?
 
 	};

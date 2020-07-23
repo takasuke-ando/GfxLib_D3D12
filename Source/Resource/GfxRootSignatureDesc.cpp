@@ -77,7 +77,7 @@ void		RootSignatureDesc::AddParam_DescriptorTable(const DESCRIPTOR_RANGE *ranges
 		range.RangeType = (D3D12_DESCRIPTOR_RANGE_TYPE)ranges[i].RangeType;
 		range.BaseShaderRegister = ranges[i].BaseShaderRegister;
 		range.NumDescriptors = ranges[i].NumDescriptors;
-		range.RegisterSpace = 0;
+		range.RegisterSpace = ranges[i].RegisterSpace;
 		range.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 		d3dranges[i] = range;

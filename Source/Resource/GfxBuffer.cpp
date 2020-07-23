@@ -138,6 +138,36 @@ bool Buffer::InitializeImmutable(const void* pData, size_t byteSize, ResourceSta
 
 
 
+
+
+/*
+	すでに作成済みのリソースを使い、初期化
+*/
+bool	Buffer::Initialize(ID3D12Resource* rtResource)
+{
+	Finalize();
+
+
+
+	bool b = _Initialize(rtResource);
+
+	if (!b) {
+		return false;
+	}
+
+
+	auto desc = rtResource->GetDesc();
+	m_BuffSize = (uint32_t)desc.Width;
+	m_pGpuAddress = rtResource->GetGPUVirtualAddress();
+
+
+	return true;
+
+
+}
+
+
+
 void Buffer::Finalize(bool delayed)
 {
 	/*
@@ -250,17 +280,45 @@ bool ByteAddressBuffer::InitializeImmutable(const void* pData, size_t byteSize, 
 
 
 
+
+/***************************************************************
+@brief	初期化
+@par	[説明]
+	すでに作成済みのリソースから作成
+@param
+*/
+bool ByteAddressBuffer::Initialize(ID3D12Resource* res)
+{
+	if (!SuperClass::Initialize(res)) {
+
+		return false;
+	}
+
+
+	_InitSRV();
+
+
+	return true;
+
+}
+
+
+
 void 	ByteAddressBuffer::_InitSRV()
 {
+
+	// 4の倍数じゃないと、最後の要素がアクセスできない
+	GFX_ASSERT(GetBufferSize() % 4 == 0, L"[ByteAddressBuffer] Buffer Size Should be Aligned to 4");
 
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
 	SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
 	SRVDesc.Format = DXGI_FORMAT_R32_TYPELESS;
 	SRVDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	SRVDesc.Buffer.NumElements = (UINT)GetBufferSize() / 4;
+	SRVDesc.Buffer.NumElements = (UINT)(GetBufferSize()/ 4);
 	SRVDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_RAW;
 
+	m_SrvHandle = GfxLib::AllocateDescriptorHandle(GfxLib::DescriptorHeapType::CBV_SRV_UAV);
 
 	ID3D12Device* d3dDev = GfxLib::CoreSystem::GetInstance()->GetD3DDevice();
 	d3dDev->CreateShaderResourceView(GetD3DResource(), &SRVDesc, m_SrvHandle);
@@ -382,6 +440,7 @@ void 	StructuredBuffer::_InitSRV()
 	SRVDesc.Buffer.StructureByteStride = m_ElementSize;
 	SRVDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 
+	m_SrvHandle = GfxLib::AllocateDescriptorHandle(GfxLib::DescriptorHeapType::CBV_SRV_UAV);
 
 	ID3D12Device* d3dDev = GfxLib::CoreSystem::GetInstance()->GetD3DDevice();
 	d3dDev->CreateShaderResourceView(GetD3DResource(), &SRVDesc, m_SrvHandle);

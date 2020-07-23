@@ -60,6 +60,11 @@ namespace GfxLib
 
 
 
+		/*
+			すでに作成済みのリソースを使い、初期化
+		*/
+		bool	Initialize(ID3D12Resource* rtResource);
+
 
 		uint32_t	GetBufferSize() const { return m_BuffSize; }
 
@@ -114,6 +119,17 @@ namespace GfxLib
 		@param
 		*/
 		bool InitializeImmutable(const void* pData, size_t byteSize , ResourceStates states );
+
+
+
+
+		/***************************************************************
+		@brief	初期化
+		@par	[説明]
+			すでに作成済みのリソースから作成
+		@param
+		*/
+		bool Initialize(ID3D12Resource* res);
 
 
 		D3D12_CPU_DESCRIPTOR_HANDLE	GetSrvDescHandle() const { return m_SrvHandle; }	//!<	CPUハンドル

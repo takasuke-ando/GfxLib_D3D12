@@ -37,7 +37,7 @@ ShaderTable::~ShaderTable()
 void	ShaderTable::AddRecord(const void* shaderIdentifier, const void* localRootArguments, uint32_t localRootArgumentsSize)
 {
     GFX_ASSERT(m_pNextCopyDest<(uint8_t*)m_gpuBuffer.GetCpuAddr()+m_numShaderRecords*m_shaderRecordSize , L"Shader Table Write Size Over" );
-
+    GFX_ASSERT(D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES+localRootArgumentsSize<=m_shaderRecordSize , L"ShaderRecord Size over!!" )
 
     // ShaderIdentifier と、LocalRootArgumentsをコピー
     memcpy(m_pNextCopyDest, shaderIdentifier, D3D12_SHADER_IDENTIFIER_SIZE_IN_BYTES);

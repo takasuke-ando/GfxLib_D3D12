@@ -126,7 +126,8 @@ namespace GfxLib
 		bool	InitializeResource(
 			ID3D12Resource* dstResource , 
 			uint32_t subDataNum,
-			const D3D12_SUBRESOURCE_DATA subData[]);
+			const D3D12_SUBRESOURCE_DATA subData[],
+			ResourceStates states = ResourceStates::GenericRead );
 
 		/***************************************************************
 		@brief	リソースの初期化コピーを行う
@@ -137,7 +138,8 @@ namespace GfxLib
 		bool	InitializeResource(
 			ID3D12Resource* dstResource,
 			const void *srcData,
-			const size_t byteSize );
+			const size_t byteSize ,
+			ResourceStates states = ResourceStates::GenericRead );
 
 
 

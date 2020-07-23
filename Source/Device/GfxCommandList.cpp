@@ -411,7 +411,8 @@ ID3D12CommandAllocator*	CommandList::DetachAllocator()
 bool	CommandList::InitializeResource(
 	ID3D12Resource* dstResource,
 	uint32_t subDataNum,
-	const D3D12_SUBRESOURCE_DATA subData[])
+	const D3D12_SUBRESOURCE_DATA subData[],
+	ResourceStates states )
 {
 
 	UINT64 uploadBufferSize = d3dx12::GetRequiredIntermediateSize(dstResource, 0, subDataNum);
@@ -483,7 +484,7 @@ bool	CommandList::InitializeResource(
 	}
 
 	// バリヤを設定
-	ResourceTransitionBarrier(dstResource, ResourceStates::CopyDest, ResourceStates::GenericRead);
+	ResourceTransitionBarrier(dstResource, ResourceStates::CopyDest, states );
 
 
 	return true;
@@ -500,7 +501,8 @@ bool	CommandList::InitializeResource(
 bool	CommandList::InitializeResource(
 	ID3D12Resource* dstResource,
 	const void *srcData,
-	const size_t byteSize)
+	const size_t byteSize,
+	ResourceStates states)
 {
 
 
@@ -578,7 +580,7 @@ bool	CommandList::InitializeResource(
 		// 遅延開放に登録
 		CoreSystem::GetInstance()->GetDelayDelete().Regist((ID3D12Resource*)d3dResForUpload);
 	}
-	ResourceTransitionBarrier(dstResource, ResourceStates::CopyDest, ResourceStates::GenericRead);
+	ResourceTransitionBarrier(dstResource, ResourceStates::CopyDest, states);
 
 
 

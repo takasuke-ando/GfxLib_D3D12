@@ -107,7 +107,7 @@ bool Buffer::Initialize(size_t byteSize, D3D12_RESOURCE_FLAGS flags, D3D12_RESOU
 GPUからしかアクセスできない状態になる
 @param
 */
-bool Buffer::InitializeImmutable(const void* pData, size_t byteSize)
+bool Buffer::InitializeImmutable(const void* pData, size_t byteSize, ResourceStates states)
 {
 	Finalize();
 
@@ -124,7 +124,7 @@ bool Buffer::InitializeImmutable(const void* pData, size_t byteSize)
 
 	{
 		auto *initCmdList = CoreSystem::GetInstance()->GetResourceInitCommandList();
-		initCmdList->InitializeResource(GetD3DResource(), pData, byteSize);
+		initCmdList->InitializeResource(GetD3DResource(), pData, byteSize, states);
 	}
 
 
@@ -160,6 +160,232 @@ void Buffer::Finalize(bool delayed)
 
 
 
+ByteAddressBuffer::ByteAddressBuffer()
+{
+
+	m_SrvHandle.ptr = 0;
+
+}
 
 
+
+ByteAddressBuffer::~ByteAddressBuffer()
+{
+
+	Finalize();
+
+}
+
+
+
+
+/***************************************************************
+@brief	開放
+@par	[説明]
+@param[in]	delayed:	遅延開放フラグ。数フレーム待ってから開放することで、
+GPUアクセス中のリソースに対して書き込みを行うことがない
+*/
+void ByteAddressBuffer::Finalize(bool delayed )
+{
+
+	if (m_SrvHandle.ptr != 0) {
+
+		GfxLib::FreeDescriptorHandle(DescriptorHeapType::CBV_SRV_UAV, m_SrvHandle);
+		m_SrvHandle.ptr = 0;
+
+	}
+
+	SuperClass::Finalize(delayed);
+
+}
+
+
+
+/***************************************************************
+@brief	初期化
+@par	[説明]
+	任意のステート、フラグを指定してリソースを初期化
+	CPUアクセスはできない
+@param
+*/
+bool ByteAddressBuffer::Initialize(size_t byteSize, D3D12_RESOURCE_FLAGS flags, D3D12_RESOURCE_STATES states)
+{
+
+	if (!SuperClass::Initialize(byteSize, flags, states)) {
+
+		return false;
+	}
+
+
+	_InitSRV();
+
+
+	return true;
+}
+
+
+/***************************************************************
+@brief	初期化
+@par	[説明]
+	サイズを指定して、初期化を行う
+	GPUからしかアクセスできない状態になる
+@param
+*/
+bool ByteAddressBuffer::InitializeImmutable(const void* pData, size_t byteSize, ResourceStates states)
+{
+
+	if (!SuperClass::InitializeImmutable(pData,byteSize,states)) {
+
+
+		return false;
+
+	}
+
+	_InitSRV();
+
+
+	return true;
+
+}
+
+
+
+void 	ByteAddressBuffer::_InitSRV()
+{
+
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
+	SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	SRVDesc.Format = DXGI_FORMAT_R32_TYPELESS;
+	SRVDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	SRVDesc.Buffer.NumElements = (UINT)GetBufferSize() / 4;
+	SRVDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_RAW;
+
+
+	ID3D12Device* d3dDev = GfxLib::CoreSystem::GetInstance()->GetD3DDevice();
+	d3dDev->CreateShaderResourceView(GetD3DResource(), &SRVDesc, m_SrvHandle);
+
+
+}
+
+
+
+
+
+StructuredBuffer::StructuredBuffer()
+	:m_ElementSize(0)
+	,m_ElementCount(0)
+{
+
+	m_SrvHandle.ptr = 0;
+
+}
+
+
+
+StructuredBuffer::~StructuredBuffer()
+{
+
+	Finalize();
+
+}
+
+
+
+
+/***************************************************************
+@brief	開放
+@par	[説明]
+@param[in]	delayed:	遅延開放フラグ。数フレーム待ってから開放することで、
+GPUアクセス中のリソースに対して書き込みを行うことがない
+*/
+void StructuredBuffer::Finalize(bool delayed)
+{
+
+	if (m_SrvHandle.ptr != 0) {
+
+		GfxLib::FreeDescriptorHandle(DescriptorHeapType::CBV_SRV_UAV, m_SrvHandle);
+		m_SrvHandle.ptr = 0;
+
+	}
+
+	SuperClass::Finalize(delayed);
+
+}
+
+
+
+/***************************************************************
+@brief	初期化
+@par	[説明]
+	任意のステート、フラグを指定してリソースを初期化
+	CPUアクセスはできない
+@param
+*/
+bool StructuredBuffer::Initialize(uint32_t elementSize, uint32_t elementCount, D3D12_RESOURCE_FLAGS flags, D3D12_RESOURCE_STATES states)
+{
+
+	if (!SuperClass::Initialize(elementSize*elementCount, flags, states)) {
+
+		return false;
+	}
+
+	m_ElementSize = elementSize;
+	m_ElementCount = elementCount;
+
+	_InitSRV();
+
+
+	return true;
+}
+
+
+/***************************************************************
+@brief	初期化
+@par	[説明]
+	サイズを指定して、初期化を行う
+	GPUからしかアクセスできない状態になる
+@param
+*/
+bool StructuredBuffer::InitializeImmutable(const void* pData, uint32_t elementSize, uint32_t elementCount, ResourceStates states)
+{
+
+	if (!SuperClass::InitializeImmutable(pData, elementSize*elementCount, states)) {
+
+
+		return false;
+
+	}
+
+
+	m_ElementSize = elementSize;
+	m_ElementCount = elementCount;
+
+	_InitSRV();
+
+
+	return true;
+
+}
+
+
+
+void 	StructuredBuffer::_InitSRV()
+{
+
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
+	SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
+	SRVDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	SRVDesc.Buffer.NumElements = m_ElementCount;
+	SRVDesc.Buffer.StructureByteStride = m_ElementSize;
+	SRVDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+
+
+	ID3D12Device* d3dDev = GfxLib::CoreSystem::GetInstance()->GetD3DDevice();
+	d3dDev->CreateShaderResourceView(GetD3DResource(), &SRVDesc, m_SrvHandle);
+
+
+}
 

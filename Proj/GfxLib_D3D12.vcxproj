@@ -151,6 +151,7 @@
     <ClInclude Include="..\Source\Font\GfxFontSystem.h" />
     <ClInclude Include="..\Source\GfxLib.h" />
     <ClInclude Include="..\Source\GfxLibStdAfx.h" />
+    <ClInclude Include="..\Source\Model\GfxInterModelData.h" />
     <ClInclude Include="..\Source\RayTracing\GfxAccelerationStructure.h" />
     <ClInclude Include="..\Source\RayTracing\GfxPipelineStateSubobject.h" />
     <ClInclude Include="..\Source\RayTracing\GfxRtGeometry.h" />
@@ -207,6 +208,7 @@
     <ClCompile Include="..\Source\Font\GfxFontRenderer.cpp" />
     <ClCompile Include="..\Source\Font\GfxFontSystem.cpp" />
     <ClCompile Include="..\Source\GfxLib.cpp" />
+    <ClCompile Include="..\Source\Model\GfxInterModelData.cpp" />
     <ClCompile Include="..\Source\RayTracing\GfxAccelerationStructure.cpp" />
     <ClCompile Include="..\Source\RayTracing\GfxPipelineStateSubobject.cpp" />
     <ClCompile Include="..\Source\RayTracing\GfxRtGeometry.cpp" />

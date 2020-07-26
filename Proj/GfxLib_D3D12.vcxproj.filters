@@ -43,6 +43,9 @@
     <Filter Include="RayTracing">
       <UniqueIdentifier>{c5af6f8f-4cbc-4784-83bd-217a95177285}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Model">
+      <UniqueIdentifier>{43e464e5-baf6-49f0-90fa-1756c149da42}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -223,6 +226,9 @@
     <ClInclude Include="..\Source\RayTracing\GfxStateObject.h">
       <Filter>RayTracing</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Model\GfxInterModelData.h">
+      <Filter>Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -371,6 +377,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\RayTracing\GfxStateObject.cpp">
       <Filter>RayTracing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Model\GfxInterModelData.cpp">
+      <Filter>Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

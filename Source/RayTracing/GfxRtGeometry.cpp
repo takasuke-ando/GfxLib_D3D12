@@ -41,7 +41,7 @@ bool	RtGeometry::Initialize(const void* vtxData, size_t vtxStrideSize, size_t vt
     if (!m_vtxBuffer.Initialize(vtxData, vtxStrideSize, vtxCount))   return false;
     if (!m_idxBuffer.Initialize(idxData, idxFormat, idxCount))       return false;
 
-
+    if (!m_idxBufferSRV.Initialize(m_idxBuffer.GetD3DResource()) ) return false;
     
 
     D3D12_RAYTRACING_GEOMETRY_DESC geometryDesc = {};
@@ -73,7 +73,7 @@ void	RtGeometry::Finalize(bool delayed )
 
     m_vtxBuffer.Finalize(delayed);
     m_idxBuffer.Finalize(delayed);
-
+    m_idxBufferSRV.Finalize(delayed);
 
 }
 

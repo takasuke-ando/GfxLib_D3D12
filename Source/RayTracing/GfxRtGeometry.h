@@ -39,11 +39,13 @@ namespace GfxLib
 
 		const D3D12_RAYTRACING_GEOMETRY_DESC& GetDesc() const { return m_geomDesc; }
 
+		D3D12_CPU_DESCRIPTOR_HANDLE		GetIndexBufferSRV() const { return m_idxBufferSRV.GetSrvDescHandle();  }
 
 
 	private:
-		VertexBuffer m_vtxBuffer;
-		IndexBuffer  m_idxBuffer;
+		VertexBuffer		m_vtxBuffer;
+		IndexBuffer			m_idxBuffer;
+		ByteAddressBuffer	m_idxBufferSRV;
 
 		D3D12_RAYTRACING_GEOMETRY_DESC	m_geomDesc;
 

@@ -12,11 +12,19 @@
 #include "GfxResource.h"
 #include "System/GfxCoreSystem.h"
 #include "Util/GfxFormatUtil.h"
+#include "Util/GfxMath.h"
 
 
 
 using namespace GfxLib;
 
+
+namespace {
+
+
+	uint32_t  BufferInitializeSizeAlignment = 4;
+
+}
 
 Resource::Resource()
 {
@@ -85,7 +93,7 @@ bool		Resource::_Initialize_Buffer(size_t sizeInBytes, D3D12_HEAP_TYPE heapType,
 
 	resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
 	resDesc.Alignment = 0;
-	resDesc.Width = sizeInBytes;
+	resDesc.Width = UpperBounds( (uint32_t)sizeInBytes , BufferInitializeSizeAlignment );
 	resDesc.Height = 1;
 	resDesc.DepthOrArraySize = 1;
 	resDesc.MipLevels = 1;

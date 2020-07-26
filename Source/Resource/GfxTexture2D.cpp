@@ -242,7 +242,8 @@ bool	Texture2D::InitializeUAV(
 	Format format,
 	uint32_t width,
 	uint32_t height,
-	uint32_t mipLevels)
+	uint32_t mipLevels, 
+	ResourceStates states)
 {
 
 #if 1
@@ -251,7 +252,7 @@ bool	Texture2D::InitializeUAV(
 
 
 
-	if (!SuperClass::_Initialize_Texture2D(format, width, height, mipLevels, D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS)) {
+	if (!SuperClass::_Initialize_Texture2D(format, width, height, mipLevels, (D3D12_RESOURCE_STATES)states, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS)) {
 
 		GFX_ERROR(L"Texture2D Creation Error");
 

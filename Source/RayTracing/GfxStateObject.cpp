@@ -42,6 +42,8 @@ bool	StateObject::Initialize(const D3D12_STATE_OBJECT_DESC& desc)
 
 	}
 
+	m_d3dStateObject.QueryInterface(m_d3dProperties.InitialAccept());
+
 	return true;
 }
 
@@ -55,6 +57,7 @@ void	StateObject::Finalize(bool delayed )
 
 	}
 
+	m_d3dStateObject.Release();
 	m_d3dStateObject.Release();
 }
 

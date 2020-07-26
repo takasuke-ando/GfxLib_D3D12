@@ -37,7 +37,7 @@ namespace GfxLib
 		*/
 		bool	Initialize(Format format, uint32_t width, uint32_t height, uint32_t mipLevels);
 		bool	Initialize( Format format, uint32_t width, uint32_t height, uint32_t mipLevels , uint32_t subDataNum, const D3D12_SUBRESOURCE_DATA subData [] );
-		bool	InitializeUAV(Format format, uint32_t width, uint32_t height, uint32_t mipLevels); // UnorderedAccess可能リソースとして初期化
+		bool	InitializeUAV(Format format, uint32_t width, uint32_t height, uint32_t mipLevels,ResourceStates states = ResourceStates::GenericRead ); // UnorderedAccess可能リソースとして初期化
 
 		bool	InitializeFromFile(const wchar_t *filePath);
 
@@ -67,6 +67,7 @@ namespace GfxLib
 
 
 		D3D12_CPU_DESCRIPTOR_HANDLE	GetSrvDescHandle() const { return m_SrvHandle; }	//!<	CPUハンドル
+		D3D12_CPU_DESCRIPTOR_HANDLE	GetUavDescHandle() const { return m_UavHandle; }	//!<	CPUハンドル
 
 	private:
 

@@ -42,6 +42,8 @@ namespace GfxLib
 		D3D12_CPU_DESCRIPTOR_HANDLE		GetIndexBufferSRV() const { return m_idxBufferSRV.GetSrvDescHandle();  }
 
 
+		Format	GetIndexFormat() const { return (Format)m_idxBuffer.GetFormat();  }
+
 	private:
 		VertexBuffer		m_vtxBuffer;
 		IndexBuffer			m_idxBuffer;

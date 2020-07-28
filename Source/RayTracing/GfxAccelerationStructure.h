@@ -91,7 +91,8 @@ namespace GfxLib
 
 		void	Build(CommandList& cmdList, Buffer* scratchBuffer);
 
-		const DirectX::XMMATRIX& GetTransform() const { return m_Transform; }
+		const	DirectX::XMMATRIX& GetTransform() const { return m_Transform; }
+		void	 SetTransform(const DirectX::XMMATRIX& mtx )  { m_Transform = mtx; }
 
 	private:
 		//Bottom level

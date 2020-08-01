@@ -96,10 +96,12 @@ InterModelData::~InterModelData()
 
 
 
-bool	InterModelData::InitializeFromObjFile(const wchar_t* objfilepath)
+bool	InterModelData::InitializeFromObjFile(const wchar_t* objfilepath, float scale )
 {
 	Finalize();
 
+	// どうやら.OBJは手前がZ？
+	const bool invertZ = true;
 
 	std::ifstream	ifs(objfilepath);
 
@@ -115,6 +117,8 @@ bool	InterModelData::InitializeFromObjFile(const wchar_t* objfilepath)
 	std::vector< XMFLOAT3 > vecPosition;
 	std::vector< XMFLOAT3 > vecUv;
 
+
+	SubMesh* subMesh = nullptr;
 
 	struct VerteIndices
 	{
@@ -151,7 +155,8 @@ bool	InterModelData::InitializeFromObjFile(const wchar_t* objfilepath)
 
 
 
-		switch (line[0]) {
+		switch (line[0]) 
+		{
 		case 0:
 		case '\n':
 		case '#':
@@ -160,10 +165,13 @@ bool	InterModelData::InitializeFromObjFile(const wchar_t* objfilepath)
 			break;
 		case 'v':
 		{
+
 			if (line[1] == 'n') {
 
 				XMFLOAT3 norm = {};
 				sscanf_s(line+2, "%f %f %f", &norm.x, &norm.y, &norm.z);
+
+				if (invertZ) norm.z *= -1.f;
 
 				vecNormal.push_back(norm);
 
@@ -172,6 +180,12 @@ bool	InterModelData::InitializeFromObjFile(const wchar_t* objfilepath)
 
 				XMFLOAT3 pos = {};
 				sscanf_s(line + 2, "%f %f %f", &pos.x, &pos.y, &pos.z);
+
+				pos.x *= scale;
+				pos.y *= scale;
+				pos.z *= scale;
+
+				if (invertZ) pos.z *= -1.f;
 
 				vecPosition.push_back(pos);
 
@@ -197,167 +211,189 @@ bool	InterModelData::InitializeFromObjFile(const wchar_t* objfilepath)
 
 		}
 			break;
-		case 'f':
-		{
-			// 面を解釈
-
-			char* t = line;
-			uint32_t elemcount = 0;
-
-			/*
-			while (*t != 0) {
-				if (*t == ' ') {
-					++elemcount;
-				}
-				++t;
-			}
-
-			if (elemcount < 3) {
-
-				GFX_WARN(L"[InterModelData] Face Element Count too small");
-				continue;
-
-			}
-			*/
-
-			Tokenizer<char> tokenizer(line,' ');
-
-			// f はスキップ
-			tokenizer.Skip();
-
-
-
-			VerteIndices vindices[4] = { {-1,-1,-1}, {-1,-1,-1} ,{-1,-1,-1}, {-1,-1,-1} };
-
-			uint32_t vsingle[4] = {};
-
-
-			// vindicesを作成
-			for (uint32_t e = 0; e < 4; ++e) {
-
-				std::string svtx;
-				tokenizer.GetNext(svtx);
-
-				Tokenizer<char> indextokenizer(svtx.c_str(), '/');
-
-				std::string pos, uv, norm;
-
-				indextokenizer.GetNext(pos);
-				indextokenizer.GetNext(uv);
-				indextokenizer.GetNext(norm);
-
-				int32_t npos = atoi(pos.c_str());
-				int32_t nuv = atoi(uv.c_str());
-				int32_t nnorm = atoi(norm.c_str());
-
-
-				if (npos >= 0) {
-					npos = npos - 1; // 1スタートなのでずらす
-				} else {
-					npos = (int32_t)vecPosition.size() + npos;
-				}
-
-				if (nuv >= 0) {
-					nuv = nuv - 1;
-				} else {
-					nuv = (int32_t)vecUv.size() + nuv;
-				}
-
-				if (nnorm >= 0) {
-					nnorm = nnorm - 1;
-				} else {
-					nnorm = (int32_t)vecNormal.size() + nnorm;
-				}
-
-
-				VerteIndices vi = { npos, nuv, nnorm };
-
-				vindices[e] = vi;
-				++elemcount;
-
-
-				if (tokenizer.IsEnd()) {
-					break;
-				}
-			}
-
-
-			// 面法線
-			XMVECTOR faceNormal;
-
+		case 'g':
 			{
-				XMFLOAT3 v0 = (vecPosition[vindices[0].npos]);
-				XMFLOAT3 v1 = (vecPosition[vindices[1].npos]);
-				XMFLOAT3 v2 = (vecPosition[vindices[2].npos]);
-				
-				XMVECTOR vx0 = XMVectorSet(v0.x - v1.x, v0.y - v1.y, v0.z - v1.z, 0.f);
-				XMVECTOR vx1 = XMVectorSet(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z, 0.f);
-
-				faceNormal = XMVector3Cross(vx1, vx0);
-				faceNormal = XMVector3Normalize(faceNormal);
+				if (subMesh) {
+					m_vecSubMesh.push_back(subMesh);
+				}
+				subMesh = new SubMesh;
 			}
+			break;
+		case 'f':
+			{
+			
+				
+				// 面を解釈
+				if (subMesh == nullptr) {
+
+					subMesh = new SubMesh;
+
+				} 
 
 
-			// 頂点インデックスを解決
+				char* t = line;
+				uint32_t elemcount = 0;
 
-			for (uint32_t e = 0; e < elemcount; ++e) {
+				/*
+				while (*t != 0) {
+					if (*t == ' ') {
+						++elemcount;
+					}
+					++t;
+				}
 
-				VerteIndices vi = vindices[e];
+				if (elemcount < 3) {
 
-				Vertex v = {
+					GFX_WARN(L"[InterModelData] Face Element Count too small");
+					continue;
 
-					vecPosition[vi.npos],
-					vi.nuv >= 0 ? vecUv[vi.nuv] : XMFLOAT3{0,0,0},
-					vi.nnorm >= 0 ? vecNormal[vi.nnorm] : XMFLOAT3{XMVectorGetX(faceNormal),XMVectorGetY(faceNormal),XMVectorGetZ(faceNormal)},// 
+				}
+				*/
 
-				};
+				Tokenizer<char> tokenizer(line,' ');
 
-				auto it = uniqIndices.find(v);
+				// f はスキップ
+				tokenizer.Skip();
 
-				if ( it == uniqIndices.end()) {
 
-					// pos,uv,norm の集合で、ユニークとなるインデックスを作成する
 
-					/*
+				VerteIndices vindices[4] = { {-1,-1,-1}, {-1,-1,-1} ,{-1,-1,-1}, {-1,-1,-1} };
+
+				uint32_t vsingle[4] = {};
+
+
+				// vindicesを作成
+				for (uint32_t e = 0; e < 4; ++e) {
+
+					std::string svtx;
+					tokenizer.GetNext(svtx);
+
+					Tokenizer<char> indextokenizer(svtx.c_str(), '/');
+
+					std::string pos, uv, norm;
+
+					indextokenizer.GetNext(pos);
+					indextokenizer.GetNext(uv);
+					indextokenizer.GetNext(norm);
+
+					int32_t npos = atoi(pos.c_str());
+					int32_t nuv = atoi(uv.c_str());
+					int32_t nnorm = atoi(norm.c_str());
+
+
+					if (npos >= 0) {
+						npos = npos - 1; // 1スタートなのでずらす
+					} else {
+						npos = (int32_t)vecPosition.size() + npos;
+					}
+
+					if (nuv >= 0) {
+						nuv = nuv - 1;
+					} else {
+						nuv = (int32_t)vecUv.size() + nuv;
+					}
+
+					if (nnorm >= 0) {
+						nnorm = nnorm - 1;
+					} else {
+						nnorm = (int32_t)vecNormal.size() + nnorm;
+					}
+
+
+					VerteIndices vi = { npos, nuv, nnorm };
+
+					vindices[e] = vi;
+					++elemcount;
+
+
+					if (tokenizer.IsEnd()) {
+						break;
+					}
+				}
+
+
+				// 面法線
+				XMVECTOR faceNormal;
+
+				{
+					XMFLOAT3 v0 = (vecPosition[vindices[0].npos]);
+					XMFLOAT3 v1 = (vecPosition[vindices[1].npos]);
+					XMFLOAT3 v2 = (vecPosition[vindices[2].npos]);
+				
+					XMVECTOR vx0 = XMVectorSet(v0.x - v1.x, v0.y - v1.y, v0.z - v1.z, 0.f);
+					XMVECTOR vx1 = XMVectorSet(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z, 0.f);
+
+					if ( invertZ )
+						faceNormal = XMVector3Cross(vx0,vx1);
+					else
+						faceNormal = XMVector3Cross(vx1, vx0);
+
+					faceNormal = XMVector3Normalize(faceNormal);
+				}
+
+
+				// 頂点インデックスを解決
+
+				for (uint32_t e = 0; e < elemcount; ++e) {
+
+					VerteIndices vi = vindices[e];
+
 					Vertex v = {
 
 						vecPosition[vi.npos],
 						vi.nuv >= 0 ? vecUv[vi.nuv] : XMFLOAT3{0,0,0},
-						vi.nnorm >= 0 ? vecNormal[vi.nnorm] : faceNormal,// 
+						vi.nnorm >= 0 ? vecNormal[vi.nnorm] : XMFLOAT3{XMVectorGetX(faceNormal),XMVectorGetY(faceNormal),XMVectorGetZ(faceNormal)},// 
 
 					};
-					*/
 
-					uint32_t idx = (int32_t)m_vecVertex.size();
-					m_vecVertex.push_back(v);
+					auto it = uniqIndices.find(v);
 
-					vsingle[e] = idx;
+					if ( it == uniqIndices.end()) {
 
-					uniqIndices.insert(std::pair<Vertex,uint32_t>(v,idx));
-				} else {
+						// pos,uv,norm の集合で、ユニークとなるインデックスを作成する
 
-					vsingle[e] = (*it).second;
+						/*
+						Vertex v = {
+
+							vecPosition[vi.npos],
+							vi.nuv >= 0 ? vecUv[vi.nuv] : XMFLOAT3{0,0,0},
+							vi.nnorm >= 0 ? vecNormal[vi.nnorm] : faceNormal,// 
+
+						};
+						*/
+
+						uint32_t idx = (int32_t)m_vecVertex.size();
+						m_vecVertex.push_back(v);
+
+						vsingle[e] = idx;
+
+						uniqIndices.insert(std::pair<Vertex,uint32_t>(v,idx));
+					} else {
+
+						vsingle[e] = (*it).second;
+
+					}
+
+
+					vindices[e] = vi;
 
 				}
 
 
-				vindices[e] = vi;
+				Triangle t0 = {vsingle[0],vsingle[1],vsingle[2]};
+				//m_vecTriangle.push_back(t0);
+
+				subMesh->AddTriangle(t0);
+
+				if (elemcount > 3) {
+					Triangle t1 = { vsingle[0],vsingle[2],vsingle[3] };
+					subMesh->AddTriangle(t1);
+
+				}
+
+
 
 			}
-
-
-			Triangle t0 = {vsingle[0],vsingle[1],vsingle[2]};
-			m_vecTriangle.push_back(t0);
-
-			if (elemcount > 3) {
-				Triangle t1 = { vsingle[0],vsingle[2],vsingle[3] };
-				m_vecTriangle.push_back(t1);
-
-			}
-
-
-
-		}
 			break;
 		default:
 
@@ -367,6 +403,8 @@ bool	InterModelData::InitializeFromObjFile(const wchar_t* objfilepath)
 
 	}
 
+	if ( subMesh)
+		m_vecSubMesh.push_back(subMesh);
 
 	ifs.close();
 
@@ -375,11 +413,43 @@ bool	InterModelData::InitializeFromObjFile(const wchar_t* objfilepath)
 }
 
 
+/***************************************************************
+	@brief
+	@par	[説明]
+		トータル三角形カウントを取得
+	@param
+*/
+uint32_t InterModelData::GetTotalTriangleCount() const
+{
+	uint32_t count = 0;
+	for (auto it : m_vecSubMesh) {
+		count += (uint32_t)it->GetTriangle().size();
+	}
+
+	return count;
+}
+
+
+
 void	InterModelData::Finalize()
 {
 
 	m_vecVertex.clear();
-	m_vecTriangle.clear();
+
+	for (auto it : m_vecSubMesh) {
+		delete it;
+	}
 
 }
 
+InterModelData::SubMesh::SubMesh()
+{
+
+
+}
+
+InterModelData::SubMesh::~SubMesh()
+{
+	m_vecTriangle.clear();
+
+}

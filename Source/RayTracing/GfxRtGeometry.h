@@ -39,6 +39,17 @@ namespace GfxLib
 
 		const D3D12_RAYTRACING_GEOMETRY_DESC& GetDesc() const { return m_geomDesc; }
 
+
+		/***************************************************************
+			@brief
+				インデックスオフセットとレンジを指定して
+				サブセットを取得する
+			@par	[説明]
+			@param
+		*/
+		void	GetSubsetDesc(D3D12_RAYTRACING_GEOMETRY_DESC&outDesc,uint32_t indexOffset , uint32_t indexCount ) const;
+
+
 		D3D12_CPU_DESCRIPTOR_HANDLE		GetIndexBufferSRV() const { return m_idxBufferSRV.GetSrvDescHandle();  }
 
 

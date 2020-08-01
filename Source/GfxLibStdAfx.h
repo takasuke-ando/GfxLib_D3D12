@@ -71,7 +71,7 @@ void	GfxLibDebugEvent(GfxLib::DebugLevel ,  const wchar_t *file, uint32_t line, 
 #include "Util/GfxD3DPtr.h"
 
 
-#define		GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FINALIZE		(false)
+#define		GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FINALIZE		(true)
 
 #define		GFX_DEFAULT_DEPTH_CLEAR_VALUE					(1.f)
 

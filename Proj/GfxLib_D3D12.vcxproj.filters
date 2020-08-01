@@ -229,6 +229,9 @@
     <ClInclude Include="..\Source\Model\GfxInterModelData.h">
       <Filter>Model</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\RayTracing\GfxRtModel.h">
+      <Filter>RayTracing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -380,6 +383,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Model\GfxInterModelData.cpp">
       <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\RayTracing\GfxRtModel.cpp">
+      <Filter>RayTracing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

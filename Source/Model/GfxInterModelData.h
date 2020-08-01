@@ -26,7 +26,7 @@ namespace GfxLib
 
 
 
-		bool	InitializeFromObjFile(const wchar_t *objfilepath );
+		bool	InitializeFromObjFile(const wchar_t *objfilepath , float scale = 1.f );
 		void	Finalize();
 
 
@@ -55,15 +55,54 @@ namespace GfxLib
 		const std::vector< Vertex >& GetVertex() const { return m_vecVertex; }
 
 		// Mesh
-		const std::vector< Triangle >& GetTriangle() const { return m_vecTriangle; }
+		//const std::vector< Triangle >& GetTriangle() const { return m_vecTriangle; }
+
+
+		/***************************************************************
+			@brief
+			@par	[説明]
+				トータル三角形カウントを取得
+			@param
+		*/
+		uint32_t GetTotalTriangleCount() const;
+
+
+		class SubMesh
+		{
+		public:
+			SubMesh();
+			~SubMesh();
+
+			const std::vector< Triangle >& GetTriangle() const { return m_vecTriangle; }
+
+			// vectorを移動します
+			/*
+			void	MoveTriangles(std::vector< Triangle >&& vecTri)
+			{
+				m_vecTriangle = vecTri;
+			}
+			*/
+			void	AddTriangle(const Triangle& t)
+			{
+				m_vecTriangle.push_back(t);
+			}
+
+		protected:
+		private:
+			// Mesh
+			std::vector< Triangle > m_vecTriangle;
+		};
+
+		const std::vector< SubMesh* >	GetSubMeshes() const { return m_vecSubMesh; }
+
 
 	protected:
 	private:
 
+		std::vector< SubMesh* >	m_vecSubMesh;
+
 		std::vector< Vertex >	m_vecVertex;
 
-		// Mesh
-		std::vector< Triangle > m_vecTriangle;
 
 	};
 

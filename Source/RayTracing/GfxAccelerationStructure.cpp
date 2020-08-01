@@ -75,20 +75,48 @@ bool BottomLevelAccelerationStructure::Initialize(const RtGeometry* geometrys, s
 
 	Finalize();
 
-
-	ID3D12Device5* device = CoreSystem::GetInstance()->GetD3DDevice5();
-
-
-	D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAGS buildFlags = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_PREFER_FAST_TRACE;
-
-
 	for (uint32_t i = 0; i < numGeom; ++i) {
 
 		m_vecGeometry.push_back(geometrys + i);
 		m_vecGeomDesc.push_back(geometrys[i].GetDesc());
 	}
 
+	if ( !_Initialize(numGeom)) {
+		return false;
+	}
 
+
+	return true;
+
+}
+
+
+
+bool	BottomLevelAccelerationStructure::Initialize(const D3D12_RAYTRACING_GEOMETRY_DESC* geometrys, size_t numGeom)
+{
+	Finalize();
+
+	for (uint32_t i = 0; i < numGeom; ++i) {
+
+		m_vecGeomDesc.push_back(geometrys[i]);
+	}
+
+	if (!_Initialize(numGeom)) {
+		return false;
+	}
+
+	return true;
+
+}
+
+
+
+bool	BottomLevelAccelerationStructure::_Initialize( size_t numGeom)
+{
+
+	D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAGS buildFlags = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_PREFER_FAST_TRACE;
+
+	ID3D12Device5* device = CoreSystem::GetInstance()->GetD3DDevice5();
 
 	D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS bottomLevelInputs = {};
 	bottomLevelInputs.DescsLayout = D3D12_ELEMENTS_LAYOUT_ARRAY;
@@ -123,12 +151,8 @@ bool BottomLevelAccelerationStructure::Initialize(const RtGeometry* geometrys, s
 
 	m_asInputs = bottomLevelInputs;
 
-
 	return true;
-
 }
-
-
 
 
 

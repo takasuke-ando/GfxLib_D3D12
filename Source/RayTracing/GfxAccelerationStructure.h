@@ -77,7 +77,7 @@ namespace GfxLib
 		BottomLevelAccelerationStructure();
 		~BottomLevelAccelerationStructure();
 
-		/*
+		/***************************************************************
 			@brief
 				BLASを初期化。
 				リソースの確保のみを行う
@@ -87,14 +87,27 @@ namespace GfxLib
 
 		*/
 		bool	Initialize(const RtGeometry* geometrys, size_t numGeom);
+		bool	Initialize(const D3D12_RAYTRACING_GEOMETRY_DESC* geometrys, size_t numGeom);
+
 		void	Finalize(bool delayed = GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FINALIZE);
+
+
 
 		void	Build(CommandList& cmdList, Buffer* scratchBuffer);
 
 		const	DirectX::XMMATRIX& GetTransform() const { return m_Transform; }
-		void	 SetTransform(const DirectX::XMMATRIX& mtx )  { m_Transform = mtx; }
+		void	SetTransform(const DirectX::XMMATRIX& mtx )  { m_Transform = mtx; }
 
 	private:
+
+		/***************************************************************
+			@brief	初期化処理共通部分
+			@par	[説明]
+				Initializeの後半共通部分
+			@param
+		*/
+		bool	_Initialize( size_t numGeom);
+
 		//Bottom level
 		std::vector<const RtGeometry*>	m_vecGeometry;				//!<	参照するレイトレーシングジオメトリ
 		std::vector< D3D12_RAYTRACING_GEOMETRY_DESC> m_vecGeomDesc;	//!<	CPUタイムラインでしか参照されない（はず）

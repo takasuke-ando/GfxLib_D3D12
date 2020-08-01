@@ -155,6 +155,7 @@
     <ClInclude Include="..\Source\RayTracing\GfxAccelerationStructure.h" />
     <ClInclude Include="..\Source\RayTracing\GfxPipelineStateSubobject.h" />
     <ClInclude Include="..\Source\RayTracing\GfxRtGeometry.h" />
+    <ClInclude Include="..\Source\RayTracing\GfxRtModel.h" />
     <ClInclude Include="..\Source\RayTracing\GfxRtPipelineStateDesc.h" />
     <ClInclude Include="..\Source\RayTracing\GfxShaderTable.h" />
     <ClInclude Include="..\Source\RayTracing\GfxStateObject.h" />
@@ -212,6 +213,7 @@
     <ClCompile Include="..\Source\RayTracing\GfxAccelerationStructure.cpp" />
     <ClCompile Include="..\Source\RayTracing\GfxPipelineStateSubobject.cpp" />
     <ClCompile Include="..\Source\RayTracing\GfxRtGeometry.cpp" />
+    <ClCompile Include="..\Source\RayTracing\GfxRtModel.cpp" />
     <ClCompile Include="..\Source\RayTracing\GfxRtPipelineStateDesc.cpp" />
     <ClCompile Include="..\Source\RayTracing\GfxShaderTable.cpp" />
     <ClCompile Include="..\Source\RayTracing\GfxStateObject.cpp" />

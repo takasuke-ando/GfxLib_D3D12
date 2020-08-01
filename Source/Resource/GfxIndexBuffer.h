@@ -50,6 +50,8 @@ namespace GfxLib
 
 		const D3D12_INDEX_BUFFER_VIEW&		GetIndexBufferView() const { return m_idxBuffView; }
 
+		DXGI_FORMAT	GetFormat() const { return m_idxBuffView.Format; }
+
 
 	private:
 		D3D12_INDEX_BUFFER_VIEW	m_idxBuffView;

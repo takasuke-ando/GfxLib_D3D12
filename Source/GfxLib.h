@@ -49,6 +49,9 @@
 #include "RayTracing/GfxRtPipelineStateDesc.h"
 #include "RayTracing/GfxShaderTable.h"
 #include "RayTracing/GfxStateObject.h"
+#include "RayTracing/GfxRtModel.h"
+
+#include "Model/GfxInterModelData.h"
 
 
 #endif // !___INCLUDE_GFXLIB_D3D12_H__

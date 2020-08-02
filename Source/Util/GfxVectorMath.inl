@@ -12,6 +12,30 @@ namespace GfxLib
 {
 
 
+	inline const Float4& Float4::operator=(const DirectX::XMVECTOR& rhs)
+	{
+		x = DirectX::XMVectorGetX(rhs);
+		y = DirectX::XMVectorGetY(rhs);
+		z = DirectX::XMVectorGetZ(rhs);
+		w = DirectX::XMVectorGetW(rhs);
+	}
+
+	inline const Float4& Float4::operator=(const DirectX::XMFLOAT4& rhs)
+	{
+		x = rhs.x;
+		y = rhs.y;
+		z = rhs.z;
+		w = rhs.w;
+
+	}
+
+	inline DirectX::XMVECTOR	Float4::ToXMVECTOR() const
+	{
+
+		return DirectX::XMVectorSet(x, y, z, w);
+
+	}
+
 
 	inline const Float3& Float3::operator=(const DirectX::XMVECTOR& rhs)
 	{

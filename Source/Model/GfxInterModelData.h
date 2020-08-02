@@ -1,6 +1,10 @@
 ﻿#pragma once
 
 
+#include "Util/GfxVectorMath.h"
+
+#include <string>
+
 namespace GfxLib
 {
 
@@ -36,9 +40,9 @@ namespace GfxLib
 
 		struct Vertex {
 
-			DirectX::XMFLOAT3 pos;
-			DirectX::XMFLOAT3 uv;
-			DirectX::XMFLOAT3 norm;
+			Float3 pos;
+			Float3 uv;
+			Float3 norm;
 
 
 			bool operator< (const Vertex& rhs) const {
@@ -71,6 +75,30 @@ namespace GfxLib
 		uint32_t GetTotalTriangleCount() const;
 
 
+		class Material
+		{
+		public:
+			Material(const wchar_t* name);
+			~Material();
+
+
+			Float3 m_DiffuseColor;
+			Float3 m_SpecularColor;
+
+			float	m_Roughness;
+
+			const wchar_t* GetName() const {
+				return m_strName.c_str();
+			}
+
+		private:
+			std::wstring		m_strName;
+
+		};
+
+
+
+
 		/***************************************************************
 			@brief	サブメッシュ情報
 			@par	[説明]
@@ -97,19 +125,36 @@ namespace GfxLib
 				m_vecTriangle.push_back(t);
 			}
 
+			void	SetMaterial(int32_t idx) {
+				m_nMaterial = idx;
+			}
+
+			// 未設定の時、-1
+			int32_t GetMaterial() const {
+				return m_nMaterial;
+			}
+
 		protected:
 		private:
 			// Mesh
 			std::vector< Triangle > m_vecTriangle;
+
+			int32_t			m_nMaterial;		//	マテリアルインデックス
 		};
 
 		const std::vector< SubMesh* >	GetSubMeshes() const { return m_vecSubMesh; }
 
 
 	protected:
+
+		bool	LoadMtlFile(const wchar_t* mtlfilepath);
+
+
+
 	private:
 
 		std::vector< SubMesh* >	m_vecSubMesh;
+		std::vector< Material* >	m_vecMaterial;
 
 		std::vector< Vertex >	m_vecVertex;
 

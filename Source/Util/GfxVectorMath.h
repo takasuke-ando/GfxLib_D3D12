@@ -14,6 +14,40 @@ namespace GfxLib
 
 
 	/***************************************************************
+		@brief	Float4
+		@par	[説明]
+			DirectX::XMFLOAT4と似ているが
+			いくつかのメソッドが追加されている
+		@param
+	*/
+	struct Float4
+	{
+		float x;
+		float y;
+		float z;
+		float w;
+
+		Float4() = default;
+
+		Float4(const Float4&) = default;
+		Float4& operator=(const Float4&) = default;
+
+		Float4(Float4&&) = default;
+		Float4& operator=(Float4&&) = default;
+
+		Float4(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
+		explicit Float4(_In_reads_(4) const float* pArray) : x(pArray[0]), y(pArray[1]), z(pArray[2]) {}
+
+
+		inline const Float4& operator=(const DirectX::XMVECTOR& rhs);
+		inline const Float4& operator=(const DirectX::XMFLOAT4& rhs);
+
+		inline DirectX::XMVECTOR	ToXMVECTOR() const;
+
+
+	};
+
+	/***************************************************************
 		@brief	Float3
 		@par	[説明]
 			DirectX::XMFLOAT3が使いづらいので作成

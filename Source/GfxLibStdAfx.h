@@ -62,9 +62,9 @@ void	GfxLibDebugEvent(GfxLib::DebugLevel ,  const wchar_t *file, uint32_t line, 
 
 
 
-#define		GFX_ERROR( ... )		{if (g_DebugLevelAction[(uint32_t)GfxLib::DebugLevel::Error] >= DebugAction::Log)GfxLibDebugEvent(GfxLib::DebugLevel::Error,_CRT_WIDE(__FILE__), (unsigned)(__LINE__),__VA_ARGS__);}
-#define		GFX_WARN( ... )			{if (g_DebugLevelAction[(uint32_t)GfxLib::DebugLevel::Warn] >= DebugAction::Log)GfxLibDebugEvent(GfxLib::DebugLevel::Warn,_CRT_WIDE(__FILE__), (unsigned)(__LINE__),__VA_ARGS__);}
-#define		GFX_INFO( ... )			{if (g_DebugLevelAction[(uint32_t)GfxLib::DebugLevel::Info] >= DebugAction::Log)GfxLibDebugEvent(GfxLib::DebugLevel::Info,_CRT_WIDE(__FILE__), (unsigned)(__LINE__),__VA_ARGS__);}
+#define		GFX_ERROR( ... )		{if (GfxLib::g_DebugLevelAction[(uint32_t)GfxLib::DebugLevel::Error] >= GfxLib::DebugAction::Log)GfxLibDebugEvent(GfxLib::DebugLevel::Error,_CRT_WIDE(__FILE__), (unsigned)(__LINE__),__VA_ARGS__);}
+#define		GFX_WARN( ... )			{if (GfxLib::g_DebugLevelAction[(uint32_t)GfxLib::DebugLevel::Warn] >= GfxLib::DebugAction::Log)GfxLibDebugEvent(GfxLib::DebugLevel::Warn,_CRT_WIDE(__FILE__), (unsigned)(__LINE__),__VA_ARGS__);}
+#define		GFX_INFO( ... )			{if (GfxLib::g_DebugLevelAction[(uint32_t)GfxLib::DebugLevel::Info] >= GfxLib::DebugAction::Log)GfxLibDebugEvent(GfxLib::DebugLevel::Info,_CRT_WIDE(__FILE__), (unsigned)(__LINE__),__VA_ARGS__);}
 
 
 

@@ -380,13 +380,16 @@ bool	InterModelData::InitializeFromObjFile(const wchar_t* objfilepath, float sca
 				}
 
 
-				Triangle t0 = {vsingle[0],vsingle[1],vsingle[2]};
+				//OBJは左回りルールなので、右回りに変換
+				//Triangle t0 = { vsingle[0],vsingle[1],vsingle[2] };
+				Triangle t0 = { vsingle[0],vsingle[2],vsingle[1] };
 				//m_vecTriangle.push_back(t0);
 
 				subMesh->AddTriangle(t0);
 
 				if (elemcount > 3) {
-					Triangle t1 = { vsingle[0],vsingle[2],vsingle[3] };
+					//Triangle t1 = { vsingle[0],vsingle[2],vsingle[3] };
+					Triangle t1 = { vsingle[0],vsingle[3],vsingle[2] };
 					subMesh->AddTriangle(t1);
 
 				}

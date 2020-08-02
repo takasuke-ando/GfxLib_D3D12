@@ -117,9 +117,9 @@ bool	RtModel::Initialize(const InterModelData& data)
 		vtx.v3 = vert.pos.z * scale;
 
 
-		attr.BaseColor = XMFLOAT3{ 1,1,1 };
+		attr.BaseColor = Float3{ 1,1,1 };
 		attr.Normal = vert.norm;
-		attr.Uv = XMFLOAT2{ vert.uv.x,vert.uv.y };
+		attr.Uv = Float2{ vert.uv.x,vert.uv.y };
 
 
 		++i;

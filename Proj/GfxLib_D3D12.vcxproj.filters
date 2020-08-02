@@ -232,6 +232,9 @@
     <ClInclude Include="..\Source\RayTracing\GfxRtModel.h">
       <Filter>RayTracing</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Util\GfxVectorMath.h">
+      <Filter>Util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -403,6 +406,9 @@
     </None>
     <None Include="..\Source\Device\GfxGraphicsCommandList.inl">
       <Filter>Device</Filter>
+    </None>
+    <None Include="..\Source\Util\GfxVectorMath.inl">
+      <Filter>Util</Filter>
     </None>
   </ItemGroup>
 </Project>

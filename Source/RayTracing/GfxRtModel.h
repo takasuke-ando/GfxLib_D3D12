@@ -7,6 +7,7 @@
 
 #include "GfxRtGeometry.h"
 #include "Resource/GfxBuffer.h"
+#include "Util/GfxVectorMath.h"
 
 namespace GfxLib
 {
@@ -52,9 +53,9 @@ namespace GfxLib
 		// TODO:パックしてサイズ削減
 		struct RtAttrib {
 
-			DirectX::XMFLOAT3	Normal;
-			DirectX::XMFLOAT3	BaseColor;
-			DirectX::XMFLOAT2	Uv;
+			Float3	Normal;
+			Float3	BaseColor;
+			Float2	Uv;
 			// Tangent / Binormal
 		};
 

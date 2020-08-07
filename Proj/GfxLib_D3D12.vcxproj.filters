@@ -46,6 +46,9 @@
     <Filter Include="Model">
       <UniqueIdentifier>{43e464e5-baf6-49f0-90fa-1756c149da42}</UniqueIdentifier>
     </Filter>
+    <Filter Include="リソース ファイル\HLSL">
+      <UniqueIdentifier>{26fea266-e894-4f97-b902-007d537975bc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -410,5 +413,19 @@
     <None Include="..\Source\Util\GfxVectorMath.inl">
       <Filter>Util</Filter>
     </None>
+    <None Include="..\Source\Hlsl\GfxLighting.hlsli">
+      <Filter>リソース ファイル\HLSL</Filter>
+    </None>
+    <None Include="..\Source\Hlsl\GfxRayTracing.hlsli">
+      <Filter>リソース ファイル\HLSL</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Source\Hlsl\GfxRayTracing.hlsl">
+      <Filter>リソース ファイル\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Source\Hlsl\GfxRayTracingModel.hlsl">
+      <Filter>リソース ファイル\HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

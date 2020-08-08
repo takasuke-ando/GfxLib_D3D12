@@ -165,6 +165,18 @@ namespace GfxLib
 		//	return m_pAdhocDescriptorHeap;
 		//}
 
+
+		/***************************************************************
+			@brief	DXRの機能レベルを取得
+			@par	[説明]
+				DXRの機能レベルを取得する
+				D3D12_RAYTRACING_TIER_NOT_SUPPORTEDじゃなければ、DXRが使用可能
+			@param
+		*/
+		D3D12_RAYTRACING_TIER	GetRaytracingTier() const { return m_raytracingTier;  }
+
+
+
 	private:
 
 		//	Immutable
@@ -175,8 +187,9 @@ namespace GfxLib
 		D3DPtr<IDXGIFactory4>			m_GIFactory;
 		//D3DPtr<ID3D12CommandAllocator>	m_aCmdAllocator[MAX_FRAME_QUEUE];
 		
-		D3D_FEATURE_LEVEL	m_featureLevel;
-		D3D_DRIVER_TYPE		m_driverType;
+		D3D_FEATURE_LEVEL		m_featureLevel;
+		D3D_DRIVER_TYPE			m_driverType;
+		D3D12_RAYTRACING_TIER	m_raytracingTier;
 
 		// リソース管理
 		DelayDelete			m_DelayDelete;

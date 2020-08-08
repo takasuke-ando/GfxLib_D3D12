@@ -30,6 +30,7 @@ CoreSystem::CoreSystem()
 	:m_pd3dDev(NULL)
 	, m_featureLevel(D3D_FEATURE_LEVEL_11_0)
 	, m_driverType(D3D_DRIVER_TYPE_HARDWARE)
+	, m_raytracingTier(D3D12_RAYTRACING_TIER_NOT_SUPPORTED)
 	, m_pDescriptorAllocator(nullptr)
 	, m_pGraphicsPsoPool(nullptr)
 	//, m_pAdhocDescriptorHeap(nullptr)
@@ -170,6 +171,15 @@ bool	CoreSystem::Initialize()
 		GFX_ERROR(L"CreateDXGIFactory1 Failed error=%08x", hr);
 
 		return false;
+	}
+
+
+	m_raytracingTier = D3D12_RAYTRACING_TIER_NOT_SUPPORTED;
+	D3D12_FEATURE_DATA_D3D12_OPTIONS5 featureOptions5 = {};
+	if (SUCCEEDED(m_pd3dDev->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS5, &featureOptions5, sizeof(featureOptions5)))) {
+		m_raytracingTier = featureOptions5.RaytracingTier;
+
+		GFX_INFO(L"RaytracingTier:%d",m_raytracingTier);
 	}
 
 

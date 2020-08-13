@@ -633,7 +633,7 @@ bool	InterModelData::LoadMtlFile(const wchar_t* mtlfilepath)
 			material->m_DiffuseColor = diffcolor;
 		} else if (key == "Ks") {
 
-			Float3 speccolor = { 0.04f,0.04f,0.04f };
+			Float3 speccolor = {};
 
 			sscanf_s(tokenier.GetCurrent(), "%f %f %f", &speccolor.x, &speccolor.y, &speccolor.z);
 
@@ -643,6 +643,16 @@ bool	InterModelData::LoadMtlFile(const wchar_t* mtlfilepath)
 
 
 			material->m_SpecularColor = speccolor;
+
+		} else if (key == "map_Kd") {
+
+			std::string name;
+			tokenier.GetNext(name);
+
+			std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+			std::wstring wname = converter.from_bytes(name);
+
+			material->m_DiffuseMap = wname;
 
 		}
 

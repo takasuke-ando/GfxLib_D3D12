@@ -86,6 +86,7 @@ namespace GfxLib
 			Float3 m_SpecularColor;
 
 			float	m_Roughness;
+			std::wstring		m_DiffuseMap;
 
 			const wchar_t* GetName() const {
 				return m_strName.c_str();

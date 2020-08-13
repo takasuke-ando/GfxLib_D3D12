@@ -49,6 +49,9 @@
     <Filter Include="リソース ファイル\HLSL">
       <UniqueIdentifier>{26fea266-e894-4f97-b902-007d537975bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Renderer">
+      <UniqueIdentifier>{7ed5c4d3-0408-411f-a6d0-9923771d2812}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -238,6 +241,9 @@
     <ClInclude Include="..\Source\Util\GfxVectorMath.h">
       <Filter>Util</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Renderer\GfxRayTracingRenderer.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -392,6 +398,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\RayTracing\GfxRtModel.cpp">
       <Filter>RayTracing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Renderer\GfxRayTracingRenderer.cpp">
+      <Filter>Renderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

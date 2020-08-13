@@ -54,4 +54,7 @@
 #include "Model/GfxInterModelData.h"
 
 
+#include "Renderer/GfxRayTracingRenderer.h"
+
+
 #endif // !___INCLUDE_GFXLIB_D3D12_H__

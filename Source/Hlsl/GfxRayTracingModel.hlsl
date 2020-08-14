@@ -186,6 +186,7 @@ void MyClosestHitShader(inout RayPayload payload, in MyAttributes attr)
     }
 
     {
+        //  Directional Light
         DirectionalLight   lit;
 
         //lit.Dir = float3(0.f, 0.707106f, 0.707106f);

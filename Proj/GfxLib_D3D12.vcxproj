@@ -159,6 +159,7 @@
     <ClInclude Include="..\Source\RayTracing\GfxRtPipelineStateDesc.h" />
     <ClInclude Include="..\Source\RayTracing\GfxShaderTable.h" />
     <ClInclude Include="..\Source\RayTracing\GfxStateObject.h" />
+    <ClInclude Include="..\Source\Renderer\GfxRayTracingRenderer.h" />
     <ClInclude Include="..\Source\Resource\GfxBuffer.h" />
     <ClInclude Include="..\Source\Resource\GfxConstantBuffer.h" />
     <ClInclude Include="..\Source\Resource\GfxDepthStencil.h" />
@@ -172,6 +173,8 @@
     <ClInclude Include="..\Source\Resource\GfxRootSignatureDesc.h" />
     <ClInclude Include="..\Source\Resource\GfxSampler.h" />
     <ClInclude Include="..\Source\Resource\GfxTexture2D.h" />
+    <ClInclude Include="..\Source\Resource\GfxTextureBase.h" />
+    <ClInclude Include="..\Source\Resource\GfxTextureContainer.h" />
     <ClInclude Include="..\Source\Resource\GfxVertexBuffer.h" />
     <ClInclude Include="..\Source\Shader\GfxShader.h" />
     <ClInclude Include="..\Source\State\GfxBlendState.h" />
@@ -194,6 +197,7 @@
     <ClInclude Include="..\Source\Util\GfxMath.h" />
     <ClInclude Include="..\Source\Util\GfxStringContainer.h" />
     <ClInclude Include="..\Source\Util\GfxUniqIdMaker.h" />
+    <ClInclude Include="..\Source\Util\GfxVectorMath.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -217,6 +221,7 @@
     <ClCompile Include="..\Source\RayTracing\GfxRtPipelineStateDesc.cpp" />
     <ClCompile Include="..\Source\RayTracing\GfxShaderTable.cpp" />
     <ClCompile Include="..\Source\RayTracing\GfxStateObject.cpp" />
+    <ClCompile Include="..\Source\Renderer\GfxRayTracingRenderer.cpp" />
     <ClCompile Include="..\Source\Resource\GfxBuffer.cpp" />
     <ClCompile Include="..\Source\Resource\GfxConstantBuffer.cpp" />
     <ClCompile Include="..\Source\Resource\GfxDepthStencil.cpp" />
@@ -230,6 +235,8 @@
     <ClCompile Include="..\Source\Resource\GfxRootSignatureDesc.cpp" />
     <ClCompile Include="..\Source\Resource\GfxSampler.cpp" />
     <ClCompile Include="..\Source\Resource\GfxTexture2D.cpp" />
+    <ClCompile Include="..\Source\Resource\GfxTextureBase.cpp" />
+    <ClCompile Include="..\Source\Resource\GfxTextureContainer.cpp" />
     <ClCompile Include="..\Source\Resource\GfxVertexBuffer.cpp" />
     <ClCompile Include="..\Source\Shader\GfxShader.cpp" />
     <ClCompile Include="..\Source\State\GfxBlendState.cpp" />
@@ -257,10 +264,41 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Source\Device\GfxGraphicsCommandList.inl" />
+    <None Include="..\Source\Hlsl\GfxLighting.hlsli" />
+    <None Include="..\Source\Hlsl\GfxRayTracing.hlsli" />
     <None Include="..\Source\Resource\GfxDescriptorBuffer.inl" />
     <None Include="..\Source\Util\GfxD3DPtr.inl" />
     <None Include="..\Source\Util\GfxFormatUtil.inl" />
     <None Include="..\Source\Util\GfxMath.inl" />
+    <None Include="..\Source\Util\GfxVectorMath.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Source\Hlsl\GfxRayTracing.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Library</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.3</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Library</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.3</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </EntryPointName>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Shader\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Shader\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="..\Source\Hlsl\GfxRayTracingModel.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Library</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.3</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Library</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.3</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Shader\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Shader\%(Filename).cso</ObjectFileOutput>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</EnableDebuggingInformation>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

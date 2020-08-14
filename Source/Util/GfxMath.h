@@ -44,6 +44,31 @@ namespace GfxLib
 
 	}
 
+
+
+	template<class T>
+	T Clamp(T val, T min, T max)
+	{
+
+		if (val < min)	return min;
+		if (max < val)	return max;
+
+		return val;
+	}
+
+
+	template<class T>
+	T Min(T val0, T val1)
+	{
+		return val0 < val1 ? val0 : val1;
+	}
+
+	template<class T>
+	T Max(T val0, T val1)
+	{
+		return val0 > val1 ? val0 : val1;
+	}
+
 }
 
 

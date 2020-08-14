@@ -28,6 +28,8 @@
 #include "Resource/GfxRenderTarget.h"
 #include "Resource/GfxDepthStencil.h"
 #include "Resource/GfxTexture2D.h"
+#include "Resource/GfxTextureBase.h"
+#include "Resource/GfxTextureContainer.h"
 
 #include "State/GfxPipelineState.h"
 #include "State/GfxBlendState.h"
@@ -52,6 +54,9 @@
 #include "RayTracing/GfxRtModel.h"
 
 #include "Model/GfxInterModelData.h"
+
+
+#include "Renderer/GfxRayTracingRenderer.h"
 
 
 #endif // !___INCLUDE_GFXLIB_D3D12_H__

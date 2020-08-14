@@ -1,6 +1,10 @@
 ﻿#pragma once
 
 
+#include "Util/GfxVectorMath.h"
+
+#include <string>
+
 namespace GfxLib
 {
 
@@ -13,6 +17,10 @@ namespace GfxLib
 		モデルデータの読み込み、操作などを行う
 
 		テクスチャや頂点バッファなどのリソースは持たない
+
+		頂点情報は単一インデックスの情報に集約し、後ほどバッファ作成など行いやすくする
+		トポロジはトライアングルリストのみ
+		表面は右回りが標準
 
 	@param
 	*/
@@ -32,9 +40,9 @@ namespace GfxLib
 
 		struct Vertex {
 
-			DirectX::XMFLOAT3 pos;
-			DirectX::XMFLOAT3 uv;
-			DirectX::XMFLOAT3 norm;
+			Float3 pos;
+			Float3 uv;
+			Float3 norm;
 
 
 			bool operator< (const Vertex& rhs) const {
@@ -67,6 +75,37 @@ namespace GfxLib
 		uint32_t GetTotalTriangleCount() const;
 
 
+		class Material
+		{
+		public:
+			Material(const wchar_t* name);
+			~Material();
+
+
+			Float3 m_DiffuseColor;
+			Float3 m_SpecularColor;
+
+			float	m_Roughness;
+			std::wstring		m_DiffuseMap;
+
+			const wchar_t* GetName() const {
+				return m_strName.c_str();
+			}
+
+		private:
+			std::wstring		m_strName;
+
+		};
+
+
+
+
+		/***************************************************************
+			@brief	サブメッシュ情報
+			@par	[説明]
+				マテリアルなどの切り替わりが行われる単位
+			@param
+		*/
 		class SubMesh
 		{
 		public:
@@ -87,19 +126,36 @@ namespace GfxLib
 				m_vecTriangle.push_back(t);
 			}
 
+			void	SetMaterial(int32_t idx) {
+				m_nMaterial = idx;
+			}
+
+			// 未設定の時、-1
+			int32_t GetMaterial() const {
+				return m_nMaterial;
+			}
+
 		protected:
 		private:
 			// Mesh
 			std::vector< Triangle > m_vecTriangle;
+
+			int32_t			m_nMaterial;		//	マテリアルインデックス
 		};
 
-		const std::vector< SubMesh* >	GetSubMeshes() const { return m_vecSubMesh; }
-
+		const std::vector< SubMesh* >		&GetSubMeshes() const { return m_vecSubMesh;	}
+		const std::vector< Material* >		&GetMaterials() const { return m_vecMaterial;	}
 
 	protected:
+
+		bool	LoadMtlFile(const wchar_t* mtlfilepath);
+
+
+
 	private:
 
-		std::vector< SubMesh* >	m_vecSubMesh;
+		std::vector< SubMesh* >		m_vecSubMesh;
+		std::vector< Material* >	m_vecMaterial;
 
 		std::vector< Vertex >	m_vecVertex;
 

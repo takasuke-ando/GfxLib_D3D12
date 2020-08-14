@@ -25,7 +25,6 @@ using namespace GfxLib;
 Texture2D::Texture2D()
 {
 
-	m_SrvHandle.ptr = 0;
 	m_UavHandle.ptr = 0;
 
 }
@@ -379,13 +378,6 @@ GPUアクセス中のリソースに対して書き込みを行うことがな�
 */
 void	Texture2D::Finalize(bool delayed /* = GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FINALIZE*/ )
 {
-
-	if (m_SrvHandle.ptr != 0) {
-
-		GfxLib::FreeDescriptorHandle(DescriptorHeapType::CBV_SRV_UAV, m_SrvHandle);
-		m_SrvHandle.ptr = 0;
-
-	}
 
 	if (m_UavHandle.ptr != 0) {
 

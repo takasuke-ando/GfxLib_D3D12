@@ -3,7 +3,7 @@
 
 
 
-#include "GfxResource.h"
+#include "GfxTextureBase.h"
 #include "Util/GfxAutoDescriptorHandle.h"
 
 
@@ -17,9 +17,9 @@ namespace GfxLib
 			2Dテクスチャクラス
 	*/
 	class Texture2D
-		: public Resource	//	TextureBase的なのを作るかも
+		: public TextureBase
 	{
-		typedef Resource	SuperClass;
+		typedef TextureBase	SuperClass;
 	public:
 		Texture2D();
 		virtual ~Texture2D();
@@ -66,7 +66,6 @@ namespace GfxLib
 		bool	WriteToSubresource(uint32_t DstSubResource, const D3D12_BOX *pDstBox, const void* pSrcData, uint32_t SrcRowPitch, uint32_t SrcDepthPitch);
 
 
-		D3D12_CPU_DESCRIPTOR_HANDLE	GetSrvDescHandle() const { return m_SrvHandle; }	//!<	CPUハンドル
 		D3D12_CPU_DESCRIPTOR_HANDLE	GetUavDescHandle() const { return m_UavHandle; }	//!<	CPUハンドル
 
 	private:
@@ -74,9 +73,9 @@ namespace GfxLib
 
 		//AutoCBV_SRV_UAVHandle	m_SrvHandle;	//!<	SRVハンドル
 
-		D3D12_CPU_DESCRIPTOR_HANDLE	m_SrvHandle;	//!<	CPUハンドル
+		//D3D12_CPU_DESCRIPTOR_HANDLE	m_SrvHandle;	//!<	CPUハンドル
 		D3D12_CPU_DESCRIPTOR_HANDLE	m_UavHandle;	//!<	UAVハンドル
-
+//
 	};
 
 

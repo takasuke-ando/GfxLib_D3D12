@@ -13,6 +13,8 @@ namespace GfxLib
 {
 
 	class InterModelData;
+	class TextureContainer;
+	class TextureBase;
 
 	/*
 		@brief
@@ -40,7 +42,7 @@ namespace GfxLib
 				初期化後にはモデルデータは破棄しても構わない
 		
 		*/
-		bool	Initialize(const InterModelData &data);
+		bool	Initialize(const InterModelData &data, TextureContainer &texContainer);
 		void	Finalize(bool delayed=GFX_DEFAULT_DELAY_DELETE_FLAG_ON_FINALIZE);
 
 
@@ -67,11 +69,26 @@ namespace GfxLib
 
 		class Material
 		{
+			friend class RtModel;
 		public:
-			Material()  {}
+			Material() :m_pDiffuseTex(nullptr), m_DiffuseColor{1,1,1},m_SpecularColor(0.04f,0.04f,0.04f),m_Roughness(0.5f){}
 			~Material() {}
 
+
+			const TextureBase* GetDiffuseTex() const { return m_pDiffuseTex; }
+
+			const Float3& GetDiffuseColor() const { return m_DiffuseColor;  }
+			const Float3& GetSpecularColor() const { return m_SpecularColor;  }
+			float		GetRoughness() const { return m_Roughness;  }
+
 		protected:
+
+			const TextureBase* m_pDiffuseTex;
+
+			Float3	m_DiffuseColor;
+			Float3  m_SpecularColor;
+			float	m_Roughness;
+
 		};
 
 
@@ -83,8 +100,9 @@ namespace GfxLib
 		*/
 		class SubGroup
 		{
+			friend class RtModel;
 		public:
-			SubGroup(uint32_t startIndex, uint32_t idx_count):m_startIndex(startIndex),m_indexCount(idx_count) {}
+			SubGroup(uint32_t startIndex, uint32_t idx_count):m_startIndex(startIndex),m_indexCount(idx_count), m_materialId(0){}
 			~SubGroup(){}
 
 			uint32_t GetStartIndex() const {
@@ -94,16 +112,22 @@ namespace GfxLib
 				return m_indexCount;
 			}
 
+			uint32_t GetMaterialId() const {
+				return m_materialId;
+			}
+
 		protected:
 		private:
 
 			uint32_t m_startIndex;
 			uint32_t m_indexCount;
+			uint32_t m_materialId;
 
 		};
 
 
-		const std::vector< SubGroup* >	GetSubGroups() const { return m_vecSubGroup; }
+		const std::vector< SubGroup* >	&GetSubGroups() const { return m_vecSubGroup; }
+		const std::vector< Material* >	&GetMaterials() const { return m_vecMaterial; }
 
 		D3D12_CPU_DESCRIPTOR_HANDLE		GetIndexBufferSRV() const { return m_rtGeometry.GetIndexBufferSRV(); }
 

@@ -15,6 +15,8 @@
 #include "GfxRtModel.h"
 
 #include "Model/GfxInterModelData.h"
+#include "Resource/GfxTextureContainer.h"
+#include "Resource/GfxTextureBase.h"
 
 #if 1
 
@@ -38,9 +40,39 @@ RtModel::~RtModel()
 }
 
 
-bool	RtModel::Initialize(const InterModelData& data)
+bool	RtModel::Initialize(const InterModelData& data, TextureContainer& texContainer)
 {
 
+	//	マテリアル初期化
+
+
+	for (auto &it : data.GetMaterials()) {
+
+		Material* mat = new Material;
+
+		if (it->m_DiffuseMap != L"") {
+
+			const TextureBase* pTex = texContainer.LoadTextureFromFile(it->m_DiffuseMap.c_str());
+
+			mat->m_pDiffuseTex = pTex;
+
+
+		}
+
+
+		mat->m_DiffuseColor		= it->m_DiffuseColor;
+		mat->m_SpecularColor	= it->m_SpecularColor;
+		mat->m_Roughness		= it->m_Roughness;
+
+
+		m_vecMaterial.push_back(mat);
+
+	}
+
+
+
+
+	//	ジオメトリを作成
 
 	float scale = 1.f;
 
@@ -94,6 +126,10 @@ bool	RtModel::Initialize(const InterModelData& data)
 
 		// サブメッシュごとに割り当てられた範囲を記録
 		SubGroup *subg = new SubGroup(startIndex, (uint32_t)tris.size()*3);
+
+
+		
+		subg->m_materialId = subMesh->GetMaterial();
 
 		m_vecSubGroup.push_back(subg);
 

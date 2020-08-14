@@ -143,8 +143,8 @@ namespace GfxLib
 			int32_t			m_nMaterial;		//	マテリアルインデックス
 		};
 
-		const std::vector< SubMesh* >	GetSubMeshes() const { return m_vecSubMesh; }
-
+		const std::vector< SubMesh* >		&GetSubMeshes() const { return m_vecSubMesh;	}
+		const std::vector< Material* >		&GetMaterials() const { return m_vecMaterial;	}
 
 	protected:
 
@@ -154,7 +154,7 @@ namespace GfxLib
 
 	private:
 
-		std::vector< SubMesh* >	m_vecSubMesh;
+		std::vector< SubMesh* >		m_vecSubMesh;
 		std::vector< Material* >	m_vecMaterial;
 
 		std::vector< Vertex >	m_vecVertex;

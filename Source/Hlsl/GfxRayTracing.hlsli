@@ -26,7 +26,11 @@ struct ModelConstantBuffer
 {
 	bool isIndex16bit;
 	uint primitiveOffset;   //  モデル全体でのプリミティブ開始位置
-	int padd2[2];
+	int2 padd;
+    float3  diffuseAlbedo;
+    float   roughness;
+    float3  specularAlbedo;
+    int     padd2;
 };
 
 struct VtxAttrib

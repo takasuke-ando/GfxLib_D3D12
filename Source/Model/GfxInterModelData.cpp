@@ -623,6 +623,7 @@ bool	InterModelData::LoadMtlFile(const wchar_t* mtlfilepath)
 
 			roughness = Clamp<float>(roughness, 0.f, 1.f);
 
+			material->m_Roughness = roughness;
 
 		} else if (key == "Kd") {
 

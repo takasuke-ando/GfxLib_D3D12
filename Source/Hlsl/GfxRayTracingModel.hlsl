@@ -36,6 +36,8 @@ ByteAddressBuffer           l_geomIndexBuffer[]     :   register(t16, space1);
 StructuredBuffer<VtxAttrib> l_geomAttrib[]          :   register(t16, space2);
 
 
+Texture2D       l_texDiffuse    :   register(t17);  //  DiffuseMap
+
 
 typedef BuiltInTriangleIntersectionAttributes MyAttributes;
 
@@ -101,6 +103,7 @@ VtxAttrib   GetVtxAttrib(in uint MaterialID, in uint3 Indices, float2 barycentri
 
     attr.Normal = attr0.Normal * factor.x + attr1.Normal * factor.y + attr2.Normal * factor.z;
     attr.BaseColor = attr0.BaseColor * factor.x + attr1.BaseColor * factor.y + attr2.BaseColor * factor.z;
+    attr.Uv = attr0.Uv * factor.x + attr1.Uv * factor.y + attr2.Uv * factor.z;
 
     // To World Space
     attr.Normal = mul(attr.Normal, (float3x3)ObjectToWorld4x3());
@@ -160,6 +163,7 @@ void MyClosestHitShader(inout RayPayload payload, in MyAttributes attr)
 
 
     float3  worldPosition = WorldRayOrigin() + WorldRayDirection() * RayTCurrent();
+    const float3 eyeVec = normalize(-WorldRayDirection());  //  ピクセルから視点へ向かうベクトル
 
     float3 radiance = (float3)0;
 
@@ -167,10 +171,19 @@ void MyClosestHitShader(inout RayPayload payload, in MyAttributes attr)
 
     Material mat;
 
-    mat.DiffuseAlbedo = vtx.BaseColor;
-    mat.SpecularAlbedo = float3(0.04f, 0.04f, 0.04f);
-    mat.Roughness = 0.2f;
+    //mat.DiffuseAlbedo = vtx.BaseColor;
+    mat.SpecularAlbedo = g_modelCB.specularAlbedo;
+    mat.Roughness = g_modelCB.roughness;
     mat.Normal = normalize(vtx.Normal);
+
+
+    {
+
+        float4 diffuseTex = l_texDiffuse.SampleLevel(sampsLinear, vtx.Uv, 0);
+
+        mat.DiffuseAlbedo = diffuseTex.rgb* vtx.BaseColor * g_modelCB.diffuseAlbedo;
+
+    }
 
     {
         DirectionalLight   lit;
@@ -183,9 +196,11 @@ void MyClosestHitShader(inout RayPayload payload, in MyAttributes attr)
         // Shadowing
         bool isShadow = ShadowRayHitTest(worldPosition, lit.Dir);
 
+
         if (!isShadow)
         {
-            radiance += ComputeDirectionalLight(mat, lit, normalize(-WorldRayDirection()));
+            //radiance += mat.DiffuseAlbedo;
+            radiance += ComputeDirectionalLight(mat, lit, eyeVec);
         }
     }
 
@@ -193,7 +208,13 @@ void MyClosestHitShader(inout RayPayload payload, in MyAttributes attr)
         //  Ambient Light
 
 
-        radiance += g_texSkyIem.SampleLevel(sampsLinear, mat.Normal, 0).xyz * mat.DiffuseAlbedo;
+        //  Ambient Diffuse
+       radiance += g_texSkyIem.SampleLevel(sampsLinear, mat.Normal, 0).xyz * mat.DiffuseAlbedo;
+
+
+        //  Ambient Specular
+        float3 F = F_Schlick(saturate(dot(eyeVec,mat.Normal)), mat.SpecularAlbedo);
+       radiance += g_texSkyRem.SampleLevel(sampsLinear, reflect(-eyeVec, mat.Normal), mat.Roughness*8.f ).xyz * F;
 
 
     }

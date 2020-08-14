@@ -15,6 +15,8 @@
 #include "Shader/GfxShader.h"
 #include "RayTracing/GfxStateObject.h"
 #include "Resource/GfxSampler.h"
+#include "Resource/GfxTexture2D.h"
+#include "Util/GfxVectorMath.h"
 
 
 
@@ -51,6 +53,10 @@ namespace GfxLib
 			uint32_t	isIndex16bit;
 			uint32_t	primitiveOffset;
 			uint32_t	padd[2];
+			Float3		diffuseAlbedo;
+			float		roughness;
+			Float3		specularAlbedo;	//	Specular Albedo
+			uint32_t	padd2;
 		};
 
 
@@ -106,6 +112,13 @@ namespace GfxLib
 
 
 
+		enum DUMMY_TEX_NUM {
+			DUMMY_TEX_WHITE,
+
+			DUMMY_TEX_NUM,
+		};
+
+
 
 	protected:
 	private:
@@ -124,6 +137,9 @@ namespace GfxLib
 		GfxLib::StateObject		m_rtStateObject;
 
 		GfxLib::Sampler			m_sampsLinear;
+
+
+		GfxLib::Texture2D		m_texDummy[DUMMY_TEX_NUM];
 
 	};
 

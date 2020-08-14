@@ -129,8 +129,13 @@ bool	RayTracingRenderer::Initialize()
 
 
 
+	uint32_t pixelColor = 0xffffffff;
 
+	D3D12_SUBRESOURCE_DATA	subData = {};
+	subData.pData = &pixelColor;
+	subData.RowPitch = sizeof(pixelColor);
 
+	m_texDummy[DUMMY_TEX_WHITE].Initialize(Format::R8G8B8A8_UNORM, 1, 1, 1, 1, &subData);
 
 	return true;
 
@@ -152,6 +157,11 @@ void	RayTracingRenderer::Finalize(bool bDelayed)
 
 
 	m_sampsLinear.Finalize();
+
+
+	for (auto& tex : m_texDummy) {
+		tex.Finalize(bDelayed);
+	}
 
 }
 
@@ -190,6 +200,7 @@ void	RayTracingRenderer::Render(GfxLib::GraphicsCommandList& cmdList,D3D12_CPU_D
 		D3D12_GPU_VIRTUAL_ADDRESS	cb;			//	RayGenConstantBuffer
 		D3D12_GPU_DESCRIPTOR_HANDLE	indexSRV;	//	IndexSRV	
 		D3D12_GPU_DESCRIPTOR_HANDLE	vtxSRV;		//	VtxSRV
+		D3D12_GPU_DESCRIPTOR_HANDLE	texSRV;		//	Textures
 	} rootArguments;
 
 	// for RayGen
@@ -265,20 +276,36 @@ void	RayTracingRenderer::Render(GfxLib::GraphicsCommandList& cmdList,D3D12_CPU_D
 		vtxSrvDesc.CopyHandle(0, rtModel->GetGeomAttributeSRV());
 		rootArguments.vtxSRV = vtxSrvDesc.GetGPUDescriptorHandle();
 
+
+
 		for (auto subgroup : subGroupVec) {
 			//RootArguments rootArgMaterial = rootArguments;
 
 			// マテリアル毎のパラメータ
+			auto* material = rtModel->GetMaterials()[subgroup->GetMaterialId()];
 
 			RayTracing::ModelConstantBuffer  modelCB = {};
 
 			modelCB.isIndex16bit = rtModel->GetIndexFormat() == GfxLib::Format::R16_UINT;
 			modelCB.primitiveOffset = subgroup->GetStartIndex() / 3;
 
+			modelCB.roughness = material->GetRoughness();
+			modelCB.diffuseAlbedo = material->GetDiffuseColor();
+			modelCB.specularAlbedo = material->GetSpecularColor();
+
+
 			GfxLib::GpuBufferRange cbBuffer = cmdList.AllocateGpuBuffer(sizeof(modelCB), D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
 			memcpy(cbBuffer.GetCpuAddr(), &modelCB, sizeof(modelCB));
 			rootArguments.cb = cbBuffer.GetGpuAddr();
 
+
+			// Texture
+			GfxLib::DescriptorBuffer	texSrvDesc = cmdList.AllocateDescriptorBuffer(1);
+
+			const TextureBase* pTex = material->GetDiffuseTex();
+			if (!pTex) pTex = &m_texDummy[DUMMY_TEX_WHITE];
+			texSrvDesc.CopyHandle(0, pTex->GetSrvDescHandle());
+			rootArguments.texSRV = texSrvDesc.GetGPUDescriptorHandle();
 
 			for (uint32_t i = 0; i < TRACE_TYPE_NUM; ++i) {
 
@@ -368,6 +395,7 @@ void	RayTracingRenderer::_CreateRayTracingRootSignature()
 	rootSigDesc.Clear();
 
 
+	//	Model ClosestHit Local Signature
 
 	//rootSigDesc.AddParam_32BitConstants(sizeof(m_rayGenCB) / sizeof(uint32_t), 0);
 	rootSigDesc.AddParam_Cbv(16);
@@ -378,11 +406,17 @@ void	RayTracingRenderer::_CreateRayTracingRootSignature()
 	rootSigDesc.AddParam_DescriptorTable(&ranges2, 1);
 
 
+	GfxLib::DESCRIPTOR_RANGE	ranges3 = { GfxLib::DescriptorRangeType::Srv , 1,17,0 };
+	rootSigDesc.AddParam_DescriptorTable(&ranges3, 1);
+
+
 	rootSigDesc.SetFlags(D3D12_ROOT_SIGNATURE_FLAG_LOCAL_ROOT_SIGNATURE);
 
 	m_localRootSig.Initialize(rootSigDesc);
 
 	rootSigDesc.Clear();
+
+	//	Miss Shader
 
 	{
 		GfxLib::DESCRIPTOR_RANGE	ranges = { GfxLib::DescriptorRangeType::Srv , 1,16,0 };

@@ -28,6 +28,8 @@
 #include "Resource/GfxRenderTarget.h"
 #include "Resource/GfxDepthStencil.h"
 #include "Resource/GfxTexture2D.h"
+#include "Resource/GfxTextureBase.h"
+#include "Resource/GfxTextureContainer.h"
 
 #include "State/GfxPipelineState.h"
 #include "State/GfxBlendState.h"

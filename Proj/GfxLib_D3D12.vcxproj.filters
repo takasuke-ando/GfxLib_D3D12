@@ -244,6 +244,12 @@
     <ClInclude Include="..\Source\Renderer\GfxRayTracingRenderer.h">
       <Filter>Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Resource\GfxTextureBase.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Resource\GfxTextureContainer.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -401,6 +407,12 @@
     </ClCompile>
     <ClCompile Include="..\Source\Renderer\GfxRayTracingRenderer.cpp">
       <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Resource\GfxTextureBase.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Resource\GfxTextureContainer.cpp">
+      <Filter>Resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

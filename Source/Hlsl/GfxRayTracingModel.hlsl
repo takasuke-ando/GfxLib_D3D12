@@ -20,6 +20,7 @@
 
 
 
+#include "GfxCommon.hlsli"
 #include "GfxRaytracing.hlsli"
 #include "GfxLighting.hlsli"
 
@@ -140,6 +141,114 @@ bool        ShadowRayHitTest(float3 worldPosition, float3 lightdir)
 }
 
 
+float2  Hammersley(uint index, uint count , float2 secondRand)
+{
+
+
+    float x = ( index + secondRand .x )/ (float)count;
+
+    float y = 0;
+
+    float base = 0.5f;
+
+    uint val = index;
+    while (val) {
+
+        if (val & 1) {
+
+            y += base;
+
+        }
+
+
+        base *= 0.5f;
+        val >>= 1;
+    }
+
+
+    y += secondRand.y;
+
+    if (y > 1) y -= 1;
+
+
+    return float2(x, y);
+
+
+}
+
+
+
+float3  getCosHemisphereSample(float2 randVal , float3 normal )
+{
+
+
+    float3 bitangent = normalize( cross(float3(0, 0.99f, 0.1f), normal) );
+    float3 tangent = cross(bitangent, normal);
+
+    float r = sqrt(randVal.x);
+
+    // ディスク上に一様サンプリング
+    float phi = 2.f * _PI * randVal.y;
+
+    //  半球に射影
+    float x = r * cos(phi);
+    float z = r * sin(phi);
+    float y = sqrt(1.f - randVal.x);
+
+    return x * tangent + y * normal + z * bitangent;
+
+
+}
+
+
+float   EvaluateAO(float3 position,float3 normal)
+{
+
+    uint2   pixelIndex = DispatchRaysIndex().xy;
+
+   // float2 secondRand = frac( pixelIndex * float2(23587.5489,4899.5748) );
+
+    float2 secondRand;
+
+    secondRand.x = Noise((float2)DispatchRaysIndex() / (float2)DispatchRaysDimensions());
+    secondRand.y = Noise(((float2)DispatchRaysIndex()+128) / (float2)DispatchRaysDimensions());
+
+
+    float visibility = 0.f;
+
+    const uint aoRayCount = 32;
+
+    for (uint i = 0; i < aoRayCount; ++i) {
+
+
+        float2 randVal = Hammersley(i, aoRayCount , secondRand );
+
+        float3 sampleDir = getCosHemisphereSample(randVal,normal);
+
+
+        bool isHit = ShadowRayHitTest(position,sampleDir);
+
+
+        float NoL = saturate(dot(normal,sampleDir));
+
+        float pdf = NoL / _PI;
+
+        visibility += (!isHit) * NoL / pdf;
+
+
+    }
+
+
+    return (1 / _PI) * visibility / (float)aoRayCount;
+
+
+
+
+}
+
+
+
+
 
 [shader("closesthit")]
 void MyClosestHitShader(inout RayPayload payload, in MyAttributes attr)
@@ -190,9 +299,10 @@ void MyClosestHitShader(inout RayPayload payload, in MyAttributes attr)
         DirectionalLight   lit;
 
         //lit.Dir = float3(0.f, 0.707106f, 0.707106f);
-        lit.Dir = float3(0.f, 0.5f, -sqrt(3) / 2.f);
+        //lit.Dir = float3(0.f, 0.5f, -sqrt(3) / 2.f);
         //lit.Dir = float3(0.f, 1.f, 0.f);
-        lit.Irradiance = float3(1.f, 1.f, 1.f);
+        lit.Dir = normalize(float3(0.f, 0.9f, 0.1f));
+        lit.Irradiance = float3(10.f, 10.f, 10.f);
 
         // Shadowing
         bool isShadow = ShadowRayHitTest(worldPosition, lit.Dir);
@@ -209,13 +319,15 @@ void MyClosestHitShader(inout RayPayload payload, in MyAttributes attr)
         //  Ambient Light
 
 
+        float aoOcclusion = EvaluateAO(worldPosition,mat.Normal);
+
         //  Ambient Diffuse
-       radiance += g_texSkyIem.SampleLevel(sampsLinear, mat.Normal, 0).xyz * mat.DiffuseAlbedo;
+       radiance += aoOcclusion * g_texSkyIem.SampleLevel(sampsLinear, mat.Normal, 0).xyz * mat.DiffuseAlbedo;
 
 
         //  Ambient Specular
         float3 F = F_Schlick(saturate(dot(eyeVec,mat.Normal)), mat.SpecularAlbedo);
-       radiance += g_texSkyRem.SampleLevel(sampsLinear, reflect(-eyeVec, mat.Normal), mat.Roughness*8.f ).xyz * F;
+       radiance += aoOcclusion * g_texSkyRem.SampleLevel(sampsLinear, reflect(-eyeVec, mat.Normal), mat.Roughness*8.f ).xyz * F;
 
 
     }

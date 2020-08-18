@@ -40,6 +40,10 @@ bool IsInsideViewport(float2 p, Viewport viewport)
         && (p.y >= viewport.top && p.y <= viewport.bottom);
 }
 
+
+
+
+
 [shader("raygeneration")]
 void MyRaygenShader()
 {
@@ -98,7 +102,6 @@ void MyRaygenShader()
 
         // OETF
         color = pow(color, 1 / 2.2f);
-
 
         // Write the raytraced color to the output texture.
         RenderTarget[DispatchRaysIndex().xy] = float4(color,1);

@@ -141,40 +141,6 @@ bool        ShadowRayHitTest(float3 worldPosition, float3 lightdir)
 }
 
 
-float2  Hammersley(uint index, uint count , float2 secondRand)
-{
-
-
-    float x = ( index + secondRand .x )/ (float)count;
-
-    float y = 0;
-
-    float base = 0.5f;
-
-    uint val = index;
-    while (val) {
-
-        if (val & 1) {
-
-            y += base;
-
-        }
-
-
-        base *= 0.5f;
-        val >>= 1;
-    }
-
-
-    y += secondRand.y;
-
-    if (y > 1) y -= 1;
-
-
-    return float2(x, y);
-
-
-}
 
 
 

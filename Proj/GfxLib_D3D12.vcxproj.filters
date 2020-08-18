@@ -440,6 +440,9 @@
     <None Include="..\Source\Hlsl\GfxRayTracing.hlsli">
       <Filter>リソース ファイル\HLSL</Filter>
     </None>
+    <None Include="..\Source\Hlsl\GfxCommon.hlsli">
+      <Filter>リソース ファイル\HLSL</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Source\Hlsl\GfxRayTracing.hlsl">

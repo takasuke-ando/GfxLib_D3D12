@@ -21,7 +21,7 @@
 
 
 //  Local Root Signature [RayGen]
-ConstantBuffer<RayGenConstantBuffer> g_rayGenCB : register(b0);
+//ConstantBuffer<RayGenConstantBuffer> g_rayGenCB : register(b16);
 
 
 

@@ -19,6 +19,10 @@ struct RayGenConstantBuffer
     Viewport viewport;
     Viewport stencil;
     float4x4 mtxCamera; //  ƒJƒƒ‰s—ñ
+    float   globalTime;
+    uint    padd0;
+    uint    padd1;
+    uint    padd2;
 };
 
 
@@ -68,6 +72,8 @@ TextureCube  g_texSky       :   register(t1);
 TextureCube  g_texSkyRem    :   register(t2);
 TextureCube  g_texSkyIem    :   register(t3);
 
+
+ConstantBuffer<RayGenConstantBuffer> g_rayGenCB : register(b0);
 
 
 

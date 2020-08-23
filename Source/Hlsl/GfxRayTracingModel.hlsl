@@ -429,8 +429,8 @@ void    RenderModel(inout RayPayload payload, in MyAttributes attr, in RenderMod
 
     {
         uint2   pixelIndex = DispatchRaysIndex().xy;
-        randVal.x = Noise((float2)DispatchRaysIndex() / (float2)DispatchRaysDimensions());
-        randVal.y = Noise(((float2)DispatchRaysIndex() + 128) / (float2)DispatchRaysDimensions());
+        randVal.x = Noise((float2)DispatchRaysIndex() / (float2)DispatchRaysDimensions() + (float2)g_rayGenCB.globalTime );
+        randVal.y = Noise(((float2)DispatchRaysIndex() + 128) / (float2)DispatchRaysDimensions() + (float2)g_rayGenCB.globalTime*2.f);
     }
 
 
@@ -481,11 +481,16 @@ void    RenderModel(inout RayPayload payload, in MyAttributes attr, in RenderMod
 
             float   dirLightMasking = EvaluateDirShadow(worldPosition, lit.Dir, randVal);
 
+
             if (dirLightMasking > 0.f) {
 
+                if (config.enableDiffuse) {
+                    radiance += dirLightMasking * ComputeDirectionalLightDiffuse(mat, lit, eyeVec);
+                }
 
-                radiance += dirLightMasking * ComputeDirectionalLight(mat, lit, eyeVec);
-
+                if (config.enableSpecular) {
+                    radiance += dirLightMasking * ComputeDirectionalLightSpecular(mat, lit, eyeVec);
+                }
             }
         } else {
 
@@ -494,7 +499,13 @@ void    RenderModel(inout RayPayload payload, in MyAttributes attr, in RenderMod
             if (!isShadow)
             {
                 //radiance += mat.DiffuseAlbedo;
-                radiance += ComputeDirectionalLight(mat, lit, eyeVec);
+                if (config.enableDiffuse) {
+                    radiance += ComputeDirectionalLightDiffuse(mat, lit, eyeVec);
+                }
+
+                if (config.enableSpecular) {
+                    radiance += ComputeDirectionalLightSpecular(mat, lit, eyeVec);
+                }
             }
 
         }
@@ -513,7 +524,7 @@ void    RenderModel(inout RayPayload payload, in MyAttributes attr, in RenderMod
 
     //  Ambient Diffuse
 
-    {
+    if (config.enableDiffuse) {
         if (config.ambientDiffuseType == AMBIENT_DIFFUSE_TYPE::GI) {
 
             radiance += EvaluateDiffuseGI(worldPosition,mat.Normal,randVal) * mat.DiffuseAlbedo;
@@ -534,7 +545,7 @@ void    RenderModel(inout RayPayload payload, in MyAttributes attr, in RenderMod
 
 
     //  Ambient Specular
-    {
+    if (config.enableSpecular) {
 
         if (config.ambientSpecularType == AMBIENT_SPECULAR_TYPE::SkyLight)
         {
@@ -574,6 +585,7 @@ void MyClosestHitShader(inout RayPayload payload, in MyAttributes attr)
 {
 
     RenderModelConfig config = (RenderModelConfig)0;
+    config.Default();
 
     config.forceLowMip = false;
     config.enableDirLightSoftShadow = true;
@@ -596,9 +608,12 @@ void MyClosestHitShader_Low(inout RayPayload payload, in MyAttributes attr)
 {
 
     RenderModelConfig config = (RenderModelConfig)0;
+    config.Default();
 
     config.forceLowMip = true;
     config.enableDirLightSoftShadow = false;
+
+    config.enableSpecular = false;
 
 
     RenderModel(payload, attr, config);

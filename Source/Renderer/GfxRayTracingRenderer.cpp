@@ -31,6 +31,7 @@ namespace GlobalRootSignatureParams {
 		AccelerationStructureSlot,
 		SamplerStateSlot,
 		SkyTextures,
+		SceneCb,
 		Count
 	};
 }
@@ -191,7 +192,8 @@ void	RayTracingRenderer::Render(GfxLib::GraphicsCommandList& cmdList,D3D12_CPU_D
 	rayGenCB.mtxCamera = XMMatrixTranspose(sceneInfo.mtxCamera);
 	rayGenCB.viewport = sceneInfo.vp;
 	rayGenCB.stencil = sceneInfo.vp;
-
+	rayGenCB.globalTime = (float)sceneInfo.globalTime;
+	rayGenCB.sceneRandom = float(sceneInfo.globalTime - floor(sceneInfo.globalTime));
 
 	Texture2D* const texSky = sceneInfo.texSky;
 	Texture2D* const texSkyRem = sceneInfo.texSkyRem;
@@ -371,11 +373,15 @@ void	RayTracingRenderer::Render(GfxLib::GraphicsCommandList& cmdList,D3D12_CPU_D
 	db3.CopyHandle(2, texSkyIem->GetSrvDescHandle());
 
 
+	GfxLib::GpuBufferRange cbBuffer = cmdList.AllocateGpuBuffer(sizeof(rayGenCB), D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
+	memcpy(cbBuffer.GetCpuAddr(), &rayGenCB, sizeof(rayGenCB));
 
 	cmdList.GetD3DCommandList()->SetComputeRootDescriptorTable(GlobalRootSignatureParams::OutputViewSlot, db1.GetGPUDescriptorHandle());
 	cmdList.GetD3DCommandList()->SetComputeRootShaderResourceView(GlobalRootSignatureParams::AccelerationStructureSlot, sceneInfo.TLAS->GetD3DResource()->GetGPUVirtualAddress());
 	cmdList.GetD3DCommandList()->SetComputeRootDescriptorTable(GlobalRootSignatureParams::SamplerStateSlot, db2.GetGPUDescriptorHandle());
 	cmdList.GetD3DCommandList()->SetComputeRootDescriptorTable(GlobalRootSignatureParams::SkyTextures, db3.GetGPUDescriptorHandle());
+	cmdList.GetD3DCommandList()->SetComputeRootDescriptorTable(GlobalRootSignatureParams::SkyTextures, db3.GetGPUDescriptorHandle());
+	cmdList.GetD3DCommandList()->SetComputeRootConstantBufferView(GlobalRootSignatureParams::SceneCb, cbBuffer.GetGpuAddr());
 
 
 	DispatchRays(cmdList.GetD3DCommandList4(), m_rtStateObject.GetD3DStateObject(), &dispatchDesc);
@@ -397,6 +403,7 @@ void	RayTracingRenderer::_CreateRayTracingRootSignature()
 	rootSigDesc.AddParam_Srv(0);
 	rootSigDesc.AddParam_DescriptorTable(&GfxLib::DESCRIPTOR_RANGE{ GfxLib::DescriptorRangeType::Sampler,1,0 }, 1);
 	rootSigDesc.AddParam_DescriptorTable(&GfxLib::DESCRIPTOR_RANGE{ GfxLib::DescriptorRangeType::Srv,3,1 }, 1);
+	rootSigDesc.AddParam_Cbv(0);
 
 	m_globalRootSig.Initialize(rootSigDesc);
 
@@ -438,7 +445,7 @@ void	RayTracingRenderer::_CreateRayTracingRootSignature()
 	// RayGen
 	rootSigDesc.Clear();
 
-	rootSigDesc.AddParam_Cbv(0);
+	rootSigDesc.AddParam_Cbv(16);
 	rootSigDesc.SetFlags(D3D12_ROOT_SIGNATURE_FLAG_LOCAL_ROOT_SIGNATURE);
 
 	m_localRootSigRayGen.Initialize(rootSigDesc);

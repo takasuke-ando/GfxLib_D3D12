@@ -46,6 +46,10 @@ namespace GfxLib
 			Viewport	viewport;
 			Viewport	stencil;
 			DirectX::XMMATRIX	mtxCamera;
+			float				globalTime;
+			float				sceneRandom;	//0-1
+			uint32_t			padd1;
+			uint32_t			padd2;
 		};
 
 		struct ModelConstantBuffer
@@ -80,6 +84,8 @@ namespace GfxLib
 			GfxLib::Texture2D		*texSky;
 			GfxLib::Texture2D		*texSkyRem;
 			GfxLib::Texture2D		*texSkyIem;
+
+			double				globalTime;	//	アプリケーションが起動してからの時間
 
 		};
 

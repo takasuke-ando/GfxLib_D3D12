@@ -30,6 +30,8 @@ namespace GfxLib
 	class TopLevelAccelerationStructure;
 	class BottomLevelAccelerationStructure;
 
+	class RtSceneTargets;
+
 	namespace RayTracing {
 
 		struct Viewport
@@ -116,7 +118,7 @@ namespace GfxLib
 			@param	outputUAV:	UAVステートになっていること
 			@param	sceneInfo:	シーン情報
 		*/
-		void	Render(GfxLib::GraphicsCommandList& cmdList,D3D12_CPU_DESCRIPTOR_HANDLE outputUAV, const RayTracing::SceneInfo &sceneInfo);
+		void	Render(GfxLib::GraphicsCommandList& cmdList, RtSceneTargets &rtTargets, const RayTracing::SceneInfo &sceneInfo);
 
 
 

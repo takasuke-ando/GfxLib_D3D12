@@ -250,6 +250,9 @@
     <ClInclude Include="..\Source\Resource\GfxTextureContainer.h">
       <Filter>Resource</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Renderer\GfxRtSceneTargets.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -413,6 +416,9 @@
     </ClCompile>
     <ClCompile Include="..\Source\Resource\GfxTextureContainer.cpp">
       <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Renderer\GfxRtSceneTargets.cpp">
+      <Filter>Renderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

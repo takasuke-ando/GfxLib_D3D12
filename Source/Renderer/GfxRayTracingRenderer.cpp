@@ -4,6 +4,7 @@
 
 #include "GfxRayTracingRenderer.h"
 
+#include "GfxRtSceneTargets.h"
 
 #include "Resource/GfxRootSignatureDesc.h"
 #include "RayTracing/GfxRtPipelineStateDesc.h"
@@ -176,8 +177,13 @@ void	RayTracingRenderer::Finalize(bool bDelayed)
 
 
 
-void	RayTracingRenderer::Render(GfxLib::GraphicsCommandList& cmdList,D3D12_CPU_DESCRIPTOR_HANDLE outputUAV, const RayTracing::SceneInfo& sceneInfo )
+void	RayTracingRenderer::Render(GfxLib::GraphicsCommandList& cmdList, RtSceneTargets& rtTargets , const RayTracing::SceneInfo& sceneInfo )
 {
+
+
+	D3D12_CPU_DESCRIPTOR_HANDLE outputUAV = rtTargets.GetOutputTexture().GetUavDescHandle();
+
+	cmdList.ResourceTransitionBarrier(&rtTargets.GetOutputTexture(), GfxLib::ResourceStates::ShaderResource, GfxLib::ResourceStates::UnorderedAccess);
 
 
 	const void* rayGenShaderIdentifier = m_rtStateObject.GetShaderIdentifier(c_raygenShaderName);
@@ -387,6 +393,7 @@ void	RayTracingRenderer::Render(GfxLib::GraphicsCommandList& cmdList,D3D12_CPU_D
 	DispatchRays(cmdList.GetD3DCommandList4(), m_rtStateObject.GetD3DStateObject(), &dispatchDesc);
 
 
+	cmdList.ResourceTransitionBarrier(&rtTargets.GetOutputTexture(), GfxLib::ResourceStates::UnorderedAccess, GfxLib::ResourceStates::ShaderResource);
 }
 
 

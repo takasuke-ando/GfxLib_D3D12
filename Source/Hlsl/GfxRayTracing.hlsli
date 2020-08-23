@@ -43,7 +43,7 @@ struct VtxAttrib
 
 struct RayPayload
 {
-    float4 color;
+    float3 color;
 };
 
 struct ShadowPayload
@@ -69,13 +69,30 @@ TextureCube  g_texSkyIem    :   register(t3);
 
 
 
+//  í èÌÉÇÉfÉã
+#define     HITGROUPOFFSET_RADIANCE           (0)
+//  í·ïiéøï`âÊ
+#define     HITGROUPOFFSET_RADIANCE_LOW      (1)
+#define     HITGROUPOFFSET_SHADOW           (2)
 
-#define     HITGROUPOFFSET_RADIANCE      (0)
-#define     HITGROUPOFFSET_SHADOW        (1)
 
-#define     TRACE_TYPE_NUM        (2)
+#define     MISSOFFSET_RADIANCE      (0)
+#define     MISSOFFSET_SHADOW        (1)
 
 
+#define     TRACE_TYPE_NUM          (3)
+
+#define     GI_RAY_COUNT            (4)
+
+
+#define     AMBIENT_DIFFUSE_TYPE_NONE  (0)
+#define     AMBIENT_DIFFUSE_TYPE_GI  (1)
+#define     AMBIENT_DIFFUSE_TYPE_SKY_LIGHT  (2)
+
+
+#define     AMBIENT_SPECULAR_TYPE_NONE       (0)
+#define     AMBIENT_SPECULAR_TYPE_GI          (1)
+#define     AMBIENT_SPECULAR_TYPE_SKY_LIGHT  (2)
 
 
 

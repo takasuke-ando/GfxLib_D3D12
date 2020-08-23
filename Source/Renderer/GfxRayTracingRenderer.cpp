@@ -60,20 +60,27 @@ namespace {
 
 	enum {
 
-
-		TRACE_TYPE_NUM = 2,
+		TRACE_TYPE_NUM = 3,
 
 	};
 
 	const wchar_t* c_hitGroupName[] = {
 		L"MyHitGroup",
+		L"MyHitGroup_Low",
 		L"MyHitGroup_Shadow",
 	};
 	const wchar_t* c_raygenShaderName = L"MyRaygenShader";
 	const wchar_t* c_closestHitShaderName[] = {
 		L"MyClosestHitShader",
+		L"MyClosestHitShader_Low",
 		L"MyClosestHitShader_Shadow",
 	};
+
+
+	_STATIC_ASSERT(TRACE_TYPE_NUM == _countof(c_hitGroupName));
+	_STATIC_ASSERT(TRACE_TYPE_NUM == _countof(c_closestHitShaderName));
+
+
 	const wchar_t* c_missShaderName[] = {
 		L"MyMissShader",
 		L"MyMissShader_Shadow",

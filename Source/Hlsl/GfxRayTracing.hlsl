@@ -83,12 +83,12 @@ void MyRaygenShader()
         // TMin should be kept small to prevent missing geometry at close contact areas.
         ray.TMin = 0.001;
         ray.TMax = 10000.0;
-        RayPayload payload = { float4(0, 0, 0, 0) };
+        RayPayload payload = { float3(0, 0, 0) };
         //TraceRay(Scene, RAY_FLAG_CULL_BACK_FACING_TRIANGLES, ~0, 0, 1, 0, ray, payload);
         TraceRay(Scene, 
             RAY_FLAG_NONE,
             ~0,     //  Instance Masks
-            0,      //  RayContributionToHitGroupIndex                  :   
+            HITGROUPOFFSET_RADIANCE,      //  RayContributionToHitGroupIndex                  :   
             TRACE_TYPE_NUM,      //  MultiplierForGeometryContributionToHitGroupIndex :  BLAS内Geometryのインデックスに、この値を掛けた結果がHitGroupのインデックスとなる
             0,      //  MissShaderIndex
             ray, 
@@ -136,7 +136,7 @@ void MyMissShader(inout RayPayload payload)
     //float3 skyColor = l_texSky.SampleLevel(sampsLinear, texcoord, 0).xyz;
     float3 skyColor = l_texSky.SampleLevel(sampsLinear, rayDir, 0).xyz;
 
-    payload.color = float4(skyColor, 1);
+    payload.color = float3(skyColor);
 }
 
 

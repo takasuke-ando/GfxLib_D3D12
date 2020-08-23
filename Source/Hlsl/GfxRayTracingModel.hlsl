@@ -132,7 +132,7 @@ bool        ShadowRayHitTest(float3 worldPosition, float3 lightdir)
         ~0,     //  Instance Masks
         HITGROUPOFFSET_SHADOW,      //  RayContributionToHitGroupIndex                  :   
         TRACE_TYPE_NUM,             //  MultiplierForGeometryContributionToHitGroupIndex :  BLAS内Geometryのインデックスに、この値を掛けた結果がHitGroupのインデックスとなる
-        HITGROUPOFFSET_SHADOW,      //  MissShaderIndex
+        MISSOFFSET_SHADOW,          //  MissShaderIndex
         ray,
         payload);
 
@@ -141,15 +141,60 @@ bool        ShadowRayHitTest(float3 worldPosition, float3 lightdir)
 }
 
 
+/*
+    低品質な、シーンラディアンスを計算
+*/
+float3        TraceSceneRadiance_Low(float3 worldPosition, float3 lightdir)
+{
+
+
+    RayDesc ray;
+    ray.Origin = worldPosition;
+    ray.Direction = lightdir;
+    ray.TMin = 0.001;
+    ray.TMax = 10000.0;
+    RayPayload payload = { (float3)0 };
+    //TraceRay(Scene, RAY_FLAG_CULL_BACK_FACING_TRIANGLES, ~0, 0, 1, 0, ray, payload);
+    TraceRay(Scene,
+        RAY_FLAG_NONE,
+        ~0,     //  Instance Masks
+        HITGROUPOFFSET_RADIANCE_LOW,             //  RayContributionToHitGroupIndex                  :   
+        TRACE_TYPE_NUM,                 //  MultiplierForGeometryContributionToHitGroupIndex :  BLAS内Geometryのインデックスに、この値を掛けた結果がHitGroupのインデックスとなる
+        MISSOFFSET_RADIANCE,            //  MissShaderIndex
+        ray,
+        payload);
+
+    return payload.color.rgb;
+
+}
 
 
 
+
+void    GetTangentFrame(float3 normal ,out float3 bitangent, out float3 tangent)
+{
+
+
+
+    bitangent = normalize(cross(float3(0, 0.99f, 0.1f), normal));
+    tangent = cross(bitangent, normal);
+
+}
+
+
+/*
+
+    分布がコサイン重み付きのサンプリングを行う
+
+*/
 float3  getCosHemisphereSample(float2 randVal , float3 normal )
 {
 
 
-    float3 bitangent = normalize( cross(float3(0, 0.99f, 0.1f), normal) );
-    float3 tangent = cross(bitangent, normal);
+    float3 bitangent ;
+    float3 tangent ;
+
+    GetTangentFrame(normal, bitangent, tangent);
 
     float r = sqrt(randVal.x);
 
@@ -167,17 +212,51 @@ float3  getCosHemisphereSample(float2 randVal , float3 normal )
 }
 
 
-float   EvaluateAO(float3 position,float3 normal)
+/*
+
+    center方向、
+    radiusサイズの円内へのサンプルを行う
+    サンプル密度は、球ではなく円内に一様になる様なサンプルとなる
+
+*/
+float3  getConeSample(float2 randVal, float3 center , float radius)
 {
 
-    uint2   pixelIndex = DispatchRaysIndex().xy;
+    float3 bitangent;
+    float3 tangent;
+
+    GetTangentFrame(center, bitangent, tangent);
+
+
+
+    float r = sqrt(randVal.x) * radius;
+
+    // ディスク上に一様サンプリング
+    float phi = 2.f * _PI * randVal.y;
+
+    //  半球に射影
+    float x = r * cos(phi);
+    float z = r * sin(phi);
+    float y = 1;
+
+    return x * tangent + y * center + z * bitangent;
+
+
+}
+
+
+
+float   EvaluateAO(float3 position,float3 normal,float2 randVal)
+{
+
 
    // float2 secondRand = frac( pixelIndex * float2(23587.5489,4899.5748) );
 
-    float2 secondRand;
+    float2 secondRand = randVal;
 
-    secondRand.x = Noise((float2)DispatchRaysIndex() / (float2)DispatchRaysDimensions());
-    secondRand.y = Noise(((float2)DispatchRaysIndex()+128) / (float2)DispatchRaysDimensions());
+    //uint2   pixelIndex = DispatchRaysIndex().xy;
+    //secondRand.x = Noise((float2)DispatchRaysIndex() / (float2)DispatchRaysDimensions());
+    //secondRand.y = Noise(((float2)DispatchRaysIndex()+128) / (float2)DispatchRaysDimensions());
 
 
     float visibility = 0.f;
@@ -214,11 +293,99 @@ float   EvaluateAO(float3 position,float3 normal)
 
 
 
-
-
-[shader("closesthit")]
-void MyClosestHitShader(inout RayPayload payload, in MyAttributes attr)
+float   EvaluateDirShadow(float3 position, float3 normal, float2 randVal)
 {
+
+
+    float2 secondRand = randVal;
+
+    float visibility = 0.f;
+
+    const uint shadowRayCount = 4;
+
+    for (uint i = 0; i < shadowRayCount; ++i) {
+
+
+        float2 randVal = Hammersley(i, shadowRayCount, secondRand);
+
+        float3 sampleDir = getConeSample(randVal, normal,0.01f);
+
+        bool isHit = ShadowRayHitTest(position, sampleDir);
+
+
+        visibility += (!isHit);
+
+
+    }
+
+
+    return visibility / (float)shadowRayCount;
+
+
+}
+
+
+
+float3   EvaluateDiffuseGI(float3 position, float3 normal, float2 randVal)
+{
+
+
+    // float2 secondRand = frac( pixelIndex * float2(23587.5489,4899.5748) );
+
+    float2 secondRand = randVal;
+
+    //uint2   pixelIndex = DispatchRaysIndex().xy;
+    //secondRand.x = Noise((float2)DispatchRaysIndex() / (float2)DispatchRaysDimensions());
+    //secondRand.y = Noise(((float2)DispatchRaysIndex()+128) / (float2)DispatchRaysDimensions());
+
+
+    const uint aoRayCount = GI_RAY_COUNT;
+    float3  radianceAcc = (float3)0;
+
+    for (uint i = 0; i < aoRayCount; ++i) {
+
+
+        float2 randVal = Hammersley(i, aoRayCount, secondRand);
+
+        float3 sampleDir = getCosHemisphereSample(randVal, normal);
+
+
+        float3 color = TraceSceneRadiance_Low(position, sampleDir);
+
+
+        float NoL = saturate(dot(normal, sampleDir));
+
+        float pdf = NoL / _PI;
+
+        radianceAcc += color * NoL / pdf;
+
+
+    }
+
+
+    return (1 / _PI) * radianceAcc / (float)aoRayCount;
+
+
+
+
+}
+
+
+struct RenderModelConfig
+{
+
+    bool forceLowMip;
+    bool enableDirLightSoftShadow;
+    uint ambientDiffuseType;
+    uint ambientSpecularType;
+
+};
+
+
+void    RenderModel(inout RayPayload payload, in MyAttributes attr, in RenderModelConfig config)
+{
+
+
 
     const uint MaterialID = 0;
 
@@ -235,6 +402,15 @@ void MyClosestHitShader(inout RayPayload payload, in MyAttributes attr)
 
     //payload.color = float4(barycentrics, 1);
     //payload.color = float4(intepolatedIndices, intepolatedIndices, intepolatedIndices, 1);
+
+    // 0～1の乱数
+    float2 randVal;
+
+    {
+        uint2   pixelIndex = DispatchRaysIndex().xy;
+        randVal.x = Noise((float2)DispatchRaysIndex() / (float2)DispatchRaysDimensions());
+        randVal.y = Noise(((float2)DispatchRaysIndex() + 128) / (float2)DispatchRaysDimensions());
+    }
 
 
     float3  worldPosition = WorldRayOrigin() + WorldRayDirection() * RayTCurrent();
@@ -254,9 +430,17 @@ void MyClosestHitShader(inout RayPayload payload, in MyAttributes attr)
 
     {
 
-        float4 diffuseTex = l_texDiffuse.SampleLevel(sampsLinear, vtx.Uv, 0);
+        float4 diffuseTex;
+        
+        if (config.forceLowMip) {
 
-        mat.DiffuseAlbedo = diffuseTex.rgb* vtx.BaseColor * g_modelCB.diffuseAlbedo;
+            diffuseTex = l_texDiffuse.SampleLevel(sampsLinear, vtx.Uv, 13);
+
+        } else {
+            diffuseTex = l_texDiffuse.SampleLevel(sampsLinear, vtx.Uv, 0);
+        }
+
+        mat.DiffuseAlbedo = diffuseTex.rgb * vtx.BaseColor * g_modelCB.diffuseAlbedo;
 
     }
 
@@ -270,37 +454,127 @@ void MyClosestHitShader(inout RayPayload payload, in MyAttributes attr)
         lit.Dir = normalize(float3(0.f, 0.9f, 0.1f));
         lit.Irradiance = float3(10.f, 10.f, 10.f);
 
-        // Shadowing
-        bool isShadow = ShadowRayHitTest(worldPosition, lit.Dir);
+
+        if (config.enableDirLightSoftShadow) {
+
+            float   dirLightMasking = EvaluateDirShadow(worldPosition, lit.Dir, randVal);
+
+            if (dirLightMasking > 0.f) {
 
 
-        if (!isShadow)
-        {
-            //radiance += mat.DiffuseAlbedo;
-            radiance += ComputeDirectionalLight(mat, lit, eyeVec);
+                radiance += dirLightMasking * ComputeDirectionalLight(mat, lit, eyeVec);
+
+            }
+        } else {
+
+            // Binary Shadowing
+            bool isShadow = ShadowRayHitTest(worldPosition, lit.Dir);
+            if (!isShadow)
+            {
+                //radiance += mat.DiffuseAlbedo;
+                radiance += ComputeDirectionalLight(mat, lit, eyeVec);
+            }
+
         }
+
     }
+
+
+
+    float aoOcclusion = 1.f;
+
+
+    if (config.ambientDiffuseType == AMBIENT_DIFFUSE_TYPE_SKY_LIGHT || config.ambientSpecularType == AMBIENT_SPECULAR_TYPE_SKY_LIGHT) {
+        aoOcclusion = EvaluateAO(worldPosition, mat.Normal, randVal);
+    }
+
+
+    //  Ambient Diffuse
 
     {
-        //  Ambient Light
+        if (config.ambientDiffuseType == AMBIENT_DIFFUSE_TYPE_GI) {
+
+            radiance += EvaluateDiffuseGI(worldPosition,mat.Normal,randVal) * mat.DiffuseAlbedo;
+
+        } 
+        if (config.ambientDiffuseType == AMBIENT_DIFFUSE_TYPE_SKY_LIGHT)
+        {
+            //  Ambient Light
 
 
-        float aoOcclusion = EvaluateAO(worldPosition,mat.Normal);
+            //  Ambient Diffuse
+            radiance += aoOcclusion * g_texSkyIem.SampleLevel(sampsLinear, mat.Normal, 0).xyz * mat.DiffuseAlbedo;
 
-        //  Ambient Diffuse
-       radiance += aoOcclusion * g_texSkyIem.SampleLevel(sampsLinear, mat.Normal, 0).xyz * mat.DiffuseAlbedo;
+        }
 
 
-        //  Ambient Specular
-        float3 F = F_Schlick(saturate(dot(eyeVec,mat.Normal)), mat.SpecularAlbedo);
-       radiance += aoOcclusion * g_texSkyRem.SampleLevel(sampsLinear, reflect(-eyeVec, mat.Normal), mat.Roughness*8.f ).xyz * F;
 
 
     }
 
 
-    payload.color = float4(radiance, 1);
+
+    //  Ambient Specular
+    {
+
+        if (config.ambientSpecularType == AMBIENT_SPECULAR_TYPE_SKY_LIGHT)
+        {
+
+            //  Ambient Specular
+            float3 F = F_Schlick(saturate(dot(eyeVec, mat.Normal)), mat.SpecularAlbedo);
+            radiance += aoOcclusion * g_texSkyRem.SampleLevel(sampsLinear, reflect(-eyeVec, mat.Normal), mat.Roughness * 8.f).xyz * F;
+
+
+        }
+
+    }
+
+
+    payload.color = radiance;
     //payload.color = float4(vtx.BaseColor, 1);
+
+
+
+}
+
+
+
+
+
+//  通常描画
+[shader("closesthit")]
+void MyClosestHitShader(inout RayPayload payload, in MyAttributes attr)
+{
+
+    RenderModelConfig config = (RenderModelConfig)0;
+
+    config.forceLowMip = false;
+    config.enableDirLightSoftShadow = true;
+
+    config.ambientDiffuseType = AMBIENT_DIFFUSE_TYPE_GI;
+    config.ambientSpecularType = AMBIENT_SPECULAR_TYPE_SKY_LIGHT;
+
+
+    RenderModel(payload, attr,config);
+
+}
+
+
+
+
+//  低品質描画
+//  さらなる再起レイは1段のみ
+[shader("closesthit")]
+void MyClosestHitShader_Low(inout RayPayload payload, in MyAttributes attr)
+{
+
+    RenderModelConfig config = (RenderModelConfig)0;
+
+    config.forceLowMip = true;
+    config.enableDirLightSoftShadow = false;
+
+
+    RenderModel(payload, attr, config);
 
 }
 

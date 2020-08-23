@@ -429,8 +429,8 @@ void    RenderModel(inout RayPayload payload, in MyAttributes attr, in RenderMod
 
     {
         uint2   pixelIndex = DispatchRaysIndex().xy;
-        randVal.x = Noise((float2)DispatchRaysIndex() / (float2)DispatchRaysDimensions() + (float2)g_rayGenCB.globalTime );
-        randVal.y = Noise(((float2)DispatchRaysIndex() + 128) / (float2)DispatchRaysDimensions() + (float2)g_rayGenCB.globalTime*2.f);
+        randVal.x = Noise((float2)DispatchRaysIndex() / (float2)DispatchRaysDimensions() /* + (float2)g_rayGenCB.globalTime */ );
+        randVal.y = Noise(((float2)DispatchRaysIndex() + 128) / (float2)DispatchRaysDimensions() /* + (float2)g_rayGenCB.globalTime*2.f */ );
     }
 
 

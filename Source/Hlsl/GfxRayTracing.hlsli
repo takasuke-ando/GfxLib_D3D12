@@ -31,6 +31,8 @@ struct ModelConstantBuffer
     float   roughness;
     float3  specularAlbedo;
     int     padd2;
+    float3  emissive;
+    int     padd3;
 };
 
 struct VtxAttrib
@@ -90,10 +92,26 @@ TextureCube  g_texSkyIem    :   register(t3);
 #define     AMBIENT_DIFFUSE_TYPE_SKY_LIGHT  (2)
 
 
+enum class AMBIENT_DIFFUSE_TYPE{
+
+    None,
+    GI,
+    SkyLight,
+};
+
+
 #define     AMBIENT_SPECULAR_TYPE_NONE       (0)
 #define     AMBIENT_SPECULAR_TYPE_GI          (1)
 #define     AMBIENT_SPECULAR_TYPE_SKY_LIGHT  (2)
 
+
+enum class AMBIENT_SPECULAR_TYPE {
+
+    None,
+    GI,
+    SkyLight,
+
+};
 
 
 #endif //INCLUDE_RAYTRACING_H

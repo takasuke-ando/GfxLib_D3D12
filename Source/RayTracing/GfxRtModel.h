@@ -71,14 +71,15 @@ namespace GfxLib
 		{
 			friend class RtModel;
 		public:
-			Material() :m_pDiffuseTex(nullptr), m_DiffuseColor{1,1,1},m_SpecularColor(0.04f,0.04f,0.04f),m_Roughness(0.5f){}
+			Material() :m_pDiffuseTex(nullptr), m_DiffuseColor{1,1,1},m_SpecularColor(0.04f,0.04f,0.04f),m_EmissiveColor(0,0,0),m_Roughness(0.5f){}
 			~Material() {}
 
 
 			const TextureBase* GetDiffuseTex() const { return m_pDiffuseTex; }
 
 			const Float3& GetDiffuseColor() const { return m_DiffuseColor;  }
-			const Float3& GetSpecularColor() const { return m_SpecularColor;  }
+			const Float3& GetSpecularColor() const { return m_SpecularColor; }
+			const Float3& GetEmissiveColor() const { return m_EmissiveColor; }
 			float		GetRoughness() const { return m_Roughness;  }
 
 		protected:
@@ -87,6 +88,7 @@ namespace GfxLib
 
 			Float3	m_DiffuseColor;
 			Float3  m_SpecularColor;
+			Float3  m_EmissiveColor;
 			float	m_Roughness;
 
 		};

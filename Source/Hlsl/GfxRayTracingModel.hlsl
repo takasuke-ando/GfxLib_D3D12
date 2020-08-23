@@ -110,6 +110,13 @@ VtxAttrib   GetVtxAttrib(in uint MaterialID, in uint3 Indices, float2 barycentri
     attr.Normal = mul(attr.Normal, (float3x3)ObjectToWorld4x3());
 
 
+    if ( HIT_KIND_TRIANGLE_BACK_FACE == HitKind()) {
+
+        attr.Normal = -attr.Normal;
+
+    }
+
+
     return attr;
 
 }
@@ -376,8 +383,22 @@ struct RenderModelConfig
 
     bool forceLowMip;
     bool enableDirLightSoftShadow;
-    uint ambientDiffuseType;
-    uint ambientSpecularType;
+    AMBIENT_DIFFUSE_TYPE ambientDiffuseType;
+    AMBIENT_SPECULAR_TYPE ambientSpecularType;
+
+    bool enableDiffuse;
+    bool enableSpecular;
+
+    void Default()
+    {
+        forceLowMip = false;
+        enableDirLightSoftShadow = true;
+        ambientDiffuseType = AMBIENT_DIFFUSE_TYPE::None;
+        ambientSpecularType = AMBIENT_SPECULAR_TYPE::None;
+
+        enableDiffuse = true;
+        enableSpecular = true;
+    }
 
 };
 
@@ -451,7 +472,8 @@ void    RenderModel(inout RayPayload payload, in MyAttributes attr, in RenderMod
         //lit.Dir = float3(0.f, 0.707106f, 0.707106f);
         //lit.Dir = float3(0.f, 0.5f, -sqrt(3) / 2.f);
         //lit.Dir = float3(0.f, 1.f, 0.f);
-        lit.Dir = normalize(float3(0.f, 0.9f, 0.1f));
+        //lit.Dir = normalize(float3(0.f, 0.9f, 0.1f));
+        lit.Dir = normalize(float3(0.f, 0.7f, 0.3f));
         lit.Irradiance = float3(10.f, 10.f, 10.f);
 
 
@@ -484,7 +506,7 @@ void    RenderModel(inout RayPayload payload, in MyAttributes attr, in RenderMod
     float aoOcclusion = 1.f;
 
 
-    if (config.ambientDiffuseType == AMBIENT_DIFFUSE_TYPE_SKY_LIGHT || config.ambientSpecularType == AMBIENT_SPECULAR_TYPE_SKY_LIGHT) {
+    if (config.ambientDiffuseType == AMBIENT_DIFFUSE_TYPE::SkyLight || config.ambientSpecularType == AMBIENT_SPECULAR_TYPE::SkyLight) {
         aoOcclusion = EvaluateAO(worldPosition, mat.Normal, randVal);
     }
 
@@ -492,12 +514,12 @@ void    RenderModel(inout RayPayload payload, in MyAttributes attr, in RenderMod
     //  Ambient Diffuse
 
     {
-        if (config.ambientDiffuseType == AMBIENT_DIFFUSE_TYPE_GI) {
+        if (config.ambientDiffuseType == AMBIENT_DIFFUSE_TYPE::GI) {
 
             radiance += EvaluateDiffuseGI(worldPosition,mat.Normal,randVal) * mat.DiffuseAlbedo;
 
         } 
-        if (config.ambientDiffuseType == AMBIENT_DIFFUSE_TYPE_SKY_LIGHT)
+        if (config.ambientDiffuseType == AMBIENT_DIFFUSE_TYPE::SkyLight)
         {
             //  Ambient Light
 
@@ -507,9 +529,6 @@ void    RenderModel(inout RayPayload payload, in MyAttributes attr, in RenderMod
 
         }
 
-
-
-
     }
 
 
@@ -517,7 +536,7 @@ void    RenderModel(inout RayPayload payload, in MyAttributes attr, in RenderMod
     //  Ambient Specular
     {
 
-        if (config.ambientSpecularType == AMBIENT_SPECULAR_TYPE_SKY_LIGHT)
+        if (config.ambientSpecularType == AMBIENT_SPECULAR_TYPE::SkyLight)
         {
 
             //  Ambient Specular
@@ -526,6 +545,14 @@ void    RenderModel(inout RayPayload payload, in MyAttributes attr, in RenderMod
 
 
         }
+
+    }
+
+
+    //  Emissive
+    {
+
+        radiance += g_modelCB.emissive;
 
     }
 
@@ -551,8 +578,8 @@ void MyClosestHitShader(inout RayPayload payload, in MyAttributes attr)
     config.forceLowMip = false;
     config.enableDirLightSoftShadow = true;
 
-    config.ambientDiffuseType = AMBIENT_DIFFUSE_TYPE_GI;
-    config.ambientSpecularType = AMBIENT_SPECULAR_TYPE_SKY_LIGHT;
+    config.ambientDiffuseType = AMBIENT_DIFFUSE_TYPE::GI;
+    config.ambientSpecularType = AMBIENT_SPECULAR_TYPE::SkyLight;
 
 
     RenderModel(payload, attr,config);

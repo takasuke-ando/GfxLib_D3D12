@@ -299,6 +299,7 @@ void	RayTracingRenderer::Render(GfxLib::GraphicsCommandList& cmdList,D3D12_CPU_D
 			modelCB.roughness = material->GetRoughness();
 			modelCB.diffuseAlbedo = material->GetDiffuseColor();
 			modelCB.specularAlbedo = material->GetSpecularColor();
+			modelCB.emissive = material->GetEmissiveColor();
 
 
 			GfxLib::GpuBufferRange cbBuffer = cmdList.AllocateGpuBuffer(sizeof(modelCB), D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);

@@ -57,6 +57,8 @@ namespace GfxLib
 			float		roughness;
 			Float3		specularAlbedo;	//	Specular Albedo
 			uint32_t	padd2;
+			Float3		emissive;
+			uint32_t	padd3;
 		};
 
 

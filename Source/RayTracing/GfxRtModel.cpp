@@ -62,6 +62,7 @@ bool	RtModel::Initialize(const InterModelData& data, TextureContainer& texContai
 
 		mat->m_DiffuseColor		= it->m_DiffuseColor;
 		mat->m_SpecularColor	= it->m_SpecularColor;
+		mat->m_EmissiveColor	= it->m_EmissiveColor;
 		mat->m_Roughness		= it->m_Roughness;
 
 

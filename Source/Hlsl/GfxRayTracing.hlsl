@@ -24,13 +24,11 @@
 //ConstantBuffer<RayGenConstantBuffer> g_rayGenCB : register(b16);
 
 
+RWTexture2D<float4> l_outSceneHDR   : register(u1);
+Texture2D<float4>    l_texPrevHDR    : register(t16);
 
 
 
-
-
-//  Local Root Signature [Miss]
-TextureCube       l_texSky    :   register(t16);
 
 
 
@@ -40,6 +38,21 @@ bool IsInsideViewport(float2 p, Viewport viewport)
         && (p.y >= viewport.top && p.y <= viewport.bottom);
 }
 
+
+
+/*
+    人間の知覚反応に近いカラースペースに変換
+*/
+float3  LinearToPerceptual(float3 color)
+{
+    return log2(max(color,(float3)0.0001f));
+}
+
+
+float3  PerceptualToLinear(float3 percep)
+{
+    return pow(2.f,percep);
+}
 
 
 
@@ -97,6 +110,21 @@ void MyRaygenShader()
 
         float3 color = payload.color.rgb;
 
+
+        uint2 pixelIndex = DispatchRaysIndex().xy;
+
+
+        float3 prevColor = l_texPrevHDR.Load(uint3(pixelIndex,0)).rgb;
+
+        color = LinearToPerceptual(color);
+
+        float feedback = 0.97f;
+        color = prevColor * feedback + color * (1- feedback);
+
+        l_outSceneHDR[pixelIndex] = float4(color,0);
+
+        color = PerceptualToLinear(color);
+
         // Tone Maping
         color = color / (color+1.f);
 
@@ -104,7 +132,7 @@ void MyRaygenShader()
         color = pow(color, 1 / 2.2f);
 
         // Write the raytraced color to the output texture.
-        RenderTarget[DispatchRaysIndex().xy] = float4(color,1);
+        RenderTarget[pixelIndex] = float4(color,1);
     }// else
     //{
         // Render interpolated DispatchRaysIndex outside the stencil window
@@ -113,38 +141,6 @@ void MyRaygenShader()
 }
 
 
-
-[shader("miss")]
-void MyMissShader(inout RayPayload payload)
-{
-    
-    float3 rayDir = WorldRayDirection();
-    rayDir = normalize(rayDir);
-
-    float2 xz = rayDir.xz;
-
-    float theta = atan2(xz.y, xz.x);
-    float phai = asin(rayDir.y);
-
-
-    float2 texcoord;
-
-    texcoord.x = theta / (2 * _PI);
-    texcoord.y = - phai / (_PI) + 0.5f;
-
-
-    //float3 skyColor = l_texSky.SampleLevel(sampsLinear, texcoord, 0).xyz;
-    float3 skyColor = l_texSky.SampleLevel(sampsLinear, rayDir, 0).xyz;
-
-    payload.color = float3(skyColor);
-}
-
-
-[shader("miss")]
-void MyMissShader_Shadow(inout ShadowPayload payload)
-{
-    payload.isHit = false;
-}
 
 
 

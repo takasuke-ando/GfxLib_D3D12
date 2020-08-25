@@ -20,7 +20,7 @@ struct RayGenConstantBuffer
     Viewport stencil;
     float4x4 mtxCamera; //  ƒJƒƒ‰s—ñ
     float   globalTime;
-    uint    padd0;
+    float   sceneRandom;
     uint    padd1;
     uint    padd2;
 };

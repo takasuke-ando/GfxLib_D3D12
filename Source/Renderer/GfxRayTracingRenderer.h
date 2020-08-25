@@ -144,6 +144,7 @@ namespace GfxLib
 		GfxLib::RootSignature	m_localRootSigRayGen;
 		GfxLib::Shader			m_rtShaderLib;
 		GfxLib::Shader			m_rtShaderLibModel;
+		GfxLib::Shader			m_rtShaderLibMiss;
 		GfxLib::StateObject		m_rtStateObject;
 
 		GfxLib::Sampler			m_sampsLinear;

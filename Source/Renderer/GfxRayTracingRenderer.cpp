@@ -125,6 +125,7 @@ bool	RayTracingRenderer::Initialize()
 
 	m_rtShaderLib.CreateFromFile(L"Media/Shader/GfxRayTracing.cso");
 	m_rtShaderLibModel.CreateFromFile(L"Media/Shader/GfxRayTracingModel.cso");
+	m_rtShaderLibMiss.CreateFromFile(L"Media/Shader/GfxRayTracingMiss.cso");
 
 	{
 		D3D12_SAMPLER_DESC desc = GfxLib::Sampler::GetDefaultDesc();
@@ -162,6 +163,7 @@ void	RayTracingRenderer::Finalize(bool bDelayed)
 	m_localRootSigRayGen.Finalize(bDelayed);
 	m_rtShaderLib.Finalize(bDelayed);
 	m_rtShaderLibModel.Finalize(bDelayed);
+	m_rtShaderLibMiss.Finalize(bDelayed);
 	m_rtStateObject.Finalize(bDelayed);
 
 
@@ -180,10 +182,43 @@ void	RayTracingRenderer::Finalize(bool bDelayed)
 void	RayTracingRenderer::Render(GfxLib::GraphicsCommandList& cmdList, RtSceneTargets& rtTargets , const RayTracing::SceneInfo& sceneInfo )
 {
 
+	rtTargets.SwapIdx();
+
+
+
+	if ( rtTargets.m_bFirstDraw ){
+
+		cmdList.ResourceTransitionBarrier(&rtTargets.GetReadSceneHDR(), GfxLib::ResourceStates::ShaderResource, GfxLib::ResourceStates::UnorderedAccess);
+		cmdList.ResourceTransitionBarrier(&rtTargets.GetWriteSceneHDR(), GfxLib::ResourceStates::ShaderResource, GfxLib::ResourceStates::UnorderedAccess);
+
+
+		auto& tex0 = rtTargets.GetReadSceneHDR();
+		auto& tex1 = rtTargets.GetWriteSceneHDR();
+
+		float zeroValue[4] = {};
+
+		auto descBuff = cmdList.AllocateDescriptorBuffer(2);
+		descBuff.CopyHandle(0, tex0.GetUavDescHandle());
+		descBuff.CopyHandle(1, tex1.GetUavDescHandle());
+
+		cmdList.GetD3DCommandList()->ClearUnorderedAccessViewFloat(descBuff.GetGPUDescriptorHandle(0), tex0.GetUavDescHandle(), tex0.GetD3DResource(), zeroValue, 0, nullptr);
+		cmdList.GetD3DCommandList()->ClearUnorderedAccessViewFloat(descBuff.GetGPUDescriptorHandle(1), tex1.GetUavDescHandle(), tex1.GetD3DResource(), zeroValue, 0, nullptr);
+
+
+
+		cmdList.ResourceTransitionBarrier(&rtTargets.GetReadSceneHDR(), GfxLib::ResourceStates::UnorderedAccess, GfxLib::ResourceStates::ShaderResource);
+		cmdList.ResourceTransitionBarrier(&rtTargets.GetWriteSceneHDR(), GfxLib::ResourceStates::UnorderedAccess, GfxLib::ResourceStates::ShaderResource);
+
+		rtTargets.m_bFirstDraw = false;
+	}
+
+
+
 
 	D3D12_CPU_DESCRIPTOR_HANDLE outputUAV = rtTargets.GetOutputTexture().GetUavDescHandle();
 
 	cmdList.ResourceTransitionBarrier(&rtTargets.GetOutputTexture(), GfxLib::ResourceStates::ShaderResource, GfxLib::ResourceStates::UnorderedAccess);
+	cmdList.ResourceTransitionBarrier(&rtTargets.GetWriteSceneHDR(), GfxLib::ResourceStates::ShaderResource, GfxLib::ResourceStates::UnorderedAccess);
 
 
 	const void* rayGenShaderIdentifier = m_rtStateObject.GetShaderIdentifier(c_raygenShaderName);
@@ -222,6 +257,8 @@ void	RayTracingRenderer::Render(GfxLib::GraphicsCommandList& cmdList, RtSceneTar
 	struct RootArguments_RayGen {
 		//RayGenConstantBuffer cb;
 		D3D12_GPU_VIRTUAL_ADDRESS	cb;			//	RayGenConstantBuffer
+		D3D12_GPU_DESCRIPTOR_HANDLE	uav;		//	UAV
+		D3D12_GPU_DESCRIPTOR_HANDLE	texSRV;		//	Textures
 	} rootArguments_RayGen;
 
 	// for Miss
@@ -240,7 +277,14 @@ void	RayTracingRenderer::Render(GfxLib::GraphicsCommandList& cmdList, RtSceneTar
 		memcpy(cbBuffer.GetCpuAddr(), &rayGenCB, sizeof(rayGenCB));
 		rootArguments_RayGen.cb = cbBuffer.GetGpuAddr();
 
+		GfxLib::DescriptorBuffer	uavDesc = cmdList.AllocateDescriptorBuffer(1);
+		uavDesc.CopyHandle(0, rtTargets.GetWriteSceneHDR().GetUavDescHandle());
 
+		GfxLib::DescriptorBuffer	srvDesc = cmdList.AllocateDescriptorBuffer(1);
+		srvDesc.CopyHandle(0, rtTargets.GetReadSceneHDR().GetSrvDescHandle());
+
+		rootArguments_RayGen.uav = uavDesc.GetGPUDescriptorHandle();
+		rootArguments_RayGen.texSRV = srvDesc.GetGPUDescriptorHandle();
 
 
 	}
@@ -386,7 +430,7 @@ void	RayTracingRenderer::Render(GfxLib::GraphicsCommandList& cmdList, RtSceneTar
 	cmdList.GetD3DCommandList()->SetComputeRootShaderResourceView(GlobalRootSignatureParams::AccelerationStructureSlot, sceneInfo.TLAS->GetD3DResource()->GetGPUVirtualAddress());
 	cmdList.GetD3DCommandList()->SetComputeRootDescriptorTable(GlobalRootSignatureParams::SamplerStateSlot, db2.GetGPUDescriptorHandle());
 	cmdList.GetD3DCommandList()->SetComputeRootDescriptorTable(GlobalRootSignatureParams::SkyTextures, db3.GetGPUDescriptorHandle());
-	cmdList.GetD3DCommandList()->SetComputeRootDescriptorTable(GlobalRootSignatureParams::SkyTextures, db3.GetGPUDescriptorHandle());
+	//cmdList.GetD3DCommandList()->SetComputeRootDescriptorTable(GlobalRootSignatureParams::SkyTextures, db3.GetGPUDescriptorHandle());
 	cmdList.GetD3DCommandList()->SetComputeRootConstantBufferView(GlobalRootSignatureParams::SceneCb, cbBuffer.GetGpuAddr());
 
 
@@ -394,6 +438,7 @@ void	RayTracingRenderer::Render(GfxLib::GraphicsCommandList& cmdList, RtSceneTar
 
 
 	cmdList.ResourceTransitionBarrier(&rtTargets.GetOutputTexture(), GfxLib::ResourceStates::UnorderedAccess, GfxLib::ResourceStates::ShaderResource);
+	cmdList.ResourceTransitionBarrier(&rtTargets.GetWriteSceneHDR(), GfxLib::ResourceStates::UnorderedAccess, GfxLib::ResourceStates::ShaderResource);
 }
 
 
@@ -450,12 +495,22 @@ void	RayTracingRenderer::_CreateRayTracingRootSignature()
 
 
 	// RayGen
-	rootSigDesc.Clear();
+	{
+		rootSigDesc.Clear();
 
-	rootSigDesc.AddParam_Cbv(16);
-	rootSigDesc.SetFlags(D3D12_ROOT_SIGNATURE_FLAG_LOCAL_ROOT_SIGNATURE);
+		rootSigDesc.AddParam_Cbv(16);
 
-	m_localRootSigRayGen.Initialize(rootSigDesc);
+
+		GfxLib::DESCRIPTOR_RANGE	ranges = { GfxLib::DescriptorRangeType::Uav , 1,1,0 };
+		rootSigDesc.AddParam_DescriptorTable(&ranges, 1);
+
+		GfxLib::DESCRIPTOR_RANGE	ranges2 = { GfxLib::DescriptorRangeType::Srv , 1,16,0 };
+		rootSigDesc.AddParam_DescriptorTable(&ranges2, 1);
+
+		rootSigDesc.SetFlags(D3D12_ROOT_SIGNATURE_FLAG_LOCAL_ROOT_SIGNATURE);
+
+		m_localRootSigRayGen.Initialize(rootSigDesc);
+	}
 }
 
 
@@ -471,7 +526,16 @@ void	RayTracingRenderer::_CreateRayTracingPipelineStateObject()
 		D3D12_SHADER_BYTECODE dxillib = m_rtShaderLib.GetD3D12ShaderBytecode();
 		subobj->SetDXILLibrary(dxillib);
 		subobj->AddExport(c_raygenShaderName);
+		//for (auto s : c_missShaderName)		subobj->AddExport(s);
+	}
+
+	{
+		auto* subobj = stateDesc.CreateSubObject<GfxLib::PipelineState_DxilLibrary>();
+
+		D3D12_SHADER_BYTECODE dxillib = m_rtShaderLibMiss.GetD3D12ShaderBytecode();
+		subobj->SetDXILLibrary(dxillib);
 		for (auto s : c_missShaderName)		subobj->AddExport(s);
+
 	}
 
 	{

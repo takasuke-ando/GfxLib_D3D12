@@ -429,8 +429,8 @@ void    RenderModel(inout RayPayload payload, in MyAttributes attr, in RenderMod
 
     {
         uint2   pixelIndex = DispatchRaysIndex().xy;
-        randVal.x = Noise((float2)DispatchRaysIndex() / (float2)DispatchRaysDimensions() /* + (float2)g_rayGenCB.globalTime */ );
-        randVal.y = Noise(((float2)DispatchRaysIndex() + 128) / (float2)DispatchRaysDimensions() /* + (float2)g_rayGenCB.globalTime*2.f */ );
+        randVal.x = Noise((float2)DispatchRaysIndex() / (float2)DispatchRaysDimensions() + (float2)g_rayGenCB.sceneRandom  );
+        randVal.y = Noise(((float2)DispatchRaysIndex() + 128) / (float2)DispatchRaysDimensions() + (float2)g_rayGenCB.sceneRandom*2.f );
     }
 
 
@@ -472,8 +472,8 @@ void    RenderModel(inout RayPayload payload, in MyAttributes attr, in RenderMod
         //lit.Dir = float3(0.f, 0.707106f, 0.707106f);
         //lit.Dir = float3(0.f, 0.5f, -sqrt(3) / 2.f);
         //lit.Dir = float3(0.f, 1.f, 0.f);
-        //lit.Dir = normalize(float3(0.f, 0.9f, 0.1f));
-        lit.Dir = normalize(float3(0.f, 0.7f, 0.3f));
+        lit.Dir = normalize(float3(0.f, 0.9f, 0.1f));
+        //lit.Dir = normalize(float3(0.f, 0.7f, 0.3f));
         lit.Irradiance = float3(10.f, 10.f, 10.f);
 
 

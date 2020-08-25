@@ -457,5 +457,8 @@
     <FxCompile Include="..\Source\Hlsl\GfxRayTracingModel.hlsl">
       <Filter>リソース ファイル\HLSL</Filter>
     </FxCompile>
+    <FxCompile Include="..\Source\Hlsl\GfxRayTracingMiss.hlsl">
+      <Filter>リソース ファイル\HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

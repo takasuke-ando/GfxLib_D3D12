@@ -40,11 +40,24 @@ namespace GfxLib
 
 		Texture2D& GetOutputTexture() { return m_rtOutput; }
 
+
+		Texture2D& GetWriteSceneHDR() { return m_SceneHDR[m_nIdx]; }
+		Texture2D& GetReadSceneHDR() { return m_SceneHDR[!m_nIdx]; }
+
+
+		void	SwapIdx()  { m_nIdx = !m_nIdx;  }
+
+
 	protected:
 	private:
 
 		Texture2D		m_rtOutput;
 
+		Texture2D		m_SceneHDR[2];
+
+		uint32_t		m_nIdx;		//	現在の書き込み先
+
+		bool			m_bFirstDraw;
 
 	};
 

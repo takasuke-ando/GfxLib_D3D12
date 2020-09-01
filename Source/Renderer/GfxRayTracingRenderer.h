@@ -48,6 +48,7 @@ namespace GfxLib
 			Viewport	viewport;
 			Viewport	stencil;
 			DirectX::XMMATRIX	mtxCamera;
+			DirectX::XMFLOAT3X4	mtxCurToPrevView;
 			float				globalTime;
 			float				sceneRandom;	//0-1
 			uint32_t			padd1;

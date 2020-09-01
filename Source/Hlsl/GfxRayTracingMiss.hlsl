@@ -45,6 +45,7 @@ void MyMissShader(inout RayPayload payload)
     float3 skyColor = l_texSky.SampleLevel(sampsLinear, rayDir, 0).xyz;
 
     payload.color = float3(skyColor);
+    payload.hitdepth = length(WorldRayDirection()) * RayTCurrent();
 }
 
 

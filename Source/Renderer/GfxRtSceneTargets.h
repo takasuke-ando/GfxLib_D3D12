@@ -59,6 +59,14 @@ namespace GfxLib
 
 		bool			m_bFirstDraw;
 
+		struct {
+
+			bool enable;
+			DirectX::XMMATRIX  mtxCamera;
+
+
+		}m_Prev;
+
 	};
 
 

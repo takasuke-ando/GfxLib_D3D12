@@ -236,6 +236,28 @@ void	RayTracingRenderer::Render(GfxLib::GraphicsCommandList& cmdList, RtSceneTar
 	rayGenCB.globalTime = (float)sceneInfo.globalTime;
 	rayGenCB.sceneRandom = float(sceneInfo.globalTime - floor(sceneInfo.globalTime));
 
+
+	if (rtTargets.m_Prev.enable) {
+
+		XMVECTOR det;
+		// 前フレームのビュー行列
+		XMMATRIX invCamera = XMMatrixInverse(&det, rtTargets.m_Prev.mtxCamera);
+
+		XMFLOAT3X4	m34;
+
+		XMStoreFloat3x4(&m34, (invCamera));
+
+		rayGenCB.mtxCurToPrevView = m34;
+
+	} 
+	
+	{
+		rtTargets.m_Prev.enable = true;
+		rtTargets.m_Prev.mtxCamera = sceneInfo.mtxCamera;
+	}
+
+
+
 	Texture2D* const texSky = sceneInfo.texSky;
 	Texture2D* const texSkyRem = sceneInfo.texSkyRem;
 	Texture2D* const texSkyIem = sceneInfo.texSkyIem;

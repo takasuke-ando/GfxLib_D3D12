@@ -96,7 +96,7 @@ void MyRaygenShader()
         // TMin should be kept small to prevent missing geometry at close contact areas.
         ray.TMin = 0.001;
         ray.TMax = 10000.0;
-        RayPayload payload = { float3(0, 0, 0) };
+        RayPayload payload = { float3(0, 0, 0),0 };
         //TraceRay(Scene, RAY_FLAG_CULL_BACK_FACING_TRIANGLES, ~0, 0, 1, 0, ray, payload);
         TraceRay(Scene, 
             RAY_FLAG_NONE,
@@ -113,15 +113,61 @@ void MyRaygenShader()
 
         uint2 pixelIndex = DispatchRaysIndex().xy;
 
+        bool prevValid = false;
+        float3 prevColor=0;
+        {
 
-        float3 prevColor = l_texPrevHDR.Load(uint3(pixelIndex,0)).rgb;
+            //  Prev Frame HitPosition
+
+            float3 hitPos = origin + rayDir * payload.hitdepth;
+
+            float3 prevHitPosInView = mul(float4(hitPos, 1.f), g_rayGenCB.mtxCurToPrevView);
+
+            if (prevHitPosInView.z > 0.f) {
+
+                float2 screen = prevHitPosInView.xy / prevHitPosInView.z;
+
+                float2 uv;
+                uv.x = (screen.x - g_rayGenCB.viewport.left) / (g_rayGenCB.viewport.right - g_rayGenCB.viewport.left);
+                uv.y = 1-(screen.y - g_rayGenCB.viewport.bottom) / (g_rayGenCB.viewport.top - g_rayGenCB.viewport.bottom);
+
+                uv += (float2)0.5f / (float2)DispatchRaysDimensions();
+
+                if (all(uv > (float2)0.f) && all(uv < (float2) 1.f)) {
+
+                    float4 prev = l_texPrevHDR.SampleLevel(sampsLinear, uv, 0.f);
+
+                    float prevdepth = prev.w;
+
+                    float reprojdepth = length(prevHitPosInView);
+                    float threshold = reprojdepth  * 0.05f;
+
+
+                    if ( reprojdepth - threshold < prevdepth && prevdepth < reprojdepth + threshold) {
+
+                        prevColor = prev.rgb;
+                        prevValid = true;
+
+                    }
+                }
+
+            }
+
+
+        }
+
+
+        //  perceptualな色空間でブレンドを行う
 
         color = LinearToPerceptual(color);
 
         float feedback = 0.97f;
-        color = prevColor * feedback + color * (1- feedback);
+        if (prevValid)
+        {
+            color = prevColor * feedback + color * (1 - feedback);
+        }
 
-        l_outSceneHDR[pixelIndex] = float4(color,0);
+        l_outSceneHDR[pixelIndex] = float4(color,payload.hitdepth);
 
         color = PerceptualToLinear(color);
 

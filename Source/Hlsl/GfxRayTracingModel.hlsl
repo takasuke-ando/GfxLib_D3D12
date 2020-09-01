@@ -160,7 +160,7 @@ float3        TraceSceneRadiance_Low(float3 worldPosition, float3 lightdir)
     ray.Direction = lightdir;
     ray.TMin = 0.001;
     ray.TMax = 10000.0;
-    RayPayload payload = { (float3)0 };
+    RayPayload payload = { (float3)0,0 };
     //TraceRay(Scene, RAY_FLAG_CULL_BACK_FACING_TRIANGLES, ~0, 0, 1, 0, ray, payload);
     TraceRay(Scene,
         RAY_FLAG_NONE,
@@ -571,7 +571,7 @@ void    RenderModel(inout RayPayload payload, in MyAttributes attr, in RenderMod
     payload.color = radiance;
     //payload.color = float4(vtx.BaseColor, 1);
 
-
+    payload.hitdepth = RayTCurrent() * length(WorldRayDirection());
 
 }
 

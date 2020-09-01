@@ -18,7 +18,8 @@ struct RayGenConstantBuffer
 {
     Viewport viewport;
     Viewport stencil;
-    float4x4 mtxCamera; //  カメラ行列
+    float4x4 mtxCamera;                 //  カメラ行列
+    float4x3 mtxCurToPrevView;       //   現在→前フレームビュースペース位置
     float   globalTime;
     float   sceneRandom;
     uint    padd1;
@@ -50,6 +51,7 @@ struct VtxAttrib
 struct RayPayload
 {
     float3 color;
+    float  hitdepth;
 };
 
 struct ShadowPayload

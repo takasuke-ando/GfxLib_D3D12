@@ -84,6 +84,7 @@ namespace GfxLib
 
 			Float3 m_DiffuseColor;
 			Float3 m_SpecularColor;
+			Float3 m_EmissiveColor;
 
 			float	m_Roughness;
 			std::wstring		m_DiffuseMap;
@@ -131,6 +132,7 @@ namespace GfxLib
 			}
 
 			// 未設定の時、-1
+			// ただし不便なのでfallbackMaterialが設定されるので外部では気にしなくてよい
 			int32_t GetMaterial() const {
 				return m_nMaterial;
 			}

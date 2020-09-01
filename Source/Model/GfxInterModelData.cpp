@@ -229,7 +229,7 @@ bool	InterModelData::InitializeFromObjFile(const wchar_t* objfilepath, float sca
 
 				vecNormal.push_back(norm);
 
-			} else if (line[1] == ' ') {
+			} else if (line[1] == ' ' || line[1] == '\t') {
 
 
 				Float3 pos = {};
@@ -321,7 +321,17 @@ bool	InterModelData::InitializeFromObjFile(const wchar_t* objfilepath, float sca
 		case 'g':
 			{
 				if (subMesh) {
-					m_vecSubMesh.push_back(subMesh);
+
+					if (subMesh->GetTriangle().size() == 0) {
+
+						delete subMesh;
+						subMesh = nullptr;
+
+					} else {
+
+						m_vecSubMesh.push_back(subMesh);
+
+					}
 				}
 				subMesh = new SubMesh;
 			}
@@ -515,7 +525,12 @@ bool	InterModelData::InitializeFromObjFile(const wchar_t* objfilepath, float sca
 	}
 
 	if (subMesh) {
-		m_vecSubMesh.push_back(subMesh);
+		if (subMesh->GetTriangle().size() == 0) {
+			delete subMesh;
+			subMesh = nullptr;
+		} else {
+			m_vecSubMesh.push_back(subMesh);
+		}
 	}
 
 	ifs.close();
@@ -645,6 +660,16 @@ bool	InterModelData::LoadMtlFile(const wchar_t* mtlfilepath)
 
 			material->m_SpecularColor = speccolor;
 
+		} else if (key == "Ke") {
+
+			//	Emissive
+			Float3 emissivecolor = {};
+
+			sscanf_s(tokenier.GetCurrent(), "%f %f %f", &emissivecolor.x, &emissivecolor.y, &emissivecolor.z);
+
+
+			material->m_EmissiveColor = emissivecolor;
+
 		} else if (key == "map_Kd") {
 
 			std::string name;
@@ -711,6 +736,7 @@ InterModelData::Material::Material(const wchar_t* name)
 	m_strName = name;
 	m_DiffuseColor = Float3(1.f, 1.f, 1.f);
 	m_SpecularColor = Float3(0.04f, 0.04f, 0.04f);
+	m_EmissiveColor = Float3(0.0f, 0.0f, 0.0f);
 	m_Roughness = 0.5f;
 }
 

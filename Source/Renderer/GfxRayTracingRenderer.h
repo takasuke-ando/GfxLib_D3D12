@@ -30,6 +30,8 @@ namespace GfxLib
 	class TopLevelAccelerationStructure;
 	class BottomLevelAccelerationStructure;
 
+	class RtSceneTargets;
+
 	namespace RayTracing {
 
 		struct Viewport
@@ -46,6 +48,11 @@ namespace GfxLib
 			Viewport	viewport;
 			Viewport	stencil;
 			DirectX::XMMATRIX	mtxCamera;
+			DirectX::XMFLOAT3X4	mtxCurToPrevView;
+			float				globalTime;
+			float				sceneRandom;	//0-1
+			uint32_t			padd1;
+			uint32_t			padd2;
 		};
 
 		struct ModelConstantBuffer
@@ -57,6 +64,8 @@ namespace GfxLib
 			float		roughness;
 			Float3		specularAlbedo;	//	Specular Albedo
 			uint32_t	padd2;
+			Float3		emissive;
+			uint32_t	padd3;
 		};
 
 
@@ -78,6 +87,8 @@ namespace GfxLib
 			GfxLib::Texture2D		*texSky;
 			GfxLib::Texture2D		*texSkyRem;
 			GfxLib::Texture2D		*texSkyIem;
+
+			double				globalTime;	//	アプリケーションが起動してからの時間
 
 		};
 
@@ -108,7 +119,7 @@ namespace GfxLib
 			@param	outputUAV:	UAVステートになっていること
 			@param	sceneInfo:	シーン情報
 		*/
-		void	Render(GfxLib::GraphicsCommandList& cmdList,D3D12_CPU_DESCRIPTOR_HANDLE outputUAV, const RayTracing::SceneInfo &sceneInfo);
+		void	Render(GfxLib::GraphicsCommandList& cmdList, RtSceneTargets &rtTargets, const RayTracing::SceneInfo &sceneInfo);
 
 
 
@@ -134,6 +145,7 @@ namespace GfxLib
 		GfxLib::RootSignature	m_localRootSigRayGen;
 		GfxLib::Shader			m_rtShaderLib;
 		GfxLib::Shader			m_rtShaderLibModel;
+		GfxLib::Shader			m_rtShaderLibMiss;
 		GfxLib::StateObject		m_rtStateObject;
 
 		GfxLib::Sampler			m_sampsLinear;

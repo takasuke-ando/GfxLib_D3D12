@@ -46,8 +46,9 @@ namespace GfxLib
 	}
 
 
-	inline D3D12_GPU_DESCRIPTOR_HANDLE		DescriptorBuffer::GetGPUDescriptorHandle() const {
-		return m_heap->GetGPUDescriptorHandleByIndex(m_startIndex);
+	inline D3D12_GPU_DESCRIPTOR_HANDLE		DescriptorBuffer::GetGPUDescriptorHandle(uint32_t index) const {
+		GFX_ASSERT(index < m_size, L"Invalid Index");
+		return m_heap->GetGPUDescriptorHandleByIndex(m_startIndex+ index);
 	}
 
 

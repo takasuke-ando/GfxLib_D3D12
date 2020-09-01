@@ -53,7 +53,7 @@ namespace GfxLib
 		void	SetConstantBuffer(uint32_t index, const void* pData, uint32_t size);
 
 
-		D3D12_GPU_DESCRIPTOR_HANDLE		GetGPUDescriptorHandle() const;
+		D3D12_GPU_DESCRIPTOR_HANDLE		GetGPUDescriptorHandle(uint32_t index=0) const;
 
 
 		ID3D12DescriptorHeap*	GetD3DDescriptorHeap() const;

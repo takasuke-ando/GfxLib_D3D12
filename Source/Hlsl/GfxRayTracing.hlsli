@@ -18,7 +18,12 @@ struct RayGenConstantBuffer
 {
     Viewport viewport;
     Viewport stencil;
-    float4x4 mtxCamera; //  カメラ行列
+    float4x4 mtxCamera;                 //  カメラ行列
+    float4x3 mtxCurToPrevView;       //   現在→前フレームビュースペース位置
+    float   globalTime;
+    float   sceneRandom;
+    uint    padd1;
+    uint    padd2;
 };
 
 
@@ -31,6 +36,8 @@ struct ModelConstantBuffer
     float   roughness;
     float3  specularAlbedo;
     int     padd2;
+    float3  emissive;
+    int     padd3;
 };
 
 struct VtxAttrib
@@ -43,7 +50,8 @@ struct VtxAttrib
 
 struct RayPayload
 {
-    float4 color;
+    float3 color;
+    float  hitdepth;
 };
 
 struct ShadowPayload
@@ -67,16 +75,51 @@ TextureCube  g_texSkyRem    :   register(t2);
 TextureCube  g_texSkyIem    :   register(t3);
 
 
+ConstantBuffer<RayGenConstantBuffer> g_rayGenCB : register(b0);
 
 
 
-#define     HITGROUPOFFSET_RADIANCE      (0)
-#define     HITGROUPOFFSET_SHADOW        (1)
+//  通常モデル
+#define     HITGROUPOFFSET_RADIANCE           (0)
+//  低品質描画
+#define     HITGROUPOFFSET_RADIANCE_LOW      (1)
+#define     HITGROUPOFFSET_SHADOW           (2)
 
-#define     TRACE_TYPE_NUM        (2)
+
+#define     MISSOFFSET_RADIANCE      (0)
+#define     MISSOFFSET_SHADOW        (1)
 
 
+#define     TRACE_TYPE_NUM          (3)
 
+#define     GI_RAY_COUNT            (4)
+
+
+#define     AMBIENT_DIFFUSE_TYPE_NONE  (0)
+#define     AMBIENT_DIFFUSE_TYPE_GI  (1)
+#define     AMBIENT_DIFFUSE_TYPE_SKY_LIGHT  (2)
+
+
+enum class AMBIENT_DIFFUSE_TYPE{
+
+    None,
+    GI,
+    SkyLight,
+};
+
+
+#define     AMBIENT_SPECULAR_TYPE_NONE       (0)
+#define     AMBIENT_SPECULAR_TYPE_GI          (1)
+#define     AMBIENT_SPECULAR_TYPE_SKY_LIGHT  (2)
+
+
+enum class AMBIENT_SPECULAR_TYPE {
+
+    None,
+    GI,
+    SkyLight,
+
+};
 
 
 #endif //INCLUDE_RAYTRACING_H

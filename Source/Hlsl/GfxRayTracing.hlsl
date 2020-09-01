@@ -21,16 +21,14 @@
 
 
 //  Local Root Signature [RayGen]
-ConstantBuffer<RayGenConstantBuffer> g_rayGenCB : register(b0);
+//ConstantBuffer<RayGenConstantBuffer> g_rayGenCB : register(b16);
+
+
+RWTexture2D<float4> l_outSceneHDR   : register(u1);
+Texture2D<float4>    l_texPrevHDR    : register(t16);
 
 
 
-
-
-
-
-//  Local Root Signature [Miss]
-TextureCube       l_texSky    :   register(t16);
 
 
 
@@ -39,6 +37,25 @@ bool IsInsideViewport(float2 p, Viewport viewport)
     return (p.x >= viewport.left && p.x <= viewport.right)
         && (p.y >= viewport.top && p.y <= viewport.bottom);
 }
+
+
+
+/*
+    人間の知覚反応に近いカラースペースに変換
+*/
+float3  LinearToPerceptual(float3 color)
+{
+    return log2(max(color,(float3)0.0001f));
+}
+
+
+float3  PerceptualToLinear(float3 percep)
+{
+    return pow(2.f,percep);
+}
+
+
+
 
 [shader("raygeneration")]
 void MyRaygenShader()
@@ -79,12 +96,12 @@ void MyRaygenShader()
         // TMin should be kept small to prevent missing geometry at close contact areas.
         ray.TMin = 0.001;
         ray.TMax = 10000.0;
-        RayPayload payload = { float4(0, 0, 0, 0) };
+        RayPayload payload = { float3(0, 0, 0),0 };
         //TraceRay(Scene, RAY_FLAG_CULL_BACK_FACING_TRIANGLES, ~0, 0, 1, 0, ray, payload);
         TraceRay(Scene, 
             RAY_FLAG_NONE,
             ~0,     //  Instance Masks
-            0,      //  RayContributionToHitGroupIndex                  :   
+            HITGROUPOFFSET_RADIANCE,      //  RayContributionToHitGroupIndex                  :   
             TRACE_TYPE_NUM,      //  MultiplierForGeometryContributionToHitGroupIndex :  BLAS内Geometryのインデックスに、この値を掛けた結果がHitGroupのインデックスとなる
             0,      //  MissShaderIndex
             ray, 
@@ -93,15 +110,75 @@ void MyRaygenShader()
 
         float3 color = payload.color.rgb;
 
+
+        uint2 pixelIndex = DispatchRaysIndex().xy;
+
+        bool prevValid = false;
+        float3 prevColor=0;
+        {
+
+            //  Prev Frame HitPosition
+
+            float3 hitPos = origin + rayDir * payload.hitdepth;
+
+            float3 prevHitPosInView = mul(float4(hitPos, 1.f), g_rayGenCB.mtxCurToPrevView);
+
+            if (prevHitPosInView.z > 0.f) {
+
+                float2 screen = prevHitPosInView.xy / prevHitPosInView.z;
+
+                float2 uv;
+                uv.x = (screen.x - g_rayGenCB.viewport.left) / (g_rayGenCB.viewport.right - g_rayGenCB.viewport.left);
+                uv.y = 1-(screen.y - g_rayGenCB.viewport.bottom) / (g_rayGenCB.viewport.top - g_rayGenCB.viewport.bottom);
+
+                uv += (float2)0.5f / (float2)DispatchRaysDimensions();
+
+                if (all(uv > (float2)0.f) && all(uv < (float2) 1.f)) {
+
+                    float4 prev = l_texPrevHDR.SampleLevel(sampsLinear, uv, 0.f);
+
+                    float prevdepth = prev.w;
+
+                    float reprojdepth = length(prevHitPosInView);
+                    float threshold = reprojdepth  * 0.05f;
+
+
+                    if ( reprojdepth - threshold < prevdepth && prevdepth < reprojdepth + threshold) {
+
+                        prevColor = prev.rgb;
+                        prevValid = true;
+
+                    }
+                }
+
+            }
+
+
+        }
+
+
+        //  perceptualな色空間でブレンドを行う
+
+        color = LinearToPerceptual(color);
+
+        float feedback = 0.97f;
+        if (prevValid)
+        {
+            color = prevColor * feedback + color * (1 - feedback);
+        }
+
+        l_outSceneHDR[pixelIndex] = float4(color,payload.hitdepth);
+
+        color = PerceptualToLinear(color);
+
         // Tone Maping
         color = color / (color+1.f);
 
         // OETF
         color = pow(color, 1 / 2.2f);
 
-
         // Write the raytraced color to the output texture.
-        RenderTarget[DispatchRaysIndex().xy] = float4(color,1);
+        RenderTarget[pixelIndex] = float4(color,1);
     }// else
     //{
         // Render interpolated DispatchRaysIndex outside the stencil window
@@ -110,38 +187,6 @@ void MyRaygenShader()
 }
 
 
-
-[shader("miss")]
-void MyMissShader(inout RayPayload payload)
-{
-    
-    float3 rayDir = WorldRayDirection();
-    rayDir = normalize(rayDir);
-
-    float2 xz = rayDir.xz;
-
-    float theta = atan2(xz.y, xz.x);
-    float phai = asin(rayDir.y);
-
-
-    float2 texcoord;
-
-    texcoord.x = theta / (2 * _PI);
-    texcoord.y = - phai / (_PI) + 0.5f;
-
-
-    //float3 skyColor = l_texSky.SampleLevel(sampsLinear, texcoord, 0).xyz;
-    float3 skyColor = l_texSky.SampleLevel(sampsLinear, rayDir, 0).xyz;
-
-    payload.color = float4(skyColor, 1);
-}
-
-
-[shader("miss")]
-void MyMissShader_Shadow(inout ShadowPayload payload)
-{
-    payload.isHit = false;
-}
 
 
 

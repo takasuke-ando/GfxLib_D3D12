@@ -57,6 +57,7 @@
 
 
 #include "Renderer/GfxRayTracingRenderer.h"
+#include "Renderer/GfxRtSceneTargets.h"
 
 
 #endif // !___INCLUDE_GFXLIB_D3D12_H__

@@ -160,6 +160,7 @@
     <ClInclude Include="..\Source\RayTracing\GfxShaderTable.h" />
     <ClInclude Include="..\Source\RayTracing\GfxStateObject.h" />
     <ClInclude Include="..\Source\Renderer\GfxRayTracingRenderer.h" />
+    <ClInclude Include="..\Source\Renderer\GfxRtSceneTargets.h" />
     <ClInclude Include="..\Source\Resource\GfxBuffer.h" />
     <ClInclude Include="..\Source\Resource\GfxConstantBuffer.h" />
     <ClInclude Include="..\Source\Resource\GfxDepthStencil.h" />
@@ -222,6 +223,7 @@
     <ClCompile Include="..\Source\RayTracing\GfxShaderTable.cpp" />
     <ClCompile Include="..\Source\RayTracing\GfxStateObject.cpp" />
     <ClCompile Include="..\Source\Renderer\GfxRayTracingRenderer.cpp" />
+    <ClCompile Include="..\Source\Renderer\GfxRtSceneTargets.cpp" />
     <ClCompile Include="..\Source\Resource\GfxBuffer.cpp" />
     <ClCompile Include="..\Source\Resource\GfxConstantBuffer.cpp" />
     <ClCompile Include="..\Source\Resource\GfxDepthStencil.cpp" />
@@ -264,6 +266,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Source\Device\GfxGraphicsCommandList.inl" />
+    <None Include="..\Source\Hlsl\GfxCommon.hlsli" />
     <None Include="..\Source\Hlsl\GfxLighting.hlsli" />
     <None Include="..\Source\Hlsl\GfxRayTracing.hlsli" />
     <None Include="..\Source\Resource\GfxDescriptorBuffer.inl" />
@@ -282,6 +285,18 @@
       </EntryPointName>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </EntryPointName>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Shader\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Shader\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="..\Source\Hlsl\GfxRayTracingMiss.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Library</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.3</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Library</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.3</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Shader\%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Shader\%(Filename).cso</ObjectFileOutput>
     </FxCompile>

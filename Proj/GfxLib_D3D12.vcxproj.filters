@@ -250,6 +250,9 @@
     <ClInclude Include="..\Source\Resource\GfxTextureContainer.h">
       <Filter>Resource</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Renderer\GfxRtSceneTargets.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -414,6 +417,9 @@
     <ClCompile Include="..\Source\Resource\GfxTextureContainer.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Renderer\GfxRtSceneTargets.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Source\Util\GfxD3DPtr.inl">
@@ -440,12 +446,18 @@
     <None Include="..\Source\Hlsl\GfxRayTracing.hlsli">
       <Filter>リソース ファイル\HLSL</Filter>
     </None>
+    <None Include="..\Source\Hlsl\GfxCommon.hlsli">
+      <Filter>リソース ファイル\HLSL</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Source\Hlsl\GfxRayTracing.hlsl">
       <Filter>リソース ファイル\HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Source\Hlsl\GfxRayTracingModel.hlsl">
+      <Filter>リソース ファイル\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Source\Hlsl\GfxRayTracingMiss.hlsl">
       <Filter>リソース ファイル\HLSL</Filter>
     </FxCompile>
   </ItemGroup>

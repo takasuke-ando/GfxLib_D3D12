@@ -47,7 +47,7 @@ float Fd_Lambert() {
 
 
 
-float3		ComputeDirectionalLight(  in Material mat , in DirectionalLight light , float3 Eye /*Pixel to Eye*/ )
+float3		ComputeDirectionalLightSpecular(  in Material mat , in DirectionalLight light , float3 Eye /*Pixel to Eye*/ )
 {
 
     float3 v = Eye;
@@ -75,17 +75,28 @@ float3		ComputeDirectionalLight(  in Material mat , in DirectionalLight light , 
     // specular BRDF
     float3 Fr = (D * V) * F;
 
-    // diffuse BRDF
-    float3 Fd = mat.DiffuseAlbedo * Fd_Lambert();
 
 
-
-    return NoL * light.Irradiance * (Fr + Fd);
+    return NoL * light.Irradiance * (Fr);
 
 
 }
 
 
+
+float3		ComputeDirectionalLightDiffuse(in Material mat, in DirectionalLight light, float3 Eye /*Pixel to Eye*/)
+{
+    float3 l = light.Dir;
+    float3 n = mat.Normal;
+    float NoL = clamp(dot(n, l), 0.0, 1.0);
+
+    // diffuse BRDF
+    float3 Fd = mat.DiffuseAlbedo * Fd_Lambert();
+
+
+
+    return NoL * light.Irradiance * (Fd);
+}
 
 
 
